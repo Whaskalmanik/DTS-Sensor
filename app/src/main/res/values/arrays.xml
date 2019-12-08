@@ -16,13 +16,13 @@
   limitations under the License.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <ListPreference
-        android:title="Download Feed"
-        android:summary="Network connectivity required to download the feed."
-        android:key="listPref"
-        android:defaultValue="Wi-Fi"
-        android:entries="@array/listArray"
-        android:entryValues="@array/listValues"
-        />
-</PreferenceScreen>
+<resources>
+    <string-array name="listArray">
+        <item>Only when on Wi-Fi</item>
+        <item>On any network</item>
+    </string-array>
+    <string-array name="listValues">
+        <item>Wi-Fi</item>
+        <item>Any</item>
+    </string-array>
+</resources>
