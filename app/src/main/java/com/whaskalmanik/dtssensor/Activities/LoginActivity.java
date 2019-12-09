@@ -30,9 +30,9 @@ public class LoginActivity extends AppCompatActivity {
         boolean loginCheck=db.emailPassword(em,p);
         if(loginCheck)
         {
-             Intent n= new Intent(getApplicationContext(), NetworkActivity.class);
-             //n.putExtra("email",em);
-             startActivity(n);
+             Intent intent= new Intent(getApplicationContext(), NetworkActivity.class);
+             intent.putExtra("email",em);
+             startActivity(intent);
         }
         else
         {

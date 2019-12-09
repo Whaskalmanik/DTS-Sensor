@@ -1,5 +1,6 @@
 package com.whaskalmanik.dtssensor.Activities;
 
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,8 +20,11 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.whaskalmanik.dtssensor.Database.DatabaseHelper;
 import com.whaskalmanik.dtssensor.Entry;
 import com.whaskalmanik.dtssensor.Fragments.AntistokesFragment;
 import com.whaskalmanik.dtssensor.Fragments.StokesFragment;
@@ -34,6 +38,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -71,31 +76,55 @@ public class NetworkActivity extends AppCompatActivity implements NavigationView
 
     private DrawerLayout drawer;
 
+    DatabaseHelper db;
+    String email;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar= findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        email= Objects.requireNonNull(getIntent().getExtras()).getString("email");
+
         drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView=findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        setHeader(savedInstanceState);
 
         ActionBarDrawerToggle toggle=new ActionBarDrawerToggle(this, drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        // Register BroadcastReceiver to track connection changes.
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        receiver = new NetworkReceiver();
+        this.registerReceiver(receiver, filter);
+    }
+
+    public void setHeader(Bundle savedInstanceState)
+    {
+        db= new DatabaseHelper(this);
+        Cursor c=db.select(email);
+        c.moveToLast();
+        String name=c.getString(2);
+        String surname=c.getString(3);
+        StringBuilder b=new StringBuilder();
+
+        NavigationView navigationView=findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         if(savedInstanceState==null)
         {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new TemperatureFragment()).commit();
             navigationView.setCheckedItem(R.id.tempterature);
         }
-
-        // Register BroadcastReceiver to track connection changes.
-        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        receiver = new NetworkReceiver();
-        this.registerReceiver(receiver, filter);
+        b.append(name).append(" ").append(surname);
+        View headView=navigationView.getHeaderView(0);
+        TextView n=headView.findViewById(R.id.headName);
+        TextView em=headView.findViewById(R.id.headEmail);
+        em.setText(email);
+        n.setText(b.toString());
     }
 
     @Override
@@ -131,10 +160,14 @@ public class NetworkActivity extends AppCompatActivity implements NavigationView
             }
             case R.id.psChange:
             {
+                Intent psChange=new Intent(this,ChangePasswordActivity.class);
+                psChange.putExtra("email",email );
+                startActivity(psChange);
                 break;
             }
             case R.id.logOut:
             {
+                Toast.makeText(getApplicationContext(),"Login out",Toast.LENGTH_SHORT).show();
                 finish();
                 break;
             }

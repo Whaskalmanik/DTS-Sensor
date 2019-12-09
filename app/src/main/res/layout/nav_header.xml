@@ -15,13 +15,16 @@
         android:src="@drawable/profile_icon" />
 
     <TextView
+        android:id="@+id/headName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
         android:text="placeholder"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
     <TextView
+        android:id="@+id/headEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="s@s.com"/>
+        android:text="s@s.com" />
 </LinearLayout>

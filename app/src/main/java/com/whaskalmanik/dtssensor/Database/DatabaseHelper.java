@@ -69,4 +69,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return false;
         }
     }
+
+    public Cursor select(String email)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("Select * from user where email=?", new String[]{email});
+        return cursor;
+    }
+
+    public void changePassword(String email, String newPassword)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv= new ContentValues();
+        cv.put("password",newPassword);
+        db.update("user",cv,"email=?",new String[]{email});
+    }
 }

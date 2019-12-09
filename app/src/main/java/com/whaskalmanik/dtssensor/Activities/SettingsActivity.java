@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.widget.Toolbar;
 
 import com.whaskalmanik.dtssensor.Activities.NetworkActivity;
 import com.whaskalmanik.dtssensor.R;
@@ -21,6 +22,8 @@ public class SettingsActivity extends PreferenceActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Toolbar bar=findViewById(R.id.toolbar);
+        setActionBar(bar);
         // Loads the XML preferences file.
         addPreferencesFromResource(R.xml.preferences);
     }
