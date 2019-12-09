@@ -28,4 +28,6 @@
     <string name="email">Email</string>
     <string name="reg">New account</string>
     <string name="confPassword">Confirm Password</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

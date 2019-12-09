@@ -1,4 +1,4 @@
-package com.whaskalmanik.dtssensor;
+package com.whaskalmanik.dtssensor.Activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.whaskalmanik.dtssensor.Database.DatabaseHelper;
+import com.whaskalmanik.dtssensor.R;
 
 public class LoginActivity extends AppCompatActivity {
     DatabaseHelper db;
@@ -27,7 +30,9 @@ public class LoginActivity extends AppCompatActivity {
         boolean loginCheck=db.emailPassword(em,p);
         if(loginCheck)
         {
-            Toast.makeText(getApplicationContext(),"OK",Toast.LENGTH_LONG).show();
+             Intent n= new Intent(getApplicationContext(), NetworkActivity.class);
+             //n.putExtra("email",em);
+             startActivity(n);
         }
         else
         {
@@ -37,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void register(View view) {
-        Intent register = new Intent(getBaseContext(),RegisterActivity.class);
+        Intent register = new Intent(getBaseContext(), RegisterActivity.class);
         startActivity(register);
     }
 

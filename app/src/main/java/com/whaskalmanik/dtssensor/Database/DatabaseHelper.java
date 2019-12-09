@@ -1,4 +1,4 @@
-package com.whaskalmanik.dtssensor;
+package com.whaskalmanik.dtssensor.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -14,7 +14,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("Create table user(email text primary key, password text)");
+        db.execSQL("Create table user(email text primary key, password text, name text, surname text)");
     }
 
     //deleting on new update
@@ -24,12 +24,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //creating new account
-    public boolean insert(String email, String password)
+    public boolean insert(String email, String password,String name,String surname)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("email", email);
         contentValues.put("password",password);
+        contentValues.put("name", name);
+        contentValues.put("surname", surname);
         long ins= db.insert("user",null, contentValues);
         if(ins == -1)
         {

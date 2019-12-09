@@ -1,10 +1,13 @@
-package com.whaskalmanik.dtssensor;
+package com.whaskalmanik.dtssensor.Activities;
 
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+
+import com.whaskalmanik.dtssensor.Activities.NetworkActivity;
+import com.whaskalmanik.dtssensor.R;
 
 /**
  * This preference activity has in its manifest declaration an intent filter for

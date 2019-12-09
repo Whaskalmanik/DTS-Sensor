@@ -1,9 +1,13 @@
-package com.whaskalmanik.dtssensor;
+package com.whaskalmanik.dtssensor.Activities;
 
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,18 +16,17 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
+import com.whaskalmanik.dtssensor.Entry;
+import com.whaskalmanik.dtssensor.Fragments.AntistokesFragment;
+import com.whaskalmanik.dtssensor.Fragments.StokesFragment;
+import com.whaskalmanik.dtssensor.Fragments.TemperatureFragment;
+import com.whaskalmanik.dtssensor.R;
+import com.whaskalmanik.dtssensor.XMLParser;
 
 import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
@@ -45,7 +48,7 @@ import java.util.List;
  * o Monitors preferences and the device's network connection to determine whether
  *   to refresh the WebView content.
  */
-public class NetworkActivity extends AppCompatActivity {
+public class NetworkActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String WIFI = "Wi-Fi";
     public static final String ANY = "Any";
 
@@ -66,14 +69,89 @@ public class NetworkActivity extends AppCompatActivity {
     // The BroadcastReceiver that tracks network connectivity changes.
     private NetworkReceiver receiver = new NetworkReceiver();
 
+    private DrawerLayout drawer;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar= findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView=findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        ActionBarDrawerToggle toggle=new ActionBarDrawerToggle(this, drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        if(savedInstanceState==null)
+        {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new TemperatureFragment()).commit();
+            navigationView.setCheckedItem(R.id.tempterature);
+        }
 
         // Register BroadcastReceiver to track connection changes.
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         receiver = new NetworkReceiver();
         this.registerReceiver(receiver, filter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(drawer.isDrawerOpen(GravityCompat.START))
+        {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        else
+        {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.tempterature:
+            {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new TemperatureFragment()).commit();
+                break;
+            }
+            case R.id.stokes:
+            {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new StokesFragment()).commit();
+                break;
+            }
+            case R.id.antistokes:
+            {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new AntistokesFragment()).commit();
+                break;
+            }
+            case R.id.psChange:
+            {
+                break;
+            }
+            case R.id.logOut:
+            {
+                finish();
+                break;
+            }
+            case R.id.settings:
+            {
+                Intent settings=new Intent(this,SettingsActivity.class);
+                startActivity(settings);
+                break;
+            }
+            case R.id.refresh:
+            {
+                loadPage();
+                break;
+            }
+        }
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     // Refreshes the display if the network connection and the
@@ -141,32 +219,8 @@ public class NetworkActivity extends AppCompatActivity {
 
     // Displays an error if the app is unable to load content.
     private void showErrorPage() {
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
 
-    }
-
-    // Populates the activity's options menu.
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    // Handles the user's menu selection.
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.settings:
-                Intent settingsActivity = new Intent(getBaseContext(), SettingsActivity.class);
-                startActivity(settingsActivity);
-                return true;
-            case R.id.refresh:
-                loadPage();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     // Implementation of AsyncTask used to download XML feed from stackoverflow.com.
@@ -191,17 +245,17 @@ public class NetworkActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<Entry> result) {
-            setContentView(R.layout.activity_main);
-            GraphView graph = (GraphView) findViewById(R.id.graph);
+           // setContentView(R.layout.activity_main);
+            //GraphView graph = (GraphView) findViewById(R.id.graph);
 
-            LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
-            for(int i=0;i<result.size();i++)
-            {
-                DataPoint d=new DataPoint(Double.parseDouble(result.get(i).delka),Double.parseDouble(result.get(i).teplota));
-                series.appendData(d,true,result.size());
-            }
+            //LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
+            //for(int i=0;i<result.size();i++)
+           // {
+           //     DataPoint d=new DataPoint(Double.parseDouble(result.get(i).delka),Double.parseDouble(result.get(i).teplota));
+           //     series.appendData(d,true,result.size());
+           // }
 
-            graph.addSeries(series);
+           // graph.addSeries(series);
             //graph.getViewport().setXAxisBoundsManual(true);
         }
     }
