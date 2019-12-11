@@ -3,6 +3,10 @@ package com.whaskalmanik.dtssensor.Activities;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentContainer;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,9 +25,14 @@ import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 import com.whaskalmanik.dtssensor.Database.DatabaseHelper;
 import com.whaskalmanik.dtssensor.Entry;
 import com.whaskalmanik.dtssensor.Fragments.AntistokesFragment;
@@ -75,110 +84,121 @@ public class NetworkActivity extends AppCompatActivity implements NavigationView
     private NetworkReceiver receiver = new NetworkReceiver();
 
     private DrawerLayout drawer;
-
     DatabaseHelper db;
     String email;
+
+    double[] delka;
+    double[] stokes;
+    double[] antistokes;
+    double[] teplota;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar= findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        email= Objects.requireNonNull(getIntent().getExtras()).getString("email");
+        email = Objects.requireNonNull(getIntent().getExtras()).getString("email");
 
         drawer = findViewById(R.id.drawer_layout);
         setHeader(savedInstanceState);
 
-        ActionBarDrawerToggle toggle=new ActionBarDrawerToggle(this, drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
         // Register BroadcastReceiver to track connection changes.
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         receiver = new NetworkReceiver();
         this.registerReceiver(receiver, filter);
     }
 
-    public void setHeader(Bundle savedInstanceState)
-    {
-        db= new DatabaseHelper(this);
-        Cursor c=db.select(email);
+    public void setHeader(Bundle savedInstanceState) {
+        db = new DatabaseHelper(this);
+        Cursor c = db.select(email);
         c.moveToLast();
-        String name=c.getString(2);
-        String surname=c.getString(3);
-        StringBuilder b=new StringBuilder();
+        String name = c.getString(2);
+        String surname = c.getString(3);
+        StringBuilder b = new StringBuilder();
 
-        NavigationView navigationView=findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if(savedInstanceState==null)
-        {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new TemperatureFragment()).commit();
-            navigationView.setCheckedItem(R.id.tempterature);
+        if (savedInstanceState == null) {
+            if(delka!=null||teplota!=null)
+            {
+                TemperatureFragment tmp=TemperatureFragment.newInstance(delka,teplota);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, tmp).commit();
+                navigationView.setCheckedItem(R.id.tempterature);
+            }
         }
         b.append(name).append(" ").append(surname);
-        View headView=navigationView.getHeaderView(0);
-        TextView n=headView.findViewById(R.id.headName);
-        TextView em=headView.findViewById(R.id.headEmail);
+        View headView = navigationView.getHeaderView(0);
+        TextView n = headView.findViewById(R.id.headName);
+        TextView em = headView.findViewById(R.id.headEmail);
         em.setText(email);
         n.setText(b.toString());
     }
 
     @Override
     public void onBackPressed() {
-        if(drawer.isDrawerOpen(GravityCompat.START))
-        {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }
-        else
-        {
+        } else {
             super.onBackPressed();
         }
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId())
-        {
-            case R.id.tempterature:
-            {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new TemperatureFragment()).commit();
+        switch (item.getItemId()) {
+            case R.id.tempterature: {
+                if(delka==null||teplota==null)
+                {
+                    break;
+                }
+                TemperatureFragment fragment=TemperatureFragment.newInstance(delka,teplota);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
                 break;
             }
-            case R.id.stokes:
-            {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new StokesFragment()).commit();
+            case R.id.stokes: {
+                if(delka==null||stokes==null)
+                {
+                    break;
+                }
+                StokesFragment fragment=StokesFragment.newInstance(delka,stokes);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+                break;
+
+            }
+            case R.id.antistokes: {
+                if(delka==null||antistokes==null)
+                {
+                    break;
+                }
+                AntistokesFragment fragment=AntistokesFragment.newInstance(delka,antistokes);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
                 break;
             }
-            case R.id.antistokes:
-            {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new AntistokesFragment()).commit();
-                break;
-            }
-            case R.id.psChange:
-            {
-                Intent psChange=new Intent(this,ChangePasswordActivity.class);
-                psChange.putExtra("email",email );
+            case R.id.psChange: {
+                Intent psChange = new Intent(this, ChangePasswordActivity.class);
+                psChange.putExtra("email", email);
                 startActivity(psChange);
                 break;
             }
-            case R.id.logOut:
-            {
-                Toast.makeText(getApplicationContext(),"Login out",Toast.LENGTH_SHORT).show();
+            case R.id.logOut: {
+                Toast.makeText(getApplicationContext(), "Login out", Toast.LENGTH_SHORT).show();
                 finish();
                 break;
             }
-            case R.id.settings:
-            {
-                Intent settings=new Intent(this,SettingsActivity.class);
+            case R.id.settings: {
+                Intent settings = new Intent(this, SettingsActivity.class);
                 startActivity(settings);
                 break;
             }
-            case R.id.refresh:
-            {
+            case R.id.refresh: {
                 loadPage();
                 break;
             }
@@ -252,8 +272,7 @@ public class NetworkActivity extends AppCompatActivity implements NavigationView
 
     // Displays an error if the app is unable to load content.
     private void showErrorPage() {
-        //setContentView(R.layout.activity_main);
-
+        Toast.makeText(getApplicationContext(),"Error downloading file",Toast.LENGTH_LONG).show();
     }
 
     // Implementation of AsyncTask used to download XML feed from stackoverflow.com.
@@ -278,18 +297,19 @@ public class NetworkActivity extends AppCompatActivity implements NavigationView
 
         @Override
         protected void onPostExecute(List<Entry> result) {
-           // setContentView(R.layout.activity_main);
-            //GraphView graph = (GraphView) findViewById(R.id.graph);
+            Toast.makeText(getApplicationContext(),"Data downloaded",Toast.LENGTH_SHORT).show();
+            delka=new double[result.size()];
+            stokes=new double[result.size()];
+            antistokes=new double[result.size()];
+            teplota=new double[result.size()];
+            for (int i=0;i<result.size();i++)
+            {
 
-            //LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
-            //for(int i=0;i<result.size();i++)
-           // {
-           //     DataPoint d=new DataPoint(Double.parseDouble(result.get(i).delka),Double.parseDouble(result.get(i).teplota));
-           //     series.appendData(d,true,result.size());
-           // }
-
-           // graph.addSeries(series);
-            //graph.getViewport().setXAxisBoundsManual(true);
+                delka[i]=Double.parseDouble((result.get(i).delka));
+                stokes[i]=Double.parseDouble((result.get(i).stokes));
+                antistokes[i]= Double.parseDouble((result.get(i).antistokes));
+                teplota[i]=Double.parseDouble((result.get(i).teplota));
+            }
         }
     }
 

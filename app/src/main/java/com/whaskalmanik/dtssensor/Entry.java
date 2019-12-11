@@ -1,6 +1,8 @@
 package com.whaskalmanik.dtssensor;
 
-public class Entry {
+import java.io.Serializable;
+
+public class Entry implements Serializable {
     public final String delka;
     public final String teplota;
     public final String stokes;
