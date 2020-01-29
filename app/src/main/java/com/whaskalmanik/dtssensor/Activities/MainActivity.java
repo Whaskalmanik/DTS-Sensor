@@ -47,7 +47,7 @@ import java.util.Objects;
  * o Monitors preferences and the device's network connection to determine whether
  *   to refresh the WebView content.
  */
-public class NetworkActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
 
     @Override
@@ -100,6 +100,8 @@ public class NetworkActivity extends AppCompatActivity implements NavigationView
                 break;
             }
             case R.id.settings: {
+                Intent n = new Intent(this,SettingsActivity.class);
+                startActivity(n);
                 break;
             }
             case R.id.refresh: {
