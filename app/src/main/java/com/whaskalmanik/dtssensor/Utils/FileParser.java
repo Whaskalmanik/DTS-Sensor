@@ -1,8 +1,10 @@
-package com.whaskalmanik.dtssensor;
+package com.whaskalmanik.dtssensor.Utils;
 
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
+
+import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -55,12 +57,13 @@ public class FileParser{
         }
         return mLines;
     }
-    private void parseLines(List<String> lines)
+    private ExtractedFile parseLines(List<String> lines)
     {
+        ExtractedFile file=null;
         String date=null;
         String time=null;
-        List<Double> length=new ArrayList<>();
-        List<Double> temperature=new ArrayList<>();
+        List<Float> length=new ArrayList<>();
+        List<Float> temperature=new ArrayList<>();
         for (String line:lines) {
             if(line.startsWith("date"))
             {
@@ -81,21 +84,25 @@ public class FileParser{
             String[] words = line.split("\t");
             try
             {
-                length.add(Double.parseDouble(words[0]));
-                temperature.add(Double.parseDouble(words[1]));
+                length.add(Float.parseFloat(words[0]));
+                temperature.add(Float.parseFloat(words[1]));
                 Log.d("FileParser",words[0] + " " + words[1]);
             }
             catch (NumberFormatException nfe){}
+            file=new ExtractedFile(date,time,length,temperature);
         }
         Log.d("FileParser","=========NEW FILE=========");
+        return file;
     }
 
-    public void extractFile()
+    public ArrayList<ExtractedFile> extractFile()
     {
+        ArrayList<ExtractedFile> files = new ArrayList<>();
         for (String item:assetsList)
         {
             List<String> lines = readLines(item);
-            parseLines(lines);
+            files.add(parseLines(lines));
         }
+        return files;
     }
 }

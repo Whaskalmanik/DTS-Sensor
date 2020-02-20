@@ -14,18 +14,6 @@
             android:id="@+id/antistokes"
             android:title="Antistokes" />
     </group>
-    <item android:title="Account">
-        <menu>
-            <item
-                android:id="@+id/psChange"
-                android:icon="@drawable/password_icon"
-                android:title="Change password" />
-            <item
-                android:id="@+id/logOut"
-                android:icon="@drawable/logout_icon"
-                android:title="Log out" />
-        </menu>
-    </item>
     <item android:title="Application">
         <menu>
             <item
