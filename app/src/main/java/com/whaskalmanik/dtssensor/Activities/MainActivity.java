@@ -20,10 +20,9 @@ import android.content.Intent;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.github.mikephil.charting.charts.LineChart;
 import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
 import com.whaskalmanik.dtssensor.Utils.FileParser;
-import com.whaskalmanik.dtssensor.Fragments.AntistokesFragment;
+import com.whaskalmanik.dtssensor.Fragments.RealTimeFragment;
 import com.whaskalmanik.dtssensor.Fragments.StokesFragment;
 import com.whaskalmanik.dtssensor.Fragments.TemperatureFragment;
 import com.whaskalmanik.dtssensor.R;
@@ -31,10 +30,14 @@ import com.whaskalmanik.dtssensor.R;
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private DrawerLayout drawer;
-    private LineChart chart;
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,RealTimeFragment.FragmentRealTimeListener {
+    TemperatureFragment TemperatureFragment;
+    StokesFragment StokesFragment;
+    RealTimeFragment RealTimeFragment;
 
+    float xValue;
+
+    private DrawerLayout drawer;
     private FileParser fp;
     ArrayList<ExtractedFile> listOfFiles=new ArrayList<>();
 
@@ -95,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         if (savedInstanceState == null) {
-            TemperatureFragment tmp = TemperatureFragment.newInstance(listOfFiles);
+            RealTimeFragment tmp = RealTimeFragment.newInstance(listOfFiles);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, tmp).commit();
             navigationView.setCheckedItem(R.id.tempterature);
         }
@@ -114,18 +117,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.tempterature: {
-                TemperatureFragment fragment=TemperatureFragment.newInstance(listOfFiles);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+                TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,xValue);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
                 break;
             }
             case R.id.stokes: {
-                StokesFragment fragment=StokesFragment.newInstance(listOfFiles);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+                StokesFragment = StokesFragment.newInstance(listOfFiles);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, StokesFragment).commit();
                 break;
             }
-            case R.id.antistokes: {
-                AntistokesFragment fragment=AntistokesFragment.newInstance(listOfFiles);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+            case R.id.realTime: {
+                RealTimeFragment = RealTimeFragment.newInstance(listOfFiles);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, RealTimeFragment).commit();
                 break;
             }
 
@@ -143,6 +146,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onValueSent(float number) {
+        xValue=number;
+        TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,xValue);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
     }
 
 }
