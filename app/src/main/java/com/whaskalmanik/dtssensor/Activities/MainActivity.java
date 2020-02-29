@@ -49,6 +49,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         listOfFiles = fp.extractFile();
 
+        TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,0);
+        StokesFragment = StokesFragment.newInstance(listOfFiles);
+        RealTimeFragment = RealTimeFragment.newInstance(listOfFiles);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -117,17 +120,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.tempterature: {
-                TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,xValue);
+                //TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,xValue);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
                 break;
             }
             case R.id.stokes: {
-                StokesFragment = StokesFragment.newInstance(listOfFiles);
+                //StokesFragment = StokesFragment.newInstance(listOfFiles);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, StokesFragment).commit();
                 break;
             }
             case R.id.realTime: {
-                RealTimeFragment = RealTimeFragment.newInstance(listOfFiles);
+                //RealTimeFragment = RealTimeFragment.newInstance(listOfFiles);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, RealTimeFragment).commit();
                 break;
             }
@@ -152,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onValueSent(float number) {
         xValue=number;
         TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,xValue);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
+        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
     }
 
 }

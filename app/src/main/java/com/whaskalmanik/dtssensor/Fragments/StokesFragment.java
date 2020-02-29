@@ -21,7 +21,7 @@ public class StokesFragment extends Fragment {
     {
         View rootView = inflater.inflate(R.layout.fragment_stokes, container, false);
         if (getArguments() != null) {
-            ArrayList<ExtractedFile> files=getArguments().getParcelableArrayList("data");
+            ArrayList<ExtractedFile> files = getArguments().getParcelableArrayList("data");
         }
         return rootView;
     }

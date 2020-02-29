@@ -1,0 +1,88 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:key="markers_category"
+        android:title="@string/marker_category">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="marker_switch"
+            android:summary="@string/marker_switch_description"
+            android:title="@string/marker_switch_title" />
+
+        <EditTextPreference
+            android:defaultValue="60"
+            android:dependency="marker_switch"
+            android:inputType="numberDecimal"
+            android:key="warning_marker"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/warning_title" />
+
+        <EditTextPreference
+            android:defaultValue="100"
+            android:dependency="marker_switch"
+            android:inputType="numberDecimal"
+            android:key="critical_marker"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/critical_marker" />
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="notifications_category"
+        android:title="@string/notifications_category">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="notifications_switch"
+            android:title="@string/notifications_title_switch" />
+
+        <RingtonePreference
+            android:defaultValue="content://settings/system/notification_sound"
+            android:dependency="notifications_switch"
+            android:key="notifications_ringtone"
+            android:ringtoneType="notification"
+            android:title="@string/pref_title_ringtone" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:dependency="notifications_switch"
+            android:key="notifications_vibrations_switch"
+            android:title="@string/notifications_vibrate_switch" />
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="synchronizations_category"
+        android:title="@string/synchronizations_category">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="synchronizations_switch"
+            android:summary="@string/synchronizations_switch_description"
+            android:title="@string/synchronizations_switch_title" />
+
+        <ListPreference
+            android:defaultValue="30"
+            android:dependency="synchronizations_switch"
+            android:entries="@array/pref_sync_frequency_titles"
+            android:entryValues="@array/pref_sync_frequency_values"
+            android:key="sync_frequency"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_sync_frequency" />
+
+        <ListPreference
+            android:defaultValue="Wifi_mobile"
+            android:dependency="synchronizations_switch"
+            android:entries="@array/pref_synchronizations_type_titles"
+            android:entryValues="@array/pref_synchronizations_type_values"
+            android:key="sync_type"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_sync_type" />
+
+    </PreferenceCategory>>
+</PreferenceScreen>
