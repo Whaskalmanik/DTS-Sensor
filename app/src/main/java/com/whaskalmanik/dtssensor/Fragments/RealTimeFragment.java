@@ -1,7 +1,10 @@
 package com.whaskalmanik.dtssensor.Fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,16 +16,14 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.whaskalmanik.dtssensor.Preference.MarkersPref;
 import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
+import com.whaskalmanik.dtssensor.Graph.RealTimeGraph;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 
 public class RealTimeFragment extends Fragment {
@@ -43,13 +44,14 @@ public class RealTimeFragment extends Fragment {
     {
         View rootView =inflater.inflate(R.layout.fragment_realtime,container,false);
         chart =rootView.findViewById(R.id.chart);
+        Bundle arguments = getArguments();
 
-        if (getArguments() != null)
+        if (arguments != null)
         {
-            files = getArguments().getParcelableArrayList("data");
+            files = arguments.getParcelableArrayList("data");
         }
-
-        createGraph(chart);
+        RealTimeGraph realTimeGraph = new RealTimeGraph(chart,files,rootView.getContext());
+        realTimeGraph.createGraph();
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
             @Override
@@ -93,16 +95,4 @@ public class RealTimeFragment extends Fragment {
         return fragment;
     }
 
-    public void createGraph(LineChart chart)
-    {
-        List<Entry> entries = new ArrayList<>();
-        for(int i = 0;i < files.get(6).getLength().size();i++)
-        {
-            entries.add(new Entry(files.get(0).getLength().get(i),files.get(0).getTemperature().get(i)));
-        }
-        LineDataSet dataSet = new LineDataSet(entries, "Data");
-        LineData lineData = new LineData(dataSet);
-        chart.setData(lineData);
-        chart.invalidate();
-    }
 }

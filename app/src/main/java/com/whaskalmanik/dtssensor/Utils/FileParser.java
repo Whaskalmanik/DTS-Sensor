@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
+import com.whaskalmanik.dtssensor.Preference.SynchronizationPref;
 import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
 
 import java.io.BufferedReader;
@@ -12,6 +13,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class FileParser{
     private Context context;
@@ -95,7 +98,7 @@ public class FileParser{
         return file;
     }
 
-    public ArrayList<ExtractedFile> extractFile()
+    public ArrayList<ExtractedFile> extractFiles()
     {
         ArrayList<ExtractedFile> files = new ArrayList<>();
         for (String item:assetsList)
@@ -104,5 +107,11 @@ public class FileParser{
             files.add(parseLines(lines));
         }
         return files;
+    }
+
+    public ExtractedFile extractFile(String path)
+    {
+        List<String> lines = readLines(path);
+        return parseLines(lines);
     }
 }

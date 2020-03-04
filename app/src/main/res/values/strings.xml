@@ -22,7 +22,7 @@
     <string name="warning_title">Warning marker</string>
     <string name="critical_marker">Critical marker</string>
 
-    <!-- Notifications settings -->
+    <!-- NotificationsPref settings -->
     <string name="notifications_category">Notifications</string>
     <string name="notifications_title_switch">Enable notifications</string>
 
@@ -30,7 +30,7 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="notifications_vibrate_switch">Vibrations</string>
-    <!-- Synchronization settings -->
+    <!-- SynchronizationPref settings -->
 
     <string name="synchronizations_category">Synchronization</string>
 
@@ -40,4 +40,9 @@
 
     <string name="pref_title_sync_type">Connection type </string>
 
+    <!--Notifications-->
+    <string name="warning_title_not">Warning</string>
+    <string name="warning_des_not">Value exceeded warning marker</string>
+    <string name="critical_title_not">Critical</string>
+    <string name="critical_des_not">Value exceeded critical marker</string>
 </resources>

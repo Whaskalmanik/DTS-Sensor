@@ -19,21 +19,25 @@ public class ExtractedFile implements Parcelable {
         this.temperature=temperature;
     }
 
-    protected ExtractedFile(Parcel in) {
+    protected ExtractedFile(Parcel in)
+    {
         date = in.readString();
         time = in.readString();
         length = in.readArrayList(null);
         temperature =in.readArrayList(null);
     }
 
-    public static final Creator<ExtractedFile> CREATOR = new Creator<ExtractedFile>() {
+    public static final Creator<ExtractedFile> CREATOR = new Creator<ExtractedFile>()
+    {
         @Override
-        public ExtractedFile createFromParcel(Parcel in) {
+        public ExtractedFile createFromParcel(Parcel in)
+        {
             return new ExtractedFile(in);
         }
 
         @Override
-        public ExtractedFile[] newArray(int size) {
+        public ExtractedFile[] newArray(int size)
+        {
             return new ExtractedFile[size];
         }
 

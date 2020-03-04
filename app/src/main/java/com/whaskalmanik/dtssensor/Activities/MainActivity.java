@@ -1,14 +1,9 @@
 package com.whaskalmanik.dtssensor.Activities;
 
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.os.Build;
+
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -26,33 +21,55 @@ import com.whaskalmanik.dtssensor.Fragments.RealTimeFragment;
 import com.whaskalmanik.dtssensor.Fragments.StokesFragment;
 import com.whaskalmanik.dtssensor.Fragments.TemperatureFragment;
 import com.whaskalmanik.dtssensor.R;
+import com.whaskalmanik.dtssensor.Utils.FileWatcher;
+import com.whaskalmanik.dtssensor.Utils.NotificationHelper;
 
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,RealTimeFragment.FragmentRealTimeListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,RealTimeFragment.FragmentRealTimeListener
+{
     TemperatureFragment TemperatureFragment;
     StokesFragment StokesFragment;
     RealTimeFragment RealTimeFragment;
 
-    float xValue;
-
     private DrawerLayout drawer;
     private FileParser fp;
-    ArrayList<ExtractedFile> listOfFiles=new ArrayList<>();
+    private FileWatcher watcher;
+    ArrayList<ExtractedFile> listOfFiles = new ArrayList<>();
+
+    NotificationHelper helper;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
-        fp=new FileParser(getApplicationContext());
+        watcher = new FileWatcher(getApplicationContext());
+        fp = new FileParser(getApplicationContext());
+        watcher.setFilesFoundAction(files -> {
+            for (String path: files) {
+                fp.extractFile(path);
+            }
+        });
 
-        listOfFiles = fp.extractFile();
+        listOfFiles = fp.extractFiles();
 
         TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,0);
         StokesFragment = StokesFragment.newInstance(listOfFiles);
         RealTimeFragment = RealTimeFragment.newInstance(listOfFiles);
+
+        helper = new NotificationHelper(getApplicationContext());
+
+        helper.popWarning();
+        helper.popCritical();
+
         setContentView(R.layout.activity_main);
+        createDrawer(savedInstanceState);
+    }
+
+    private void createDrawer(Bundle savedInstanceState)
+    {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
@@ -62,88 +79,61 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
     }
 
-    public void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "max";
-            String description = "maximalní hodnota";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("1", name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-    public void pop()
+    public void setHeader(Bundle savedInstanceState)
     {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1")
-                .setSmallIcon(R.drawable.password_icon)
-                .setContentTitle("Varování")
-                .setContentText("Teplota ve vlákně dosáhla varovné hodnoty")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                // Set the intent that will fire when the user taps the notification
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
-        notificationManager.notify(1, builder.build());
-    }
-
-    public void setHeader(Bundle savedInstanceState) {
-
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         if (savedInstanceState == null) {
-            RealTimeFragment tmp = RealTimeFragment.newInstance(listOfFiles);
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, tmp).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, RealTimeFragment).commit();
             navigationView.setCheckedItem(R.id.tempterature);
         }
     }
 
     @Override
-    public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+    public void onBackPressed()
+    {
+        if (drawer.isDrawerOpen(GravityCompat.START))
+        {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        else
+        {
             super.onBackPressed();
         }
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.tempterature: {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case R.id.tempterature:
+            {
                 //TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,xValue);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
                 break;
             }
-            case R.id.stokes: {
+            case R.id.stokes:
+            {
                 //StokesFragment = StokesFragment.newInstance(listOfFiles);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, StokesFragment).commit();
                 break;
             }
-            case R.id.realTime: {
+            case R.id.realTime:
+            {
                 //RealTimeFragment = RealTimeFragment.newInstance(listOfFiles);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, RealTimeFragment).commit();
                 break;
             }
-
-            case R.id.settings: {
-                Intent n = new Intent(this,SettingsActivity.class);
+            case R.id.settings:
+            {
+                Intent n = new Intent(this, SettingsActivity.class);
                 startActivity(n);
                 break;
             }
-            case R.id.refresh: {
-                listOfFiles=fp.extractFile();
-                createNotificationChannel();
-                pop();
+            case R.id.refresh:
+            {
+                listOfFiles=fp.extractFiles();
                 break;
             }
         }
@@ -152,9 +142,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onValueSent(float number) {
-        xValue=number;
-        TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,xValue);
+    public void onValueSent(float number)
+    {
+        TemperatureFragment = TemperatureFragment.newInstance(listOfFiles, number);
         //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
     }
 
