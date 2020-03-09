@@ -109,9 +109,4 @@ public class FileParser{
         return files;
     }
 
-    public ExtractedFile extractFile(String path)
-    {
-        List<String> lines = readLines(path);
-        return parseLines(lines);
-    }
 }

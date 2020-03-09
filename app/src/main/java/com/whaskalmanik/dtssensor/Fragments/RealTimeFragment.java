@@ -19,9 +19,11 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.whaskalmanik.dtssensor.Preference.MarkersPref;
+import com.whaskalmanik.dtssensor.Preference.NotificationsPref;
 import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
 import com.whaskalmanik.dtssensor.Graph.RealTimeGraph;
+import com.whaskalmanik.dtssensor.Utils.NotificationHelper;
 
 import java.util.ArrayList;
 
@@ -30,8 +32,11 @@ public class RealTimeFragment extends Fragment {
     public FragmentRealTimeListener listener;
     LineChart chart;
     TextView max;
+    RealTimeGraph realTimeGraph;
 
     ArrayList<ExtractedFile> files = new ArrayList<>();
+
+    NotificationHelper notifications;
 
     public interface FragmentRealTimeListener {
         void onValueSent(float number);
@@ -50,7 +55,8 @@ public class RealTimeFragment extends Fragment {
         {
             files = arguments.getParcelableArrayList("data");
         }
-        RealTimeGraph realTimeGraph = new RealTimeGraph(chart,files,rootView.getContext());
+
+        realTimeGraph = new RealTimeGraph(chart,files,rootView.getContext());
         realTimeGraph.createGraph();
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
@@ -85,7 +91,12 @@ public class RealTimeFragment extends Fragment {
         super.onDetach();
         listener=null;
     }
-
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        realTimeGraph.createGraph();
+    }
     public static RealTimeFragment newInstance(ArrayList<ExtractedFile> files)
     {
         RealTimeFragment fragment = new RealTimeFragment();

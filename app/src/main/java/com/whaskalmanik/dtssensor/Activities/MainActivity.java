@@ -35,34 +35,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private DrawerLayout drawer;
     private FileParser fp;
-    private FileWatcher watcher;
-    ArrayList<ExtractedFile> listOfFiles = new ArrayList<>();
+    ArrayList<ExtractedFile> listOfFiles;
 
-    NotificationHelper helper;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
-        watcher = new FileWatcher(getApplicationContext());
         fp = new FileParser(getApplicationContext());
-        watcher.setFilesFoundAction(files -> {
-            for (String path: files) {
-                fp.extractFile(path);
-            }
-        });
+        listOfFiles = new ArrayList<>();
 
         listOfFiles = fp.extractFiles();
 
         TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,0);
         StokesFragment = StokesFragment.newInstance(listOfFiles);
         RealTimeFragment = RealTimeFragment.newInstance(listOfFiles);
-
-        helper = new NotificationHelper(getApplicationContext());
-
-        helper.popWarning();
-        helper.popCritical();
 
         setContentView(R.layout.activity_main);
         createDrawer(savedInstanceState);

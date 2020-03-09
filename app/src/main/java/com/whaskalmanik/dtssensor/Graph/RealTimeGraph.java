@@ -9,6 +9,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.whaskalmanik.dtssensor.Preference.MarkersPref;
 import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
+import com.whaskalmanik.dtssensor.Utils.NotificationHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +25,18 @@ public class RealTimeGraph
     private LineDataSet dataSetWarning;
     private LineDataSet dataSetCritical;
 
+    private NotificationHelper notifications;
+
+    private boolean poppedWarning;
+    private boolean poppedCritical;
+
     public RealTimeGraph(LineChart graph, ArrayList<ExtractedFile> data, Context context)
     {
         this.graph = graph;
         this.data = data;
         this.context = context;
         markers = new MarkersPref(context);
+        notifications = new NotificationHelper(context);
 
     }
 
@@ -40,14 +47,35 @@ public class RealTimeGraph
         dataSet.setLineWidth(lineWidth);
         dataSet.setDrawCircles(false);
     }
+    private void notificationsCheck(float yValue)
+    {
+
+        if (yValue>= markers.getWarningTemp()&&!poppedWarning)
+        {
+            notifications.popWarning();
+            poppedWarning=true;
+        }
+        else if (yValue>=markers.getCriticalTemp()&&!poppedCritical)
+        {
+            notifications.popCritical();
+            poppedCritical=true;
+        }
+        else
+        {
+            return;
+        }
+    }
 
     private void fillDataSet()
     {
+        poppedCritical=false;
+        poppedCritical=false;
         List<Entry> entriesForData = new ArrayList<>();;
         entriesForData.clear();
         for(int i = 0;i < data.get(6).getLength().size();i++)
         {
             entriesForData.add(new Entry(data.get(5).getLength().get(i),data.get(5).getTemperature().get(i)));
+            notificationsCheck(data.get(5).getTemperature().get(i));
         }
         dataSetData = new LineDataSet(entriesForData, data.get(5).getDate());
         setStyle(Color.BLUE,dataSetData,2.0f);
@@ -66,8 +94,8 @@ public class RealTimeGraph
         entries2.add(new Entry(data.get(5).getLength().size()+1,markers.getCriticalTemp()));
         dataSetCritical = new LineDataSet(entries2,"Critical marker");
 
-        setStyle(Color.parseColor("#CAB11B"),dataSetWarning,1.0f);
-        setStyle(Color.RED, dataSetCritical,1.0f);
+        setStyle(Color.parseColor("#CAB11B"),dataSetWarning,2.0f);
+        setStyle(Color.RED, dataSetCritical,2.0f);
     }
 
     public void createGraph()
