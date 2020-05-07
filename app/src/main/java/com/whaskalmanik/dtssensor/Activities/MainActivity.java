@@ -2,6 +2,8 @@ package com.whaskalmanik.dtssensor.Activities;
 
 
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,14 +17,14 @@ import android.content.Intent;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.whaskalmanik.dtssensor.Fragments.MeasurementsFragment;
+import com.whaskalmanik.dtssensor.Preferences.Preferences;
 import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
 import com.whaskalmanik.dtssensor.Utils.FileParser;
 import com.whaskalmanik.dtssensor.Fragments.RealTimeFragment;
 import com.whaskalmanik.dtssensor.Fragments.StokesFragment;
 import com.whaskalmanik.dtssensor.Fragments.TemperatureFragment;
 import com.whaskalmanik.dtssensor.R;
-import com.whaskalmanik.dtssensor.Utils.FileWatcher;
-import com.whaskalmanik.dtssensor.Utils.NotificationHelper;
 
 import java.util.ArrayList;
 
@@ -32,28 +34,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     TemperatureFragment TemperatureFragment;
     StokesFragment StokesFragment;
     RealTimeFragment RealTimeFragment;
+    MeasurementsFragment MeasurementsFragment;
 
     private DrawerLayout drawer;
     private FileParser fp;
     ArrayList<ExtractedFile> listOfFiles;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         fp = new FileParser(getApplicationContext());
+        Preferences.initialize(getApplicationContext());
         listOfFiles = new ArrayList<>();
-
         listOfFiles = fp.extractFiles();
-
+     //   reloadSettings();
         TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,0);
         StokesFragment = StokesFragment.newInstance(listOfFiles);
         RealTimeFragment = RealTimeFragment.newInstance(listOfFiles);
-
+        MeasurementsFragment = MeasurementsFragment.newInstance();
+       // new MeasurementLoadingTask().execute();
         setContentView(R.layout.activity_main);
         createDrawer(savedInstanceState);
     }
+
 
     private void createDrawer(Bundle savedInstanceState)
     {
@@ -110,6 +114,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             {
                 //RealTimeFragment = RealTimeFragment.newInstance(listOfFiles);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, RealTimeFragment).commit();
+                break;
+            }
+            case R.id.measurements:
+            {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MeasurementsFragment).commit();
                 break;
             }
             case R.id.settings:

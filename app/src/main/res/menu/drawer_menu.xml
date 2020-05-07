@@ -5,14 +5,17 @@
     <group android:checkableBehavior="single">
 
         <item
+            android:id="@+id/stokes"
+            android:title="Stokes" />
+        <item
             android:id="@+id/realTime"
             android:title="Real Time" />
         <item
             android:id="@+id/tempterature"
             android:title="Temperature" />
         <item
-            android:id="@+id/stokes"
-            android:title="Stokes" />
+            android:id="@+id/measurements"
+            android:title="Measurements" />
     </group>
     <item android:title="Application">
         <menu>

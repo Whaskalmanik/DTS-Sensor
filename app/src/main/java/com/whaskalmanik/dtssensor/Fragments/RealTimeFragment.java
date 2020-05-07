@@ -1,10 +1,7 @@
 package com.whaskalmanik.dtssensor.Fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,8 +15,6 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.whaskalmanik.dtssensor.Preference.MarkersPref;
-import com.whaskalmanik.dtssensor.Preference.NotificationsPref;
 import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
 import com.whaskalmanik.dtssensor.Graph.RealTimeGraph;
@@ -36,7 +31,6 @@ public class RealTimeFragment extends Fragment {
 
     ArrayList<ExtractedFile> files = new ArrayList<>();
 
-    NotificationHelper notifications;
 
     public interface FragmentRealTimeListener {
         void onValueSent(float number);
@@ -58,6 +52,7 @@ public class RealTimeFragment extends Fragment {
 
         realTimeGraph = new RealTimeGraph(chart,files,rootView.getContext());
         realTimeGraph.createGraph();
+
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
             @Override

@@ -7,7 +7,7 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.whaskalmanik.dtssensor.Preference.MarkersPref;
+import com.whaskalmanik.dtssensor.Preferences.Preferences;
 import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
 import com.whaskalmanik.dtssensor.Utils.NotificationHelper;
 
@@ -18,7 +18,7 @@ public class RealTimeGraph
 {
     private LineChart graph;
     private ArrayList<ExtractedFile> data;
-    private MarkersPref markers;
+    private Preferences markers;
     private Context context;
 
     private LineDataSet dataSetData;
@@ -35,7 +35,6 @@ public class RealTimeGraph
         this.graph = graph;
         this.data = data;
         this.context = context;
-        markers = new MarkersPref(context);
         notifications = new NotificationHelper(context);
 
     }
@@ -50,12 +49,12 @@ public class RealTimeGraph
     private void notificationsCheck(float yValue)
     {
 
-        if (yValue>= markers.getWarningTemp()&&!poppedWarning)
+        if (yValue>= Preferences.getWarningTemp()&&!poppedWarning)
         {
             notifications.popWarning();
             poppedWarning=true;
         }
-        else if (yValue>=markers.getCriticalTemp()&&!poppedCritical)
+        else if (yValue>=Preferences.getCriticalTemp()&&!poppedCritical)
         {
             notifications.popCritical();
             poppedCritical=true;
@@ -69,7 +68,7 @@ public class RealTimeGraph
     private void fillDataSet()
     {
         poppedCritical=false;
-        poppedCritical=false;
+        poppedWarning=false;
         List<Entry> entriesForData = new ArrayList<>();;
         entriesForData.clear();
         for(int i = 0;i < data.get(6).getLength().size();i++)
@@ -86,12 +85,12 @@ public class RealTimeGraph
         List<Entry> entries = new ArrayList<>();
         List<Entry> entries2 = new ArrayList<>();
 
-        entries.add(new Entry(0,markers.getWarningTemp()));
-        entries.add(new Entry(data.get(5).getLength().size()+1,markers.getWarningTemp()));
+        entries.add(new Entry(0,Preferences.getWarningTemp()));
+        entries.add(new Entry(data.get(5).getLength().size()+1,Preferences.getWarningTemp()));
         dataSetWarning = new LineDataSet(entries,"Warning marker");
 
-        entries2.add(new Entry(0,markers.getCriticalTemp()));
-        entries2.add(new Entry(data.get(5).getLength().size()+1,markers.getCriticalTemp()));
+        entries2.add(new Entry(0,Preferences.getCriticalTemp()));
+        entries2.add(new Entry(data.get(5).getLength().size()+1,Preferences.getCriticalTemp()));
         dataSetCritical = new LineDataSet(entries2,"Critical marker");
 
         setStyle(Color.parseColor("#CAB11B"),dataSetWarning,2.0f);
@@ -101,7 +100,7 @@ public class RealTimeGraph
     public void createGraph()
     {
         fillDataSet();
-        if(markers.isEnabled())
+        if(Preferences.areMarkersEnabled())
         {
             fillDataForMarker();
             LineData linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);

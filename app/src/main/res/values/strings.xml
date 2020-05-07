@@ -45,4 +45,9 @@
     <string name="warning_des_not">Value exceeded warning marker</string>
     <string name="critical_title_not">Critical</string>
     <string name="critical_des_not">Value exceeded critical marker</string>
+    <!--Connection-->
+    <string name="connection_category">Database connection</string>
+    <string name="connection_ip">IP address</string>
+    <string name="connection_name">Database name</string>
+    <string name="connection_port">Port</string>
 </resources>

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-import com.whaskalmanik.dtssensor.Preference.SynchronizationPref;
 import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
 
 import java.io.BufferedReader;

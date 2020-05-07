@@ -2,7 +2,7 @@ package com.whaskalmanik.dtssensor.Utils;
 
 import android.content.Context;
 
-import com.whaskalmanik.dtssensor.Preference.SynchronizationPref;
+import com.whaskalmanik.dtssensor.Preferences.Preferences;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +13,6 @@ import java.util.function.Consumer;
 
 public class FileWatcher {
     private Timer refreshTimer = new Timer();
-    private final SynchronizationPref synchronizationPref;
     private Boolean isRefreshing;
     private Context context;
     private Consumer<Collection<String>> filesFoundAction;
@@ -47,17 +46,17 @@ public class FileWatcher {
     public FileWatcher(Context context)
     {
         this.context = context;
-        synchronizationPref = new SynchronizationPref(context);
+        Preferences.areMarkersEnabled();
 
-        if (synchronizationPref.isEnabled())
+        if (Preferences.isSynchronizationEnabled())
         {
-            refreshTimer.schedule(refreshTask, 0, synchronizationPref.getFrequency() * 1000);
+            refreshTimer.schedule(refreshTask, 0, Preferences.getFrequency() * 1000);
         }
     }
 
     public void disableRefresh()
     {
-        if (synchronizationPref.isEnabled() || refreshTimer == null) {
+        if (Preferences.isSynchronizationEnabled() || refreshTimer == null) {
             return;
         }
 
@@ -67,7 +66,7 @@ public class FileWatcher {
 
     public void enableRefresh()
     {
-        if (!synchronizationPref.isEnabled()) {
+        if (!Preferences.isSynchronizationEnabled() ) {
             return;
         }
 
@@ -76,12 +75,12 @@ public class FileWatcher {
         }
 
         refreshTimer = new Timer();
-        refreshTimer.schedule(refreshTask, 0, synchronizationPref.getFrequency() * 1000);
+        refreshTimer.schedule(refreshTask, 0, Preferences.getFrequency() * 1000);
     }
 
     public void onRefreshFrequencyChanged()
     {
-        if (!synchronizationPref.isEnabled())
+        if (!Preferences.isSynchronizationEnabled())
         {
             return;
         }
@@ -99,7 +98,7 @@ public class FileWatcher {
 
         refreshTimer.schedule(refreshTask, 0);
 
-        if (!synchronizationPref.isEnabled())
+        if (!Preferences.isSynchronizationEnabled())
         {
             disableRefresh();
         }

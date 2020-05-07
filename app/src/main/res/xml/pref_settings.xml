@@ -11,9 +11,8 @@
             android:title="@string/marker_switch_title" />
 
         <EditTextPreference
-            android:defaultValue="60"
             android:dependency="marker_switch"
-            android:inputType="numberDecimal"
+            android:inputType="number"
             android:key="warning_marker"
             android:maxLines="1"
             android:selectAllOnFocus="true"
@@ -23,7 +22,7 @@
         <EditTextPreference
             android:defaultValue="100"
             android:dependency="marker_switch"
-            android:inputType="numberDecimal"
+            android:inputType="number"
             android:key="critical_marker"
             android:maxLines="1"
             android:selectAllOnFocus="true"
@@ -32,31 +31,8 @@
 
     </PreferenceCategory>
     <PreferenceCategory
-        android:key="notifications_category"
-        android:title="@string/notifications_category">
-
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="notifications_switch"
-            android:title="@string/notifications_title_switch" />
-
-        <RingtonePreference
-            android:defaultValue="content://settings/system/notification_sound"
-            android:dependency="notifications_switch"
-            android:key="notifications_ringtone"
-            android:ringtoneType="notification"
-            android:title="@string/pref_title_ringtone" />
-
-        <SwitchPreference
-            android:defaultValue="true"
-            android:dependency="notifications_switch"
-            android:key="notifications_vibrations_switch"
-            android:title="@string/notifications_vibrate_switch" />
-
-    </PreferenceCategory>
-    <PreferenceCategory
         android:key="synchronizations_category"
-        android:title="@string/synchronizations_category">
+        android:title="@string/synchronizations_category"/>
 
         <SwitchPreference
             android:defaultValue="true"
@@ -83,6 +59,38 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_sync_type" />
+
+    <PreferenceCategory
+        android:key="connection_category"
+        android:title="@string/connection_category">
+
+        <EditTextPreference
+            android:defaultValue="192.168.4.1"
+            android:inputType="text"
+            android:key="database_ip"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/connection_ip" />
+
+        <EditTextPreference
+            android:defaultValue="27017"
+            android:inputType="numberSigned"
+            android:key="database_port"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/connection_port" />
+
+        <EditTextPreference
+            android:defaultValue="DTS"
+            android:inputType="text"
+            android:key="database_name"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/connection_name" />
+
 
     </PreferenceCategory>>
 </PreferenceScreen>

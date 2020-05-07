@@ -8,19 +8,16 @@
     android:paddingRight="8dp"
     android:paddingBottom="5dp">
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chart"
-        android:layout_width="match_parent"
-        android:layout_height="833dp"
-        android:layout_weight="1">
-
-    </com.github.mikephil.charting.charts.LineChart>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="2"
-        android:orientation="vertical" />
+        android:orientation="vertical" >
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
 </LinearLayout>
 
