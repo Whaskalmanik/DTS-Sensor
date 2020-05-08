@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.BoringLayout;
 
-
+//todo dodelat dalsi nastaveni
 public final class Preferences {
     static Preferences instance;
 

@@ -48,12 +48,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Preferences.initialize(getApplicationContext());
         listOfFiles = new ArrayList<>();
         listOfFiles = fp.extractFiles();
-     //   reloadSettings();
+
         TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,0);
         StokesFragment = StokesFragment.newInstance(listOfFiles);
         RealTimeFragment = RealTimeFragment.newInstance(listOfFiles);
         MeasurementsFragment = MeasurementsFragment.newInstance();
-       // new MeasurementLoadingTask().execute();
+
         setContentView(R.layout.activity_main);
         createDrawer(savedInstanceState);
     }
