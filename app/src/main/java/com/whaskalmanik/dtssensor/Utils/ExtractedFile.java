@@ -24,7 +24,7 @@ public class ExtractedFile implements Parcelable {
         date = in.readString();
         time = in.readString();
         length = in.readArrayList(null);
-        temperature =in.readArrayList(null);
+        temperature = in.readArrayList(null);
     }
 
     public static final Creator<ExtractedFile> CREATOR = new Creator<ExtractedFile>()

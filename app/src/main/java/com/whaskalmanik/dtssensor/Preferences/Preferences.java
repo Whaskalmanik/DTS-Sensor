@@ -42,5 +42,17 @@ public final class Preferences {
     {
         return Integer.parseInt(instance.sharedPreferences.getString("sync_frequency","10"));
     }
+    public static String getIP()
+    {
+        return instance.sharedPreferences.getString("database_ip","");
+    }
 
+    public static int getPort()
+    {
+        return Integer.parseInt(instance.sharedPreferences.getString("database_port","10"));
+    }
+    public static String getDatabaseName()
+    {
+        return instance.sharedPreferences.getString("database_name","DTS");
+    }
 }

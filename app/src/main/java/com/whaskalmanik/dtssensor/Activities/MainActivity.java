@@ -16,6 +16,7 @@ import android.content.Intent;
 
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.whaskalmanik.dtssensor.Fragments.MeasurementsFragment;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Preferences.initialize(getApplicationContext());
         listOfFiles = new ArrayList<>();
         listOfFiles = fp.extractFiles();
+
+        Toast.makeText(getApplicationContext(),Preferences.getIP(),Toast.LENGTH_SHORT).show();
 
         TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,0);
         StokesFragment = StokesFragment.newInstance(listOfFiles);
