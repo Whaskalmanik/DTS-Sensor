@@ -27,6 +27,7 @@ import com.whaskalmanik.dtssensor.Fragments.StokesFragment;
 import com.whaskalmanik.dtssensor.Fragments.TemperatureFragment;
 import com.whaskalmanik.dtssensor.R;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
@@ -135,9 +136,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 listOfFiles=fp.extractFiles();
                 break;
             }
+            case R.id.storageDelete:
+            {
+                deleteRecursive(getApplicationContext().getFilesDir());
+                Toast.makeText(getApplicationContext(),"Removing data",Toast.LENGTH_LONG).show();
+                break;
+            }
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void deleteRecursive(File fileOrDirectory) {
+
+        if (fileOrDirectory.isDirectory()) {
+            for (File child : fileOrDirectory.listFiles()) {
+                deleteRecursive(child);
+            }
+        }
+        fileOrDirectory.delete();
     }
 
     @Override

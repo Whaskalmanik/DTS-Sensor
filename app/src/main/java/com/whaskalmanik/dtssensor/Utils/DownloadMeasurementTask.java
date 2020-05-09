@@ -4,11 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.google.common.collect.Lists;
+import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
 
@@ -18,7 +19,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
 public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
 
@@ -29,7 +30,8 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     private int port;
     private String databaseName;
     private MongoClient mongoClient;
-    Document myDoc;
+    ArrayList<Document> documents;
+    Exception exception;
 
     public DownloadMeasurementTask(Context context, String collectionName)
     {
@@ -38,6 +40,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         ip = Preferences.getIP();
         port = Preferences.getPort();
         databaseName = Preferences.getDatabaseName();
+        documents = new ArrayList<>();
     }
 
     @Override
@@ -50,13 +53,32 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     @Override
     protected Integer doInBackground(Void... voids) {
         try {
+            Document doc;
             mongoClient = new MongoClient(ip,port);
             MongoDatabase database = mongoClient.getDatabase(databaseName);
             MongoCollection<Document> collection = database.getCollection(collectionName);
-            myDoc = collection.find().first();
+            MongoCursor<Document> cursor= collection.find().iterator();
+            try
+            {
+                while(cursor.hasNext())
+                {
+                    doc = cursor.next();
+                    documents.add(doc);
+                }
+            }
+            catch (Exception e)
+            {
+                this.exception = e;
+            }
+            finally
+            {
+                cursor.close();
+            }
             return 0;
-        } catch (Exception e) {
-            //this.exception = e;
+        }
+        catch (Exception e)
+        {
+            this.exception = e;
         }
         finally {
             mongoClient.close();
@@ -69,25 +91,23 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         dialog.cancel();
         FileWriter fileWriter;
         BufferedWriter bufferedWriter;
-        String tmp = myDoc.toJson();
-        File file = new File(context.getFilesDir(),collectionName);
-        if(!file.exists())
+        for(int i=0;i<documents.size();i++)
         {
-            try
-            {
-                if(file.createNewFile())
-                {
-                    fileWriter = new FileWriter(file.getAbsoluteFile());
-                    bufferedWriter = new BufferedWriter(fileWriter);
-                    bufferedWriter.write(tmp);
-                    bufferedWriter.close();
+            String tmp = documents.get(i).toJson();
+            File file = new File(context.getFilesDir(),collectionName+"_"+i);
+            if(!file.exists()) {
+                try {
+                    if (file.createNewFile()) {
+                        fileWriter = new FileWriter(file.getAbsoluteFile());
+                        bufferedWriter = new BufferedWriter(fileWriter);
+                        bufferedWriter.write(tmp);
+                        bufferedWriter.close();
+                    }
+
+                } catch (IOException e) {
+                    Log.d("Exceptions", e.getMessage());
                 }
-
             }
-            catch (IOException e) {
-                Log.d("Exceptions",e.getMessage());
-            }
-
         }
     }
 }

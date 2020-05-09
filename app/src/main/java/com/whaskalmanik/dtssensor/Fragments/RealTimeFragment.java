@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -52,7 +54,12 @@ public class RealTimeFragment extends Fragment {
 
         realTimeGraph = new RealTimeGraph(chart,files,rootView.getContext());
         realTimeGraph.createGraph();
-
+/*
+        Spinner spin = (Spinner) rootView.findViewById(R.id.spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(rootView.getContext(), android.R.layout.simple_spinner_item,);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spin.setAdapter(adapter);
+*/
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
             @Override

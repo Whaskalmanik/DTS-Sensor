@@ -1,6 +1,7 @@
 package com.whaskalmanik.dtssensor.Utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.whaskalmanik.dtssensor.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,7 @@ public class EntryAdapter extends ArrayAdapter<ListEntry> {
 
     public EntryAdapter(Context context, List<ListEntry> users) {
         super(context, 0, users);
-        this.layoutResourceId = layoutResourceId;
+
         this.context = context;
         this.data = users;
     }
@@ -31,6 +33,10 @@ public class EntryAdapter extends ArrayAdapter<ListEntry> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         ListEntry entry = getItem(position);
+        if(entry==null)
+        {
+            throw new NullPointerException();
+        }
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_list, parent, false);
@@ -42,6 +48,21 @@ public class EntryAdapter extends ArrayAdapter<ListEntry> {
         TextView tvDate = (TextView) convertView.findViewById(R.id.tvDate);
 
         // Populate the data into the template view using the data object
+        SharedPreferences pref= context.getSharedPreferences("SelectedPreferences",0);
+        String temp = pref.getString("selected",null);
+        if(temp!=null)
+        {
+            File file = new File(context.getFilesDir(),temp+"_"+0);
+            entry.downloaded=file.exists();
+            if (entry.name.equals(temp))
+            {
+                entry.select();
+            }
+            else
+            {
+                entry.unselect();
+            }
+        }
         tvName.setText(entry.name);
         tvDate.setText(entry.date);
         decideImage(entry.selected, entry.downloaded, tvImage);

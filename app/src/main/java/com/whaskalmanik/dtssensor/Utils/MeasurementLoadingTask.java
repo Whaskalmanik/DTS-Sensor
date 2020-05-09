@@ -76,6 +76,8 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         dialog.cancel();
+        SharedPreferences pref= context.getSharedPreferences("SelectedPreferences",0);
+        SharedPreferences.Editor editor = pref.edit();
         if(exception != null)
         {
             Toast.makeText(context,exception.getMessage(),Toast.LENGTH_LONG).show();
@@ -89,9 +91,12 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
             EntryAdapter adapter = new EntryAdapter(context,listEntries);
             lv.setAdapter(adapter);
             lv.setOnItemClickListener((adapterView, view, i, l) -> {
-
                 ListEntry temp = listEntries.get(i);
+                editor.putString("selected",temp.name);
+                editor.commit();
+                adapter.notifyDataSetChanged();
                 DownloadMeasurementTask task = new DownloadMeasurementTask(context,temp.name);
+                //todo Trida pro naceni dat kolekce
                 task.execute();
                 Toast.makeText(context,temp.name,Toast.LENGTH_SHORT).show();
             });

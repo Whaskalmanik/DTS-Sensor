@@ -2,6 +2,7 @@ package com.whaskalmanik.dtssensor.Graph;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -17,7 +18,7 @@ import java.util.List;
 public class RealTimeGraph
 {
     private LineChart graph;
-    private ArrayList<ExtractedFile> data;
+    private ArrayList<ExtractedFile> data=null;
     private Preferences markers;
     private Context context;
 
@@ -71,6 +72,7 @@ public class RealTimeGraph
         poppedWarning=false;
         List<Entry> entriesForData = new ArrayList<>();;
         entriesForData.clear();
+
         for(int i = 0;i < data.get(6).getLength().size();i++)
         {
             entriesForData.add(new Entry(data.get(5).getLength().get(i),data.get(5).getTemperature().get(i)));
@@ -78,7 +80,6 @@ public class RealTimeGraph
         }
         dataSetData = new LineDataSet(entriesForData, data.get(5).getDate());
         setStyle(Color.BLUE,dataSetData,2.0f);
-
     }
     private void fillDataForMarker()
     {
@@ -99,19 +100,22 @@ public class RealTimeGraph
 
     public void createGraph()
     {
-        fillDataSet();
-        if(Preferences.areMarkersEnabled())
-        {
-            fillDataForMarker();
-            LineData linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);
-            graph.setData(linedata);
-            graph.getDescription().setEnabled(false);
+        if(data!=null) {
+            fillDataSet();
+            if (Preferences.areMarkersEnabled()) {
+                fillDataForMarker();
+                LineData linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);
+                graph.setData(linedata);
+                graph.getDescription().setEnabled(false);
+            } else {
+                LineData lineData = new LineData(dataSetData);
+                graph.setData(lineData);
+            }
+            graph.invalidate();
         }
         else
         {
-            LineData lineData = new LineData(dataSetData);
-            graph.setData(lineData);
+            Toast.makeText(context,"Data null",Toast.LENGTH_LONG);
         }
-        graph.invalidate();
     }
 }
