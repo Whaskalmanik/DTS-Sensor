@@ -109,7 +109,6 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
             String tmp = gson.toJson(extractedFiles.get(i));
             File file = new File(context.getFilesDir(),collectionName+"_"+i);
             if(!file.exists())
-
             {
                 try
                 {

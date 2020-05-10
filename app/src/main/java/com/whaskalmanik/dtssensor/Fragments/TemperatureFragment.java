@@ -13,6 +13,8 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
+import com.whaskalmanik.dtssensor.Graph.Graph;
 import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 
@@ -21,9 +23,10 @@ import java.util.List;
 
 
 public class TemperatureFragment extends Fragment {
-    LineChart chart;
-    float value;
-    ArrayList<ExtractedFile> files = new ArrayList<>();
+    private LineChart chart;
+    private float value;
+    private Graph graph;
+    private ArrayList<ExtractedFile> files = new ArrayList<>();
 
     @Nullable
     @Override
@@ -32,47 +35,36 @@ public class TemperatureFragment extends Fragment {
         View rootView =inflater.inflate(R.layout.fragment_temperature,container,false);
         chart =rootView.findViewById(R.id.chart);
 
+        DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
+        files=documentsLoader.parseDataFromFiles();
+
         if (getArguments() != null)
         {
-            files = getArguments().getParcelableArrayList("data");
             value = getArguments().getFloat("xValue");
         }
-        createGraph();
+        graph=new Graph(chart,files,rootView.getContext());
+        graph.createTemperatureGraph(value);
         return  rootView;
 
-
+    }
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        if(files!=null)
+        {
+            graph.createTemperatureGraph(value);
+        }
     }
 
-    public static TemperatureFragment newInstance(ArrayList<ExtractedFile> files,float value)
+    public static TemperatureFragment newInstance(float value)
     {
         TemperatureFragment fragment = new TemperatureFragment();
         Bundle args = new Bundle();
-        args.putParcelableArrayList("data",files);
         args.putFloat("xValue",value);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public void createGraph()
-    {
-        if(files!=null)
-        {
-            List<Entry> entries = new ArrayList<>();
-            for(int i = 0;i < files.size();i++)
-            {
-                for(int j =0;j<files.get(i).getLength().size();j++)
-                {
-                    if(files.get(i).getLength().get(j)==value)
-                    {
-                        entries.add(new Entry(i,files.get(i).getTemperature().get(j)));
-                    }
-                }
-            }
-            LineDataSet dataSet = new LineDataSet(entries, "Data");
-            LineData lineData = new LineData(dataSet);
-            chart.setData(lineData);
-            chart.invalidate();
-        }
-    }
 }
 

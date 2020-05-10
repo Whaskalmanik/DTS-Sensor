@@ -20,18 +20,12 @@ public class StokesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.fragment_stokes, container, false);
-        if (getArguments() != null) {
-            ArrayList<ExtractedFile> files = getArguments().getParcelableArrayList("data");
-        }
         return rootView;
     }
 
-    public static StokesFragment newInstance(ArrayList<ExtractedFile> files)
+    public static StokesFragment newInstance()
     {
         StokesFragment fragment = new StokesFragment();
-        Bundle args = new Bundle();
-        args.putParcelableArrayList("data",files);
-        fragment.setArguments(args);
         return fragment;
     }
 }

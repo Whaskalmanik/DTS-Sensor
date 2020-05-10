@@ -38,8 +38,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     RealTimeFragment RealTimeFragment;
     MeasurementsFragment MeasurementsFragment;
 
-
-
     private DrawerLayout drawer;
     private FileParser fp;
     ArrayList<ExtractedFile> listOfFiles;
@@ -54,12 +52,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //listOfFiles = fp.extractFiles();
         Toast.makeText(getApplicationContext(),Preferences.getIP(),Toast.LENGTH_SHORT).show();
 
-        DocumentsLoader documentsLoader = new DocumentsLoader(getApplicationContext());
-        listOfFiles=documentsLoader.parseDataFromFiles();
 
-        TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,0);
-        StokesFragment = StokesFragment.newInstance(listOfFiles);
-        RealTimeFragment = RealTimeFragment.newInstance(listOfFiles);
+        TemperatureFragment = TemperatureFragment.newInstance(0);
+        StokesFragment = StokesFragment.newInstance();
+        RealTimeFragment = RealTimeFragment.newInstance();
         MeasurementsFragment = MeasurementsFragment.newInstance();
 
         setContentView(R.layout.activity_main);
@@ -164,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onValueSent(float number)
     {
-        TemperatureFragment = TemperatureFragment.newInstance(listOfFiles, number);
+        TemperatureFragment = TemperatureFragment.newInstance(number);
         //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
     }
 

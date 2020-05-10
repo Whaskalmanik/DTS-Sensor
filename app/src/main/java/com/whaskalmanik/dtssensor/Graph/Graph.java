@@ -15,12 +15,13 @@ import com.whaskalmanik.dtssensor.Utils.NotificationHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RealTimeGraph
+public class Graph
 {
     private LineChart graph;
-    private ArrayList<ExtractedFile> data=null;
+    private ArrayList<ExtractedFile> data;
     private Preferences markers;
     private Context context;
+
 
     private LineDataSet dataSetData;
     private LineDataSet dataSetWarning;
@@ -28,10 +29,8 @@ public class RealTimeGraph
 
     private NotificationHelper notifications;
 
-    private boolean poppedWarning;
-    private boolean poppedCritical;
 
-    public RealTimeGraph(LineChart graph, ArrayList<ExtractedFile> data, Context context)
+    public Graph(LineChart graph, ArrayList<ExtractedFile> data, Context context)
     {
         this.graph = graph;
         this.data = data;
@@ -63,42 +62,43 @@ public class RealTimeGraph
         }
     }
 
-    private void fillDataSet()
+    private void fillDataSet(int selectedIndex)
     {
         List<Entry> entriesForData = new ArrayList<>();;
         entriesForData.clear();
 
-        for(int i = 0;i < data.get(0).getLength().size();i++)
+        for(int i = 0;i < data.get(selectedIndex).getLength().size();i++)
         {
-            entriesForData.add(new Entry(data.get(0).getLength().get(i),data.get(0).getTemperature().get(i)));
+            entriesForData.add(new Entry(data.get(selectedIndex).getLength().get(i),data.get(selectedIndex).getTemperature().get(i)));
             notificationsCheck(data.get(0).getTemperature().get(i));
         }
-        dataSetData = new LineDataSet(entriesForData, data.get(0).getDate());
+        dataSetData = new LineDataSet(entriesForData, data.get(selectedIndex).getDate().toString());
         setStyle(Color.BLUE,dataSetData,2.0f);
     }
-    private void fillDataForMarker()
+
+    private void fillDataForMarker(int selectedIndex)
     {
         List<Entry> entries = new ArrayList<>();
         List<Entry> entries2 = new ArrayList<>();
 
         entries.add(new Entry(0,Preferences.getWarningTemp()));
-        entries.add(new Entry(data.get(0).getLength().size()+1,Preferences.getWarningTemp()));
+        entries.add(new Entry(data.get(selectedIndex).getLength().size(),Preferences.getWarningTemp()));
         dataSetWarning = new LineDataSet(entries,"Warning marker");
 
         entries2.add(new Entry(0,Preferences.getCriticalTemp()));
-        entries2.add(new Entry(data.get(0).getLength().size()+1,Preferences.getCriticalTemp()));
+        entries2.add(new Entry(data.get(selectedIndex).getTemperature().size(),Preferences.getCriticalTemp()));
         dataSetCritical = new LineDataSet(entries2,"Critical marker");
 
         setStyle(Color.parseColor("#CAB11B"),dataSetWarning,2.0f);
         setStyle(Color.RED, dataSetCritical,2.0f);
     }
 
-    public void createGraph()
+    public void createRealTimeGraph(int selectedIndex)
     {
         if(data!=null) {
-            fillDataSet();
+            fillDataSet(selectedIndex);
             if (Preferences.areMarkersEnabled()) {
-                fillDataForMarker();
+                fillDataForMarker(selectedIndex);
                 LineData linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);
                 graph.setData(linedata);
                 graph.getDescription().setEnabled(false);
@@ -111,6 +111,62 @@ public class RealTimeGraph
         else
         {
             Toast.makeText(context,"Data null",Toast.LENGTH_LONG);
+        }
+    }
+
+    private void fillDataSetTemperatures(float value)
+    {
+        List<Entry> entries = new ArrayList<>();
+        for(int i = 0;i < data.size();i++)
+        {
+            for(int j =0;j<data.get(i).getLength().size();j++)
+            {
+                if(data.get(i).getLength().get(j)==value)
+                {
+                    entries.add(new Entry(i,data.get(i).getTemperature().get(j)));
+
+                }
+            }
+        }
+        dataSetData = new LineDataSet(entries, data.get(0).getDate());
+        setStyle(Color.BLUE,dataSetData,2.0f);
+    }
+
+    private void fillDataSetTemperaturesMarker()
+    {
+        List<Entry> entries = new ArrayList<>();
+        List<Entry> entries2 = new ArrayList<>();
+        entries.add(new Entry(0,Preferences.getWarningTemp()));
+        entries.add(new Entry(data.size()-1,Preferences.getWarningTemp()));
+        dataSetWarning = new LineDataSet(entries,"Warning marker");
+
+        entries2.add(new Entry(0,Preferences.getCriticalTemp()));
+        entries2.add(new Entry(data.size()-1,Preferences.getCriticalTemp()));
+        dataSetCritical = new LineDataSet(entries2,"Critical marker");
+
+        setStyle(Color.parseColor("#CAB11B"),dataSetWarning,2.0f);
+        setStyle(Color.RED, dataSetCritical,2.0f);
+    }
+
+    public void createTemperatureGraph(float value)
+    {
+        if(data!=null)
+        {
+            fillDataSetTemperatures(value);
+            LineData linedata;
+            if(Preferences.areMarkersEnabled())
+            {
+                fillDataSetTemperaturesMarker();
+                linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);
+            }
+            else
+            {
+                linedata= new LineData(dataSetData);
+
+            }
+            graph.setData(linedata);
+            graph.getDescription().setEnabled(false);
+            graph.invalidate();
         }
     }
 }

@@ -9,6 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -18,7 +21,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
 import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
-import com.whaskalmanik.dtssensor.Graph.RealTimeGraph;
+import com.whaskalmanik.dtssensor.Graph.Graph;
 
 import java.util.ArrayList;
 
@@ -27,7 +30,8 @@ public class RealTimeFragment extends Fragment {
     public FragmentRealTimeListener listener;
     LineChart chart;
     TextView max;
-    RealTimeGraph realTimeGraph;
+    Graph graph;
+    int selectedIndex=0;
 
     ArrayList<ExtractedFile> files = new ArrayList<>();
 
@@ -45,19 +49,34 @@ public class RealTimeFragment extends Fragment {
         chart =rootView.findViewById(R.id.chart);
         Bundle arguments = getArguments();
 
-        if (arguments != null)
+        DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
+        files=documentsLoader.parseDataFromFiles();
+        graph = new Graph(chart,files,rootView.getContext());
+
+        ArrayList<String> nameList= new ArrayList<>();
+
+        for(int i =0; i< files.size();i++)
         {
-            files = arguments.getParcelableArrayList("data");
+            nameList.add(files.get(i).getDate()+ " "+files.get(i).getTime());
         }
 
-        realTimeGraph = new RealTimeGraph(chart,files,rootView.getContext());
-        realTimeGraph.createGraph();
-/*
-        Spinner spin = (Spinner) rootView.findViewById(R.id.spinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(rootView.getContext(), android.R.layout.simple_spinner_item,);
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.spinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(rootView.getContext(), android.R.layout.simple_spinner_item, nameList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spin.setAdapter(adapter);
-*/
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                graph.createRealTimeGraph(position);
+            }
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+                graph.createRealTimeGraph(0);
+            }
+        });
+
+
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
             @Override
@@ -95,14 +114,14 @@ public class RealTimeFragment extends Fragment {
     public void onResume()
     {
         super.onResume();
-        realTimeGraph.createGraph();
+        if(files!=null)
+        {
+            graph.createRealTimeGraph(selectedIndex);
+        }
     }
-    public static RealTimeFragment newInstance(ArrayList<ExtractedFile> files)
+    public static RealTimeFragment newInstance()
     {
         RealTimeFragment fragment = new RealTimeFragment();
-        Bundle args = new Bundle();
-        args.putParcelableArrayList("data",files);
-        fragment.setArguments(args);
         return fragment;
     }
 
