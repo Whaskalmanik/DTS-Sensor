@@ -9,18 +9,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
 import com.whaskalmanik.dtssensor.R;
-import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
+import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 import com.whaskalmanik.dtssensor.Graph.RealTimeGraph;
-import com.whaskalmanik.dtssensor.Utils.NotificationHelper;
 
 import java.util.ArrayList;
 
@@ -54,6 +52,8 @@ public class RealTimeFragment extends Fragment {
 
         realTimeGraph = new RealTimeGraph(chart,files,rootView.getContext());
         realTimeGraph.createGraph();
+        DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
+        documentsLoader.getSelectedFiles();
 /*
         Spinner spin = (Spinner) rootView.findViewById(R.id.spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(rootView.getContext(), android.R.layout.simple_spinner_item,);

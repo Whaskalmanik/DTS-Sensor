@@ -1,10 +1,11 @@
-package com.whaskalmanik.dtssensor.Utils;
+package com.whaskalmanik.dtssensor.Files;
 
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
+
+import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,8 +13,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class FileParser{
     private Context context;
@@ -91,7 +90,7 @@ public class FileParser{
                 Log.d("FileParser",words[0] + " " + words[1]);
             }
             catch (NumberFormatException nfe){}
-            file=new ExtractedFile(date,time,length,temperature);
+            //file=new ExtractedFile(date,time,length,temperature);
         }
         Log.d("FileParser","=========NEW FILE=========");
         return file;

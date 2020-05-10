@@ -1,23 +1,20 @@
 package com.whaskalmanik.dtssensor.Fragments;
 
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.whaskalmanik.dtssensor.R;
-import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
+import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,21 +55,24 @@ public class TemperatureFragment extends Fragment {
 
     public void createGraph()
     {
-        List<Entry> entries = new ArrayList<>();
-        for(int i = 0;i < files.size();i++)
+        if(files!=null)
         {
-            for(int j =0;j<files.get(i).getLength().size();j++)
+            List<Entry> entries = new ArrayList<>();
+            for(int i = 0;i < files.size();i++)
             {
-                if(files.get(i).getLength().get(j)==value)
+                for(int j =0;j<files.get(i).getLength().size();j++)
                 {
-                    entries.add(new Entry(i,files.get(i).getTemperature().get(j)));
+                    if(files.get(i).getLength().get(j)==value)
+                    {
+                        entries.add(new Entry(i,files.get(i).getTemperature().get(j)));
+                    }
                 }
             }
+            LineDataSet dataSet = new LineDataSet(entries, "Data");
+            LineData lineData = new LineData(dataSet);
+            chart.setData(lineData);
+            chart.invalidate();
         }
-        LineDataSet dataSet = new LineDataSet(entries, "Data");
-        LineData lineData = new LineData(dataSet);
-        chart.setData(lineData);
-        chart.invalidate();
     }
 }
 

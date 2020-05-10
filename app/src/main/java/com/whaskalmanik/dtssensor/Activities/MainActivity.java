@@ -2,8 +2,6 @@ package com.whaskalmanik.dtssensor.Activities;
 
 
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,13 +16,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
 import com.whaskalmanik.dtssensor.Fragments.MeasurementsFragment;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
-import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
-import com.whaskalmanik.dtssensor.Utils.FileParser;
+import com.whaskalmanik.dtssensor.Files.ExtractedFile;
+import com.whaskalmanik.dtssensor.Files.FileParser;
 import com.whaskalmanik.dtssensor.Fragments.RealTimeFragment;
 import com.whaskalmanik.dtssensor.Fragments.StokesFragment;
 import com.whaskalmanik.dtssensor.Fragments.TemperatureFragment;
+
 import com.whaskalmanik.dtssensor.R;
 
 import java.io.File;
@@ -48,9 +48,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         fp = new FileParser(getApplicationContext());
         Preferences.initialize(getApplicationContext());
-        listOfFiles = new ArrayList<>();
-        listOfFiles = fp.extractFiles();
-
+        //listOfFiles = new ArrayList<>();
+        //listOfFiles = fp.extractFiles();
         Toast.makeText(getApplicationContext(),Preferences.getIP(),Toast.LENGTH_SHORT).show();
 
         TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,0);

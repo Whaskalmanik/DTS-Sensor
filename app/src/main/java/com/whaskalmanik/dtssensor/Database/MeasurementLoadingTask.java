@@ -1,30 +1,21 @@
-package com.whaskalmanik.dtssensor.Utils;
+package com.whaskalmanik.dtssensor.Database;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.health.ServiceHealthStats;
-import android.preference.Preference;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.common.collect.Lists;
-import com.mongodb.CommandResult;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
+import com.whaskalmanik.dtssensor.Database.DownloadMeasurementTask;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
+import com.whaskalmanik.dtssensor.Utils.EntryAdapter;
+import com.whaskalmanik.dtssensor.Utils.ListEntry;
 
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {

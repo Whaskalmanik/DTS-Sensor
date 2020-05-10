@@ -1,4 +1,4 @@
-package com.whaskalmanik.dtssensor.Utils;
+package com.whaskalmanik.dtssensor.Files;
 
 import android.content.Context;
 

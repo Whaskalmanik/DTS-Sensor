@@ -9,7 +9,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
-import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
+import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 import com.whaskalmanik.dtssensor.Utils.NotificationHelper;
 
 import java.util.ArrayList;
@@ -49,27 +49,22 @@ public class RealTimeGraph
     }
     private void notificationsCheck(float yValue)
     {
+        if(Preferences.areMarkersEnabled())
+        {
+            if (yValue>= Preferences.getWarningTemp())
+            {
+                notifications.popWarning();
+            }
+            else if (yValue>=Preferences.getCriticalTemp())
+            {
+                notifications.popCritical();
+            }
 
-        if (yValue>= Preferences.getWarningTemp()&&!poppedWarning)
-        {
-            notifications.popWarning();
-            poppedWarning=true;
-        }
-        else if (yValue>=Preferences.getCriticalTemp()&&!poppedCritical)
-        {
-            notifications.popCritical();
-            poppedCritical=true;
-        }
-        else
-        {
-            return;
         }
     }
 
     private void fillDataSet()
     {
-        poppedCritical=false;
-        poppedWarning=false;
         List<Entry> entriesForData = new ArrayList<>();;
         entriesForData.clear();
 

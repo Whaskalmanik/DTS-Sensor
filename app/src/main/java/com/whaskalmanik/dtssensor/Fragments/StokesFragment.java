@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.whaskalmanik.dtssensor.R;
-import com.whaskalmanik.dtssensor.Utils.ExtractedFile;
+import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 
 import java.util.ArrayList;
 
