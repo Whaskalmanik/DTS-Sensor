@@ -68,12 +68,12 @@ public class RealTimeGraph
         List<Entry> entriesForData = new ArrayList<>();;
         entriesForData.clear();
 
-        for(int i = 0;i < data.get(6).getLength().size();i++)
+        for(int i = 0;i < data.get(0).getLength().size();i++)
         {
-            entriesForData.add(new Entry(data.get(5).getLength().get(i),data.get(5).getTemperature().get(i)));
-            notificationsCheck(data.get(5).getTemperature().get(i));
+            entriesForData.add(new Entry(data.get(0).getLength().get(i),data.get(0).getTemperature().get(i)));
+            notificationsCheck(data.get(0).getTemperature().get(i));
         }
-        dataSetData = new LineDataSet(entriesForData, data.get(5).getDate());
+        dataSetData = new LineDataSet(entriesForData, data.get(0).getDate());
         setStyle(Color.BLUE,dataSetData,2.0f);
     }
     private void fillDataForMarker()
@@ -82,11 +82,11 @@ public class RealTimeGraph
         List<Entry> entries2 = new ArrayList<>();
 
         entries.add(new Entry(0,Preferences.getWarningTemp()));
-        entries.add(new Entry(data.get(5).getLength().size()+1,Preferences.getWarningTemp()));
+        entries.add(new Entry(data.get(0).getLength().size()+1,Preferences.getWarningTemp()));
         dataSetWarning = new LineDataSet(entries,"Warning marker");
 
         entries2.add(new Entry(0,Preferences.getCriticalTemp()));
-        entries2.add(new Entry(data.get(5).getLength().size()+1,Preferences.getCriticalTemp()));
+        entries2.add(new Entry(data.get(0).getLength().size()+1,Preferences.getCriticalTemp()));
         dataSetCritical = new LineDataSet(entries2,"Critical marker");
 
         setStyle(Color.parseColor("#CAB11B"),dataSetWarning,2.0f);

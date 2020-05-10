@@ -52,8 +52,6 @@ public class RealTimeFragment extends Fragment {
 
         realTimeGraph = new RealTimeGraph(chart,files,rootView.getContext());
         realTimeGraph.createGraph();
-        DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
-        documentsLoader.getSelectedFiles();
 /*
         Spinner spin = (Spinner) rootView.findViewById(R.id.spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(rootView.getContext(), android.R.layout.simple_spinner_item,);

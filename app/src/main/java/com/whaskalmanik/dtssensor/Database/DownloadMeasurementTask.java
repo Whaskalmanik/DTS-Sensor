@@ -31,7 +31,11 @@ import java.util.List;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
+
 public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
+
+    private final static CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
+            fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 
     private Context context;
     private String collectionName;
@@ -44,6 +48,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     private ArrayList<ExtractedFile> extractedFiles;
     private Exception exception;
 
+
     public DownloadMeasurementTask(Context context, String collectionName)
     {
         this.collectionName = collectionName;
@@ -52,6 +57,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         port = Preferences.getPort();
         databaseName = Preferences.getDatabaseName();
         extractedFiles = new ArrayList<>();
+
     }
 
     @Override
@@ -63,9 +69,9 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
 
     @Override
     protected Integer doInBackground(Void... voids) {
+
         try {
-            CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
-                    fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+
             mongoClient = new MongoClient(ip, port);
             MongoDatabase database = mongoClient.getDatabase(databaseName).withCodecRegistry(pojoCodecRegistry);
             MongoCollection<ExtractedFile> stronglyTyped = database.getCollection(collectionName, ExtractedFile.class);
@@ -103,6 +109,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
             String tmp = gson.toJson(extractedFiles.get(i));
             File file = new File(context.getFilesDir(),collectionName+"_"+i);
             if(!file.exists())
+
             {
                 try
                 {
