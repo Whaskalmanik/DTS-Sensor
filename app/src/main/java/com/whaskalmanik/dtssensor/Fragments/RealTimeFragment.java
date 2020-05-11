@@ -1,6 +1,7 @@
 package com.whaskalmanik.dtssensor.Fragments;
 
 import android.content.Context;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,6 +25,7 @@ import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 import com.whaskalmanik.dtssensor.Graph.Graph;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class RealTimeFragment extends Fragment {
@@ -34,7 +36,9 @@ public class RealTimeFragment extends Fragment {
     int selectedIndex=0;
 
     ArrayList<ExtractedFile> files = new ArrayList<>();
-
+    TextView selectedTemperature;
+    TextView minValue;
+    TextView maxValue;
 
     public interface FragmentRealTimeListener {
         void onValueSent(float number);
@@ -52,6 +56,9 @@ public class RealTimeFragment extends Fragment {
         DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
         files=documentsLoader.parseDataFromFiles();
         graph = new Graph(chart,files,rootView.getContext());
+        selectedTemperature = (TextView) rootView.findViewById(R.id.selectedTemperature);
+        minValue = (TextView) rootView.findViewById(R.id.minValue);
+        maxValue = (TextView) rootView.findViewById(R.id.maxValue);
 
         ArrayList<String> nameList= new ArrayList<>();
 
@@ -76,6 +83,7 @@ public class RealTimeFragment extends Fragment {
             }
         });
 
+        setInformation(0,View.GONE);
 
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
@@ -83,6 +91,7 @@ public class RealTimeFragment extends Fragment {
             public void onValueSelected(Entry e, Highlight h) {
                 Log.d("Fragment","Y = "+e.getY() + " X = "+ e.getX());
                 listener.onValueSent(e.getX());
+                setInformation(e.getX(),View.VISIBLE);
             }
 
             @Override
@@ -90,6 +99,13 @@ public class RealTimeFragment extends Fragment {
             }
         });
         return  rootView;
+    }
+    private void setInformation(float selectedX, int visibility)
+    {
+        selectedTemperature.setText("Selected lenght: "+selectedX+"m");
+        selectedTemperature.setVisibility(visibility);
+        minValue.setText("Lowest temperature "+ Collections.min(files.get(selectedIndex).getTemperature())+"°");
+        maxValue.setText("Highest temperature: "+ Collections.max(files.get(selectedIndex).getTemperature())+"°");
     }
 
     @Override
@@ -104,6 +120,7 @@ public class RealTimeFragment extends Fragment {
             throw new RuntimeException(context.toString() + "Must implement FragmentListener");
         }
     }
+
 
     @Override
     public void onDetach() {

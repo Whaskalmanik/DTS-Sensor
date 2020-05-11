@@ -2,6 +2,7 @@ package com.whaskalmanik.dtssensor.Database;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -100,7 +101,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         {
             Log.d("Exception",exception.getMessage());
         }
-        dialog.cancel();
+
         BufferedWriter bufferedWriter;
         Gson gson = new Gson();
 
@@ -132,5 +133,6 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
                 }
             }
         }
+        dialog.cancel();
     }
 }

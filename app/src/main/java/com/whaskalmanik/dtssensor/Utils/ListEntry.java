@@ -12,14 +12,4 @@ public class ListEntry {
         this.downloaded = false;
         this.selected = false;
     }
-    public void select()
-    {
-        this.selected = true;
-    }
-
-    public void unselect()
-    {
-        this.selected = false;
-    }
-
 }

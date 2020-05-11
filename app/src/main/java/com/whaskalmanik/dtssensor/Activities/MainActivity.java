@@ -2,6 +2,7 @@ package com.whaskalmanik.dtssensor.Activities;
 
 
 
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,13 +17,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
 import com.whaskalmanik.dtssensor.Fragments.MeasurementsFragment;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 import com.whaskalmanik.dtssensor.Files.FileParser;
 import com.whaskalmanik.dtssensor.Fragments.RealTimeFragment;
-import com.whaskalmanik.dtssensor.Fragments.StokesFragment;
+import com.whaskalmanik.dtssensor.Fragments.HeatFragment;
 import com.whaskalmanik.dtssensor.Fragments.TemperatureFragment;
 
 import com.whaskalmanik.dtssensor.R;
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,RealTimeFragment.FragmentRealTimeListener
 {
     TemperatureFragment TemperatureFragment;
-    StokesFragment StokesFragment;
+    HeatFragment HeatFragment;
     RealTimeFragment RealTimeFragment;
     MeasurementsFragment MeasurementsFragment;
 
@@ -46,15 +46,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        fp = new FileParser(getApplicationContext());
         Preferences.initialize(getApplicationContext());
-        //listOfFiles = new ArrayList<>();
-        //listOfFiles = fp.extractFiles();
-        Toast.makeText(getApplicationContext(),Preferences.getIP(),Toast.LENGTH_SHORT).show();
-
-
+        //Toast.makeText(getApplicationContext(),Preferences.getIP(),Toast.LENGTH_SHORT).show();
         TemperatureFragment = TemperatureFragment.newInstance(0);
-        StokesFragment = StokesFragment.newInstance();
+        HeatFragment = HeatFragment.newInstance();
         RealTimeFragment = RealTimeFragment.newInstance();
         MeasurementsFragment = MeasurementsFragment.newInstance();
 
@@ -79,8 +74,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, RealTimeFragment).commit();
-            navigationView.setCheckedItem(R.id.tempterature);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MeasurementsFragment).commit();
+            navigationView.setCheckedItem(R.id.measurements);
+
         }
     }
 
@@ -110,8 +106,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case R.id.stokes:
             {
-                //StokesFragment = StokesFragment.newInstance(listOfFiles);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, StokesFragment).commit();
+                //HeatFragment = HeatFragment.newInstance(listOfFiles);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, HeatFragment).commit();
                 break;
             }
             case R.id.realTime:
@@ -140,6 +136,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             {
                 deleteRecursive(getApplicationContext().getFilesDir());
                 Toast.makeText(getApplicationContext(),"Removing data",Toast.LENGTH_LONG).show();
+                SharedPreferences pref= getApplicationContext().getSharedPreferences("SelectedPreferences",0);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.remove("selected");
+                editor.commit();
+                MeasurementsFragment = MeasurementsFragment.newInstance();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MeasurementsFragment).commit();
                 break;
             }
         }

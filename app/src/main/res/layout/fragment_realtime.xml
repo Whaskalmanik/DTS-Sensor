@@ -11,7 +11,7 @@
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="833dp"
+        android:layout_height="match_parent"
         android:layout_weight="1">
 
     </com.github.mikephil.charting.charts.LineChart>
@@ -22,12 +22,39 @@
         android:layout_weight="2"
         android:orientation="vertical" >
 
-        <Spinner
-            android:id="@+id/spinner"
+        <TextView
+            android:id="@+id/maxValue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp" />
+            android:paddingLeft="15dp"
+            android:text="TextView"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/minValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
+            android:text="TextView"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/selectedTemperature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="15dp"
+            android:text="TextView"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp" />
     </LinearLayout>
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="15dp" />
 
 </LinearLayout>
 

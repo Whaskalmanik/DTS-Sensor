@@ -66,14 +66,17 @@ public class Graph
     {
         List<Entry> entriesForData = new ArrayList<>();;
         entriesForData.clear();
-
-        for(int i = 0;i < data.get(selectedIndex).getLength().size();i++)
+        if(data!=null)
         {
-            entriesForData.add(new Entry(data.get(selectedIndex).getLength().get(i),data.get(selectedIndex).getTemperature().get(i)));
-            notificationsCheck(data.get(0).getTemperature().get(i));
+            for(int i = 0;i < data.get(selectedIndex).getLength().size();i++)
+            {
+                entriesForData.add(new Entry(data.get(selectedIndex).getLength().get(i),data.get(selectedIndex).getTemperature().get(i)));
+                notificationsCheck(data.get(0).getTemperature().get(i));
+            }
+            dataSetData = new LineDataSet(entriesForData, data.get(selectedIndex).getDate().toString());
+            setStyle(Color.BLUE,dataSetData,2.0f);
         }
-        dataSetData = new LineDataSet(entriesForData, data.get(selectedIndex).getDate().toString());
-        setStyle(Color.BLUE,dataSetData,2.0f);
+
     }
 
     private void fillDataForMarker(int selectedIndex)
@@ -101,11 +104,12 @@ public class Graph
                 fillDataForMarker(selectedIndex);
                 LineData linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);
                 graph.setData(linedata);
-                graph.getDescription().setEnabled(false);
+
             } else {
                 LineData lineData = new LineData(dataSetData);
                 graph.setData(lineData);
             }
+            graph.getDescription().setEnabled(false);
             graph.invalidate();
         }
         else
