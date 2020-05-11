@@ -104,7 +104,7 @@ public class RealTimeFragment extends Fragment {
     {
         selectedTemperature.setText("Selected lenght: "+selectedX+"m");
         selectedTemperature.setVisibility(visibility);
-        minValue.setText("Lowest temperature "+ Collections.min(files.get(selectedIndex).getTemperature())+"°");
+        minValue.setText("Lowest temperature: "+ Collections.min(files.get(selectedIndex).getTemperature())+"°");
         maxValue.setText("Highest temperature: "+ Collections.max(files.get(selectedIndex).getTemperature())+"°");
     }
 
