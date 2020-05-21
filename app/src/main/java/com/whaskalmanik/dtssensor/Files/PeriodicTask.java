@@ -3,6 +3,7 @@ package com.whaskalmanik.dtssensor.Files;
 import android.content.Context;
 
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
+import com.whaskalmanik.dtssensor.Utils.Command;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,47 +12,44 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
 
-public class FileWatcher {
+public class PeriodicTask {
     private Timer refreshTimer = new Timer();
-    private Boolean isRefreshing;
+    private Boolean isRefreshing = false;
     private Context context;
-    private Consumer<Collection<String>> filesFoundAction;
+    private Command action;
 
-    private final TimerTask refreshTask = new TimerTask()
-    {
-
-        @Override
-        public void run()
-        {
-            synchronized (isRefreshing)
-            {
-                if (isRefreshing) {
-                    return;
-                }
-                isRefreshing = true;
-            }
-
-            //TODO
-            //To, co se bude pravidelně spouštět
-            List<String> newPaths = new ArrayList<>();
-
-            if (filesFoundAction != null) {
-                filesFoundAction.accept(newPaths);
-            }
-
-            isRefreshing = false;
-        }
-    };
-
-    public FileWatcher(Context context)
+    public PeriodicTask(Context context)
     {
         this.context = context;
         Preferences.areMarkersEnabled();
 
         if (Preferences.isSynchronizationEnabled())
         {
-            refreshTimer.schedule(refreshTask, 0, Preferences.getFrequency() * 1000);
+            refreshTimer.schedule(getRefreshTask(), 0, Preferences.getFrequency() * 1000);
         }
+    }
+
+    private TimerTask getRefreshTask() {
+        return new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                synchronized (isRefreshing)
+                {
+                    if (isRefreshing) {
+                        return;
+                    }
+                    isRefreshing = true;
+                }
+
+                if (action != null) {
+                    action.apply();
+                }
+
+                isRefreshing = false;
+            }
+        };
     }
 
     public void disableRefresh()
@@ -75,7 +73,7 @@ public class FileWatcher {
         }
 
         refreshTimer = new Timer();
-        refreshTimer.schedule(refreshTask, 0, Preferences.getFrequency() * 1000);
+        refreshTimer.schedule(getRefreshTask(), 0, Preferences.getFrequency() * 1000);
     }
 
     public void onRefreshFrequencyChanged()
@@ -96,7 +94,7 @@ public class FileWatcher {
             refreshTimer = new Timer();
         }
 
-        refreshTimer.schedule(refreshTask, 0);
+        refreshTimer.schedule(getRefreshTask(), 0);
 
         if (!Preferences.isSynchronizationEnabled())
         {
@@ -108,8 +106,8 @@ public class FileWatcher {
      *
      * @param action A functoid that accepts a collection of new file paths
      */
-    public void setFilesFoundAction(Consumer<Collection<String>> action)
+    public void setAction(Command action)
     {
-        filesFoundAction = action;
+        this.action = action;
     }
 }

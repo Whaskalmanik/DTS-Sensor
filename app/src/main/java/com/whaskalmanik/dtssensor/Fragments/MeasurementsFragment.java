@@ -24,7 +24,6 @@ public class MeasurementsFragment extends Fragment {
     {
         View rootView =inflater.inflate(R.layout.fragment_measurements,container,false);
         Bundle arguments = getArguments();
-        ArrayList<ListEntry> arrayOfUsers = new ArrayList<ListEntry>();
         ListView lv = (ListView)rootView.findViewById(R.id.measurement_llist);
         MeasurementLoadingTask task=new MeasurementLoadingTask(getContext(),lv);
         task.execute();

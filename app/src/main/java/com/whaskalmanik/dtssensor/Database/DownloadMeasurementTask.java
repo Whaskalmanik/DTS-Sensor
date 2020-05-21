@@ -2,7 +2,6 @@ package com.whaskalmanik.dtssensor.Database;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -16,6 +15,7 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
+import com.whaskalmanik.dtssensor.Utils.Command;
 
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -48,9 +48,12 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     private ExtractedFile extractedFile;
     private ArrayList<ExtractedFile> extractedFiles;
     private Exception exception;
+    private int notCachedIndex=0;
+    private boolean showdialog;
+    private Command callback;
 
 
-    public DownloadMeasurementTask(Context context, String collectionName)
+    public DownloadMeasurementTask(Context context, String collectionName,boolean showDialog)
     {
         this.collectionName = collectionName;
         this.context = context;
@@ -58,36 +61,52 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         port = Preferences.getPort();
         databaseName = Preferences.getDatabaseName();
         extractedFiles = new ArrayList<>();
+        this.showdialog=showDialog;
 
+    }
+
+    public void setCallback(final Command callback) {
+        this.callback = callback;
     }
 
     @Override
     protected void onPreExecute()
     {
-        dialog = ProgressDialog.show(context, "",
-                "Downloading. Please wait...", true);
+        if(showdialog) {
+            dialog = ProgressDialog.show(context, "",
+                    "Downloading. Please wait...", true);
+        }
     }
 
     @Override
     protected Integer doInBackground(Void... voids) {
 
         try {
-
             mongoClient = new MongoClient(ip, port);
             MongoDatabase database = mongoClient.getDatabase(databaseName).withCodecRegistry(pojoCodecRegistry);
             MongoCollection<ExtractedFile> stronglyTyped = database.getCollection(collectionName, ExtractedFile.class);
-            MongoCursor<ExtractedFile> cursor = stronglyTyped.find().iterator();
-            try {
-                while (cursor.hasNext()) {
-                    extractedFile = cursor.next();
-                    extractedFiles.add(extractedFile);
-                }
-            } catch (Exception e) {
-                this.exception = e;
-            } finally {
-                cursor.close();
+            long count = stronglyTyped.countDocuments();
+
+            int notCachedIndex = 0;
+            while (new File(context.getDataDir(),collectionName+"_"+notCachedIndex).exists())
+            {
+                notCachedIndex++;
             }
-            return 0;
+            if(count > notCachedIndex)
+            {
+                MongoCursor<ExtractedFile> cursor = stronglyTyped.find().skip(notCachedIndex).iterator();
+                try {
+                    while (cursor.hasNext()) {
+                        extractedFile = cursor.next();
+                        extractedFiles.add(extractedFile);
+                    }
+                } catch (Exception e) {
+                    this.exception = e;
+                } finally {
+                    cursor.close();
+                }
+                return 0;
+            }
         } catch (Exception e) {
             this.exception = e;
         } finally {
@@ -97,15 +116,18 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     }
     @Override
     protected void onPostExecute(Integer result) {
-        if(exception!=null)
+        if(exception != null)
         {
             Log.d("Exception",exception.getMessage());
         }
-
+        if(showdialog)
+        {
+            dialog.cancel();
+        }
         BufferedWriter bufferedWriter;
         Gson gson = new Gson();
 
-        for(int i=0;i<extractedFiles.size();i++)
+        for(int i = notCachedIndex;i<extractedFiles.size();i++)
         {
             String tmp = gson.toJson(extractedFiles.get(i));
             File file = new File(context.getFilesDir(),collectionName+"_"+i);
@@ -133,6 +155,9 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
                 }
             }
         }
-        dialog.cancel();
+
+        if (callback != null) {
+            callback.apply();
+        }
     }
 }

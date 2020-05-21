@@ -5,6 +5,8 @@ package com.whaskalmanik.dtssensor.Activities;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,7 +20,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.whaskalmanik.dtssensor.Database.DownloadMeasurementTask;
 import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
+import com.whaskalmanik.dtssensor.Files.PeriodicTask;
 import com.whaskalmanik.dtssensor.Fragments.MeasurementsFragment;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
@@ -28,6 +32,7 @@ import com.whaskalmanik.dtssensor.Fragments.HeatFragment;
 import com.whaskalmanik.dtssensor.Fragments.TemperatureFragment;
 
 import com.whaskalmanik.dtssensor.R;
+import com.whaskalmanik.dtssensor.Utils.Command;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,13 +40,17 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,RealTimeFragment.FragmentRealTimeListener
 {
-    TemperatureFragment TemperatureFragment;
-    HeatFragment HeatFragment;
-    RealTimeFragment RealTimeFragment;
-    MeasurementsFragment MeasurementsFragment;
-    DocumentsLoader documentsLoader;
-
+    private TemperatureFragment TemperatureFragment;
+    private HeatFragment HeatFragment;
+    private RealTimeFragment RealTimeFragment;
+    private MeasurementsFragment MeasurementsFragment;
+    private DocumentsLoader documentsLoader;
+    private PeriodicTask refreshTask;
+    private SharedPreferences pref;
     private DrawerLayout drawer;
+    private String selected;
+    private DownloadMeasurementTask downloadMeasurementTask;
+    private Fragment selectedFragment;
 
     ArrayList<ExtractedFile> listOfFiles;
 
@@ -50,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     {
         super.onCreate(savedInstanceState);
         Preferences.initialize(getApplicationContext());
+        pref = getApplicationContext().getSharedPreferences("SelectedPreferences", 0);
+        selected = pref.getString("selected",null);
 
 
         //Toast.makeText(getApplicationContext(),Preferences.getIP(),Toast.LENGTH_SHORT).show();
@@ -58,6 +69,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         RealTimeFragment = RealTimeFragment.newInstance(listOfFiles);
         MeasurementsFragment = MeasurementsFragment.newInstance();
 
+        downloadMeasurementTask = new DownloadMeasurementTask(getApplicationContext(),selected,false);
+        refreshTask = new PeriodicTask(getApplicationContext());
+        //refreshTask.disableRefresh();
+        refreshTask.setAction(this::refreshData);
         setContentView(R.layout.activity_main);
         createDrawer(savedInstanceState);
     }
@@ -79,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         if (savedInstanceState == null) {
+            selectedFragment=MeasurementsFragment;
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MeasurementsFragment).commit();
             navigationView.setCheckedItem(R.id.measurements);
         }
@@ -100,36 +116,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item)
     {
+        refreshTask.enableRefresh();
         switch (item.getItemId())
         {
             case R.id.tempterature:
             {
+                selectedFragment=TemperatureFragment;
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
                 break;
             }
             case R.id.stokes:
             {
+                selectedFragment=HeatFragment;
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, HeatFragment).commit();
                 break;
             }
             case R.id.realTime:
             {
+                selectedFragment=RealTimeFragment;
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, RealTimeFragment).commit();
                 break;
             }
             case R.id.measurements:
             {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MeasurementsFragment).commit();
+                refreshTask.disableRefresh();
                 break;
             }
             case R.id.settings:
             {
+                refreshTask.disableRefresh();
                 Intent n = new Intent(this, SettingsActivity.class);
                 startActivity(n);
                 break;
             }
             case R.id.refresh:
             {
+                refreshTask.manualRefresh();
                 break;
             }
             case R.id.storageDelete:
@@ -156,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onResume()
     {
         super.onResume();
+
     }
 
     @Override
@@ -163,6 +187,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     {
         TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,number);
         //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
+    }
+
+    void refreshData() {
+        selected = pref.getString("selected",null);
+        downloadMeasurementTask = new DownloadMeasurementTask(getApplicationContext(),selected,false);
+
+        downloadMeasurementTask.setCallback(() -> {
+            FragmentTransaction ft= getSupportFragmentManager().beginTransaction();
+            ft.detach(selectedFragment);
+            ft.attach(selectedFragment);
+            ft.commit();
+        });
+        downloadMeasurementTask.execute();
     }
 
 }
