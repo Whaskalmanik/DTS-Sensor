@@ -28,16 +28,23 @@ import java.util.List;
 public class HeatFragment extends Fragment {
     private ArrayList<ExtractedFile> files = new ArrayList<>();
     String[] colors= new String[]{"#ff6666", "#ff5544", "#ff4422"};
+    DocumentsLoader documentsLoader;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.fragment_heat, container, false);
 
-        DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
-        files=documentsLoader.parseDataFromFiles();
+        //DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
+        //files = documentsLoader.parseDataFromFiles();
 
+        Bundle arguments = getArguments();
+        documentsLoader = new DocumentsLoader(rootView.getContext());
 
+        files = documentsLoader.parseDataFromFiles();
+        if (arguments != null)
+        {
+        }
         AnyChartView anyChartView = rootView.findViewById(R.id.charHeat);
         anyChartView.setProgressBar(rootView.findViewById(R.id.progress_bar));
         HeatMap riskMap = AnyChart.heatMap();
@@ -46,21 +53,22 @@ public class HeatFragment extends Fragment {
         List<DataEntry> data = new ArrayList<>();
 
 
+
         for(int i=0;i<files.size();i++)
         {
-            for(int j=0;j<files.get(i).getLength().size();j++)
+            List<ExtractedFile.Entry> entries = files.get(i).getEntries();
+            for(int j=0;j<entries.size();j++)
             {
-                data.add(new CustomHeatDataEntry(files.get(i).getLength().get(j).toString(),files.get(i).getTime(),Math.round(files.get(i).getTemperature().get(j)),getColorString(Math.round(files.get(i).getTemperature().get(j)))));
+                data.add(new CustomHeatDataEntry(new Float(entries.get(j).getLength()).toString(),
+                            files.get(i).getTime(),
+                            Math.round((float)entries.get(j).getTemp()),
+                            getColorString(Math.round((float)entries.get(j).getTemp()))));
             }
         }
 
         riskMap.setData(data);
         riskMap.draw(true);
         anyChartView.setChart(riskMap);
-
-        Bundle arguments = getArguments();
-
-
         return rootView;
     }
     private String getColorString(int temp)
@@ -83,9 +91,12 @@ public class HeatFragment extends Fragment {
         }
         return "#d84315";
     }
-    public static HeatFragment newInstance()
+    public static HeatFragment newInstance(ArrayList<ExtractedFile> files)
     {
         HeatFragment fragment = new HeatFragment();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList("data",files);
+        fragment.setArguments(args);
         return fragment;
     }
 

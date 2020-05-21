@@ -27,6 +27,7 @@ public class TemperatureFragment extends Fragment {
     private float value;
     private Graph graph;
     private ArrayList<ExtractedFile> files = new ArrayList<>();
+    DocumentsLoader documentsLoader;
 
     @Nullable
     @Override
@@ -35,14 +36,21 @@ public class TemperatureFragment extends Fragment {
         View rootView =inflater.inflate(R.layout.fragment_temperature,container,false);
         chart =rootView.findViewById(R.id.chart);
 
-        DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
-        files=documentsLoader.parseDataFromFiles();
+        Bundle arguments = getArguments();
+        documentsLoader = new DocumentsLoader(rootView.getContext());
 
-        if (getArguments() != null)
+        files = documentsLoader.parseDataFromFiles();
+        if (arguments != null)
         {
-            value = getArguments().getFloat("xValue");
+            value = arguments.getFloat("xValue");
+            if(value==Float.MIN_VALUE)
+            {
+                value=files.get(0).getLength().get(0);
+            }
+            //files = arguments.getParcelableArrayList("data");
+            //files=null;
         }
-        graph=new Graph(chart,files,rootView.getContext());
+        graph = new Graph(chart,files,rootView.getContext());
         graph.createTemperatureGraph(value);
         return  rootView;
 
@@ -57,11 +65,12 @@ public class TemperatureFragment extends Fragment {
         }
     }
 
-    public static TemperatureFragment newInstance(float value)
+    public static TemperatureFragment newInstance(ArrayList<ExtractedFile> files,float value)
     {
         TemperatureFragment fragment = new TemperatureFragment();
         Bundle args = new Bundle();
         args.putFloat("xValue",value);
+        args.putParcelableArrayList("data",files);
         fragment.setArguments(args);
         return fragment;
     }

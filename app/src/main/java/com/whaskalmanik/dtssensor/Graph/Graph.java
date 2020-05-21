@@ -8,8 +8,10 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.highlight.ChartHighlighter;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
+import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.Utils.NotificationHelper;
 
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class Graph
     private LineDataSet dataSetCritical;
 
     private NotificationHelper notifications;
+    boolean popped=false;
 
 
     public Graph(LineChart graph, ArrayList<ExtractedFile> data, Context context)
@@ -50,13 +53,15 @@ public class Graph
     {
         if(Preferences.areMarkersEnabled())
         {
-            if (yValue>= Preferences.getWarningTemp())
+            if (!popped&&yValue>= Preferences.getWarningTemp())
             {
                 notifications.popWarning();
+                popped=true;
             }
-            else if (yValue>=Preferences.getCriticalTemp())
+            else if (!popped&&yValue>=Preferences.getCriticalTemp())
             {
                 notifications.popCritical();
+                popped=true;
             }
 
         }
@@ -66,14 +71,19 @@ public class Graph
     {
         List<Entry> entriesForData = new ArrayList<>();;
         entriesForData.clear();
-        if(data!=null)
+
+        if(data != null && !data.isEmpty())
         {
-            for(int i = 0;i < data.get(selectedIndex).getLength().size();i++)
+            List<Float> lengths = data.get(selectedIndex).getLength();
+            List<Float> temperatures = data.get(selectedIndex).getTemperature();
+            for(int i = 0;i < lengths.size() ;i++)
             {
-                entriesForData.add(new Entry(data.get(selectedIndex).getLength().get(i),data.get(selectedIndex).getTemperature().get(i)));
-                notificationsCheck(data.get(0).getTemperature().get(i));
+                entriesForData.add(new Entry(lengths.get(i),temperatures.get(i)));
+                notificationsCheck(temperatures.get(i));
             }
             dataSetData = new LineDataSet(entriesForData, data.get(selectedIndex).getDate().toString());
+            dataSetData.setHighlightLineWidth(1.5f);
+            dataSetData.setHighLightColor(context.getResources().getColor(R.color.colorYellow));
             setStyle(Color.BLUE,dataSetData,2.0f);
         }
 
@@ -104,7 +114,6 @@ public class Graph
                 fillDataForMarker(selectedIndex);
                 LineData linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);
                 graph.setData(linedata);
-
             } else {
                 LineData lineData = new LineData(dataSetData);
                 graph.setData(lineData);
@@ -120,20 +129,18 @@ public class Graph
 
     private void fillDataSetTemperatures(float value)
     {
-        List<Entry> entries = new ArrayList<>();
-        for(int i = 0;i < data.size();i++)
+        if (!Float.isNaN(value) && data != null && !data.isEmpty())
         {
-            for(int j =0;j<data.get(i).getLength().size();j++)
+            List<Entry> entries = new ArrayList<>();
+            int lengthIndex = data.get(0).getLength().indexOf(value);
+            for(int i = 0;i < data.size();i++)
             {
-                if(data.get(i).getLength().get(j)==value)
-                {
-                    entries.add(new Entry(i,data.get(i).getTemperature().get(j)));
-
-                }
+                entries.add(new Entry(i, (float)data.get(i).getEntries().get(lengthIndex).getTemp()));
             }
+            dataSetData = new LineDataSet(entries, data.get(0).getDate());
+            dataSetData.setHighlightEnabled(false);
+            setStyle(Color.BLUE,dataSetData,2.0f);
         }
-        dataSetData = new LineDataSet(entries, data.get(0).getDate());
-        setStyle(Color.BLUE,dataSetData,2.0f);
     }
 
     private void fillDataSetTemperaturesMarker()
@@ -162,11 +169,11 @@ public class Graph
             {
                 fillDataSetTemperaturesMarker();
                 linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);
+
             }
             else
             {
                 linedata= new LineData(dataSetData);
-
             }
             graph.setData(linedata);
             graph.getDescription().setEnabled(false);

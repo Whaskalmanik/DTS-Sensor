@@ -12,6 +12,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -102,6 +103,11 @@ public final class ExtractedFile implements Parcelable {
     public List<Float> getTemperature()
     {
         return data.stream().map(x -> Float.valueOf((float)x.temp)).collect(Collectors.toList());
+    }
+
+    public List<Entry> getEntries()
+    {
+        return Collections.unmodifiableList(data);
     }
 
     public String getDate()

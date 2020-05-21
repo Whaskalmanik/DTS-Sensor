@@ -34,6 +34,7 @@ public class MeasurementsFragment extends Fragment {
         }
         return  rootView;
     }
+
     public static MeasurementsFragment newInstance()
     {
         MeasurementsFragment fragment = new MeasurementsFragment();

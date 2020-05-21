@@ -1,7 +1,7 @@
 package com.whaskalmanik.dtssensor.Fragments;
 
 import android.content.Context;
-import android.opengl.Visibility;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -24,6 +25,7 @@ import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 import com.whaskalmanik.dtssensor.Graph.Graph;
 
+import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -39,36 +41,37 @@ public class RealTimeFragment extends Fragment {
     TextView selectedTemperature;
     TextView minValue;
     TextView maxValue;
+    Spinner spinner;
+    Context context;
+    DocumentsLoader documentsLoader;
+    float selectedValue=Float.MIN_VALUE;
 
     public interface FragmentRealTimeListener {
         void onValueSent(float number);
     }
 
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    public void receiveData()
     {
-        View rootView =inflater.inflate(R.layout.fragment_realtime,container,false);
-        chart =rootView.findViewById(R.id.chart);
         Bundle arguments = getArguments();
+        documentsLoader = new DocumentsLoader(context);
 
-        DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
-        files=documentsLoader.parseDataFromFiles();
-        graph = new Graph(chart,files,rootView.getContext());
-        selectedTemperature = (TextView) rootView.findViewById(R.id.selectedTemperature);
-        minValue = (TextView) rootView.findViewById(R.id.minValue);
-        maxValue = (TextView) rootView.findViewById(R.id.maxValue);
+        files = documentsLoader.parseDataFromFiles();
+        if (arguments != null)
+        {
+            //files = arguments.getParcelableArrayList("data");
 
+        }
+    }
+
+    public void setSpinner()
+    {
         ArrayList<String> nameList= new ArrayList<>();
-
         for(int i =0; i< files.size();i++)
         {
             nameList.add(files.get(i).getDate()+ " "+files.get(i).getTime());
         }
 
-        Spinner spinner = (Spinner) rootView.findViewById(R.id.spinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(rootView.getContext(), android.R.layout.simple_spinner_item, nameList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, nameList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
@@ -82,30 +85,61 @@ public class RealTimeFragment extends Fragment {
                 graph.createRealTimeGraph(0);
             }
         });
+    }
 
-        setInformation(0,View.GONE);
+    public void setGraph()
+    {
+        graph = new Graph(chart,files,context);
+
+        if(selectedValue==Float.MIN_VALUE) {
+            setInformation(0, View.GONE);
+
+        }
+        else {
+            setInformation(selectedValue, View.VISIBLE);
+        }
+
 
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
             @Override
             public void onValueSelected(Entry e, Highlight h) {
-                Log.d("Fragment","Y = "+e.getY() + " X = "+ e.getX());
-                listener.onValueSent(e.getX());
-                setInformation(e.getX(),View.VISIBLE);
+                selectedValue = e.getX();
+                listener.onValueSent(selectedValue);
+                setInformation(selectedValue,View.VISIBLE);
             }
 
             @Override
             public void onNothingSelected() {
             }
         });
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
+    {
+        View rootView =inflater.inflate(R.layout.fragment_realtime,container,false);
+        context=rootView.getContext();
+
+        selectedTemperature = (TextView) rootView.findViewById(R.id.selectedTemperature);
+        minValue = (TextView) rootView.findViewById(R.id.minValue);
+        maxValue = (TextView) rootView.findViewById(R.id.maxValue);
+        spinner = (Spinner) rootView.findViewById(R.id.spinner);
+
+        chart = rootView.findViewById(R.id.chart);
+
+        receiveData();
+        setSpinner();
+        setGraph();
         return  rootView;
     }
     private void setInformation(float selectedX, int visibility)
     {
-        selectedTemperature.setText("Selected lenght: "+selectedX+"m");
+        selectedTemperature.setText("Selected: "+selectedX+" m");
         selectedTemperature.setVisibility(visibility);
-        minValue.setText("Lowest temperature: "+ Collections.min(files.get(selectedIndex).getTemperature())+"°");
-        maxValue.setText("Highest temperature: "+ Collections.max(files.get(selectedIndex).getTemperature())+"°");
+        minValue.setText("Min: "+ Collections.min(files.get(selectedIndex).getTemperature())+" °C");
+        maxValue.setText("Max: "+ Collections.max(files.get(selectedIndex).getTemperature())+" °C");
     }
 
     @Override
@@ -127,18 +161,13 @@ public class RealTimeFragment extends Fragment {
         super.onDetach();
         listener=null;
     }
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        if(files!=null)
-        {
-            graph.createRealTimeGraph(selectedIndex);
-        }
-    }
-    public static RealTimeFragment newInstance()
+
+    public static RealTimeFragment newInstance(ArrayList<ExtractedFile> files)
     {
         RealTimeFragment fragment = new RealTimeFragment();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList("data",files);
+        fragment.setArguments(args);
         return fragment;
     }
 
