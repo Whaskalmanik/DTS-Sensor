@@ -120,10 +120,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         {
             Log.d("Exception",exception.getMessage());
         }
-        if(showdialog)
-        {
-            dialog.cancel();
-        }
+
         BufferedWriter bufferedWriter;
         Gson gson = new Gson();
 
@@ -158,6 +155,10 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
 
         if (callback != null) {
             callback.apply();
+        }
+        if(showdialog)
+        {
+            dialog.cancel();
         }
     }
 }

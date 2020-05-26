@@ -15,7 +15,7 @@
                 android:id="@+id/tempterature"
                 android:title="Temperature graph" />
             <item
-                android:id="@+id/stokes"
+                android:id="@+id/heat"
                 android:title="Heat graph" />
         </menu>
 

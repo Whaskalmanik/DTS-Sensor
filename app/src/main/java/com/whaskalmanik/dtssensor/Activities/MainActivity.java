@@ -16,9 +16,7 @@ import android.os.Bundle;
 import android.content.Intent;
 
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.whaskalmanik.dtssensor.Database.DownloadMeasurementTask;
 import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
@@ -26,13 +24,11 @@ import com.whaskalmanik.dtssensor.Files.PeriodicTask;
 import com.whaskalmanik.dtssensor.Fragments.MeasurementsFragment;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
-import com.whaskalmanik.dtssensor.Files.FileParser;
 import com.whaskalmanik.dtssensor.Fragments.RealTimeFragment;
 import com.whaskalmanik.dtssensor.Fragments.HeatFragment;
 import com.whaskalmanik.dtssensor.Fragments.TemperatureFragment;
 
 import com.whaskalmanik.dtssensor.R;
-import com.whaskalmanik.dtssensor.Utils.Command;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,8 +62,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Toast.makeText(getApplicationContext(),Preferences.getIP(),Toast.LENGTH_SHORT).show();
         TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,Float.MIN_VALUE);
         HeatFragment = HeatFragment.newInstance(listOfFiles);
-        RealTimeFragment = RealTimeFragment.newInstance(listOfFiles);
+        RealTimeFragment = RealTimeFragment.newInstance();
         MeasurementsFragment = MeasurementsFragment.newInstance();
+
 
         downloadMeasurementTask = new DownloadMeasurementTask(getApplicationContext(),selected,false);
         refreshTask = new PeriodicTask(getApplicationContext());
@@ -76,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         createDrawer(savedInstanceState);
     }
-
 
     private void createDrawer(Bundle savedInstanceState)
     {
@@ -94,10 +90,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         if (savedInstanceState == null) {
-            selectedFragment=MeasurementsFragment;
+            selectedFragment = MeasurementsFragment;
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MeasurementsFragment).commit();
             navigationView.setCheckedItem(R.id.measurements);
         }
+    }
+    private void reloadFragment(Fragment fragment)
+    {
+        FragmentTransaction ft= getSupportFragmentManager().beginTransaction();
+        ft.detach(fragment);
+        ft.attach(fragment);
+        ft.replace(R.id.fragment_container, fragment);
+        ft.commit();
     }
 
     @Override
@@ -122,24 +126,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.tempterature:
             {
                 selectedFragment=TemperatureFragment;
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
+                reloadFragment(TemperatureFragment);
                 break;
             }
-            case R.id.stokes:
+            case R.id.heat:
             {
                 selectedFragment=HeatFragment;
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, HeatFragment).commit();
+                reloadFragment(HeatFragment);
                 break;
             }
             case R.id.realTime:
             {
                 selectedFragment=RealTimeFragment;
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, RealTimeFragment).commit();
+                reloadFragment(RealTimeFragment);
                 break;
             }
             case R.id.measurements:
             {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MeasurementsFragment).commit();
+                selectedFragment=MeasurementsFragment;
+                reloadFragment(MeasurementsFragment);
                 refreshTask.disableRefresh();
                 break;
             }
@@ -153,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.refresh:
             {
                 refreshTask.manualRefresh();
+                reloadFragment(selectedFragment);
                 break;
             }
             case R.id.storageDelete:
@@ -179,7 +185,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onResume()
     {
         super.onResume();
-
+        refreshTask.enableRefresh();
+    }
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        refreshTask.disableRefresh();
+    }
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        refreshTask.disableRefresh();
     }
 
     @Override
@@ -194,10 +212,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         downloadMeasurementTask = new DownloadMeasurementTask(getApplicationContext(),selected,false);
 
         downloadMeasurementTask.setCallback(() -> {
-            FragmentTransaction ft= getSupportFragmentManager().beginTransaction();
-            ft.detach(selectedFragment);
-            ft.attach(selectedFragment);
-            ft.commit();
+            reloadFragment(selectedFragment);
         });
         downloadMeasurementTask.execute();
     }

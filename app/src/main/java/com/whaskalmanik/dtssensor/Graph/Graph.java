@@ -9,6 +9,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.ChartHighlighter;
+import com.github.mikephil.charting.highlight.Highlight;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 import com.whaskalmanik.dtssensor.R;
@@ -175,9 +176,15 @@ public class Graph
             {
                 linedata= new LineData(dataSetData);
             }
+            linedata.setHighlightEnabled(true);
             graph.setData(linedata);
             graph.getDescription().setEnabled(false);
             graph.invalidate();
         }
+    }
+    public void higlightValue(float value)
+    {
+        graph.highlightValue(value,0,true);
+
     }
 }
