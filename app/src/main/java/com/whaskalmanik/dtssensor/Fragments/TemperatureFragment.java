@@ -78,7 +78,7 @@ public class TemperatureFragment extends Fragment {
             return;
         }
 
-        selected.setText("Selected: " + value+ " m ");
+        selected.setText("Length: " + value + " m ");
 
         int lengthIndex = files.get(0).getLength().indexOf(value);
 

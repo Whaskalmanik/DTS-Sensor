@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.content.Intent;
 
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -96,8 +97,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
     }
 
-
-
     public void setHeader(Bundle savedInstanceState)
     {
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -113,8 +112,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (fragmentType == null) {
             return;
         }
+        Log.d("MainActivity","Fragment refreshed");
         Fragment selectedFragment = fragments.get(fragmentType);
-        Toast.makeText(getApplicationContext(), "BLICK FRAGMENT", Toast.LENGTH_SHORT).show();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.detach(selectedFragment);
         ft.attach(selectedFragment);
@@ -229,10 +228,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     void refreshData() {
         selected = pref.getString("selected",null);
         downloadMeasurementTask = new DownloadMeasurementTask(getApplicationContext(),selected,false);
-        downloadMeasurementTask.setCallback(() -> {
-            reloadFragment();
-           // Toast.makeText(getApplicationContext(), "BLICK", Toast.LENGTH_SHORT).show();
-        });
+        downloadMeasurementTask.setCallback(this::reloadFragment);
         downloadMeasurementTask.execute();
     }
 

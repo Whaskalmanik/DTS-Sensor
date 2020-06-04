@@ -59,8 +59,23 @@ public class HeatGraph {
         float minTemp = 20;
         float maxTemp = 30;
         float t = Math.min(Math.max((temp - minTemp) / (maxTemp - minTemp), 0f), 1f);
-        return interpolateColor(Color.CYAN,Color.RED,t);
+        return interpolateColor(Color.BLUE,Color.RED,t);
     }
+
+    public void createBar(ImageView image)
+    {
+        Bitmap bitmap = Bitmap.createBitmap(100, 10, Bitmap.Config.ARGB_8888);
+        for(int i = 0;i<100;i++)
+        {
+            for(int j = 0;j<10;j++)
+            {
+                bitmap.setPixel(i, j, getHeatColor(i/100));
+            }
+        }
+        image.setImageBitmap(bitmap);
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+    }
+
 
     public void createGraph()
     {

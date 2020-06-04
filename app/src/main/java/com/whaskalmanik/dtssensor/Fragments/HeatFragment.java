@@ -35,8 +35,12 @@ public class HeatFragment extends Fragment {
         ImageView imageView = rootView.findViewById(R.id.imageView);
         TextView lengthStart= rootView.findViewById(R.id.lenghtStart);
         TextView lengthEnd= rootView.findViewById(R.id.lenghtEnd);
+        TextView tempMin= rootView.findViewById(R.id.lenghtStart);
+        TextView tempMax= rootView.findViewById(R.id.lenghtEnd);
+        ImageView bar = rootView.findViewById(R.id.imageViewBar);
 
         HeatGraph graph= new HeatGraph(files,imageView,lengthStart,lengthEnd);
+        graph.createBar(bar);
         graph.createGraph();
         return rootView;
     }
