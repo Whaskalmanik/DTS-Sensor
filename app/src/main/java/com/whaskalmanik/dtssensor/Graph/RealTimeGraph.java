@@ -19,11 +19,10 @@ import com.whaskalmanik.dtssensor.Utils.NotificationHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Graph
+public class RealTimeGraph
 {
     private LineChart graph;
     private ArrayList<ExtractedFile> data;
-    private Preferences markers;
     private Context context;
 
 
@@ -35,13 +34,12 @@ public class Graph
     boolean popped=false;
 
 
-    public Graph(LineChart graph, ArrayList<ExtractedFile> data, Context context)
+    public RealTimeGraph(LineChart graph, ArrayList<ExtractedFile> data, Context context)
     {
         this.graph = graph;
         this.data = data;
         this.context = context;
         notifications = new NotificationHelper(context);
-
     }
 
     private void setStyle(int color,LineDataSet dataSet,float lineWidth)
@@ -51,21 +49,21 @@ public class Graph
         dataSet.setLineWidth(lineWidth);
         dataSet.setDrawCircles(false);
     }
+
     private void notificationsCheck(float yValue)
     {
         if(Preferences.areMarkersEnabled())
         {
-            if (!popped&&yValue>= Preferences.getWarningTemp())
+            if (!popped&&yValue >= Preferences.getWarningTemp())
             {
                 notifications.popWarning();
                 popped=true;
             }
-            else if (!popped&&yValue>=Preferences.getCriticalTemp())
+            else if (!popped&&yValue >= Preferences.getCriticalTemp())
             {
                 notifications.popCritical();
                 popped=true;
             }
-
         }
     }
 
@@ -88,7 +86,6 @@ public class Graph
             dataSetData.setHighLightColor(context.getResources().getColor(R.color.colorYellow));
             setStyle(Color.BLUE,dataSetData,2.0f);
         }
-
     }
 
     private void fillDataForMarker(int selectedIndex)
@@ -112,7 +109,7 @@ public class Graph
     {
         if (data==null)
         {
-            Log.d("Graph:" ,"Data are null when graph is being created!");
+            Log.d("RealTimeGraph:" ,"Data are null when graph is being created!");
             return;
         }
         fillDataSet(selectedIndex);
@@ -130,9 +127,8 @@ public class Graph
     }
 
 
-    public void higlightValue(float value)
+    public void highlightValue(float value)
     {
         graph.highlightValue(value,0,true);
-
     }
 }

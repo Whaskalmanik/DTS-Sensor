@@ -65,7 +65,7 @@ public class HeatGraph {
     public void createGraph()
     {
         if (data==null) {
-            Log.d("HeatGraph","Data in heat Graph are null");
+            Log.d("HeatGraph","Data in heat RealTimeGraph are null");
             return;
         }
 

@@ -27,10 +27,6 @@ public class MeasurementsFragment extends Fragment {
         ListView lv = (ListView)rootView.findViewById(R.id.measurement_llist);
         MeasurementLoadingTask task=new MeasurementLoadingTask(getContext(),lv);
         task.execute();
-        if (arguments != null)
-        {
-
-        }
         return  rootView;
     }
 

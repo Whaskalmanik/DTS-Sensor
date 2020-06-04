@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import com.google.common.collect.Lists;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 import com.whaskalmanik.dtssensor.Files.PeriodicTask;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
@@ -26,6 +28,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
+
+    private static final int CONNECTION_TIME_OUT_MS =5000;
+    private static final int SOCKET_TIME_OUT_MS =5000;
+    private static final int SERVER_SELECTION_TIMEOUT_MS = 5000;
+
     private Exception exception;
     private String ip;
     private int port;
@@ -36,6 +43,7 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
     private ListView lv;
     ProgressDialog dialog;
     PeriodicTask watcher;
+    MongoClientOptions options;
 
     static final DateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
     static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
@@ -50,6 +58,12 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
         port = Preferences.getPort();
         databaseName = Preferences.getDatabaseName();
         watcher= new PeriodicTask(context);
+
+        MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
+        optionsBuilder.connectTimeout(CONNECTION_TIME_OUT_MS);
+        optionsBuilder.socketTimeout(SOCKET_TIME_OUT_MS);
+        optionsBuilder.serverSelectionTimeout(SERVER_SELECTION_TIMEOUT_MS);
+        options = optionsBuilder.build();
     }
 
     @Override
@@ -62,8 +76,8 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
     @Override
     protected Integer doInBackground(Void... voids) {
         try {
-
-            mongoClient = new MongoClient(ip,port);
+            mongoClient = new MongoClient(new ServerAddress(ip,port),options);
+            //mongoClient = new MongoClient(ip,port);
             List<String> dbNames = Lists.newArrayList(mongoClient.listDatabaseNames());
             MongoDatabase database = mongoClient.getDatabase(databaseName);
             collectionNames = Lists.newArrayList(database.listCollectionNames());
@@ -97,7 +111,7 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
         SharedPreferences.Editor editor = pref.edit();
         if (result == null)
         {
-            Log.d("exception",exception.getMessage());
+            Toast.makeText(context, "Connection failed", Toast.LENGTH_LONG).show();
             return;
         }
         Toast.makeText(context, "Connection established", Toast.LENGTH_LONG).show();

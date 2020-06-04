@@ -9,7 +9,9 @@ import android.widget.Toast;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
@@ -38,6 +40,10 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     private final static CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
             fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 
+    private static final int CONNECTION_TIME_OUT_MS =5000;
+    private static final int SOCKET_TIME_OUT_MS =5000;
+    private static final int SERVER_SELECTION_TIMEOUT_MS = 5000;
+
     private Context context;
     private String collectionName;
     private ProgressDialog dialog;
@@ -52,6 +58,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     private boolean showdialog;
     private Command callback;
     private int lastIndex=0;
+    private static MongoClientOptions options;
 
     public DownloadMeasurementTask(Context context, String collectionName,boolean showDialog)
     {
@@ -62,6 +69,12 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         databaseName = Preferences.getDatabaseName();
         extractedFiles = new ArrayList<>();
         this.showdialog=showDialog;
+
+        MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
+        optionsBuilder.connectTimeout(CONNECTION_TIME_OUT_MS);
+        optionsBuilder.socketTimeout(SOCKET_TIME_OUT_MS);
+        optionsBuilder.serverSelectionTimeout(SERVER_SELECTION_TIMEOUT_MS);
+        options = optionsBuilder.build();
 
     }
 
@@ -87,7 +100,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     protected Integer doInBackground(Void... voids) {
 
         try {
-            mongoClient = new MongoClient(ip, port);
+            mongoClient = new MongoClient(new ServerAddress(ip,port),options);
             MongoDatabase database = mongoClient.getDatabase(databaseName).withCodecRegistry(pojoCodecRegistry);
             MongoCollection<ExtractedFile> stronglyTyped = database.getCollection(collectionName, ExtractedFile.class);
             long count = stronglyTyped.countDocuments();

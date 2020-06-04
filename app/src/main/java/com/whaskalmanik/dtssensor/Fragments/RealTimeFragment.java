@@ -20,7 +20,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
 import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
-import com.whaskalmanik.dtssensor.Graph.Graph;
+import com.whaskalmanik.dtssensor.Graph.RealTimeGraph;
 
 import java.util.ArrayList;
 
@@ -34,7 +34,7 @@ public class RealTimeFragment extends Fragment {
     public FragmentRealTimeListener listener;
 
     private LineChart chart;
-    private Graph graph;
+    private RealTimeGraph realTimeGraph;
     private TextView selected;
     private TextView minValue;
     private TextView maxValue;
@@ -44,9 +44,10 @@ public class RealTimeFragment extends Fragment {
     private DocumentsLoader documentsLoader;
 
     private int indexInSpinner=0;
-    private float selectedLength = Float.MIN_VALUE;
-    private float selectedTemperature = Float.MIN_VALUE;
+    private static float selectedLength = Float.MIN_VALUE;
+    private static float selectedTemperature = Float.MIN_VALUE;
     private int lastIndex;
+
 
     ArrayList<ExtractedFile> files = new ArrayList<>();
 
@@ -64,14 +65,10 @@ public class RealTimeFragment extends Fragment {
            lastIndex = arguments.getInt(LAST_INDEX,Integer.MIN_VALUE);
         }
 
-        if (savedInstanceState != null) {
-            selectedLength = savedInstanceState.getFloat(SELECTED_VALUE);
-            indexInSpinner = savedInstanceState.getInt(SELECTED_INDEX);
-        }
-        selected = (TextView) rootView.findViewById(R.id.selectedTemperature);
-        minValue = (TextView) rootView.findViewById(R.id.minValue);
-        maxValue = (TextView) rootView.findViewById(R.id.maxValue);
-        spinner = (Spinner) rootView.findViewById(R.id.spinner);
+        selected = rootView.findViewById(R.id.selectedTemperature);
+        minValue = rootView.findViewById(R.id.minValue);
+        maxValue = rootView.findViewById(R.id.maxValue);
+        spinner = rootView.findViewById(R.id.spinner);
 
         chart = rootView.findViewById(R.id.chart);
 
@@ -84,21 +81,10 @@ public class RealTimeFragment extends Fragment {
         return  rootView;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState)
-    {
-        super.onSaveInstanceState(outState);
-        outState.putInt(SELECTED_INDEX, indexInSpinner);
-        outState.putFloat(SELECTED_VALUE, selectedLength);
-    }
 
     public interface FragmentRealTimeListener {
-        void onValueSent(float number,int indexInSpinner);
-
-        void onValueSent();
+        void onValueSent(float valueX);
     }
-
-
 
     public void setSpinner()
     {
@@ -114,11 +100,11 @@ public class RealTimeFragment extends Fragment {
         {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                graph.createGraph(position);
+                realTimeGraph.createGraph(position);
                 indexInSpinner = position;
                 if(selectedLength !=Float.MIN_VALUE)
                 {
-                    graph.higlightValue(selectedLength);
+                    realTimeGraph.highlightValue(selectedLength);
                 }
             }
             public void onNothingSelected(AdapterView<?> parent)
@@ -134,7 +120,7 @@ public class RealTimeFragment extends Fragment {
 
     public void setGraph()
     {
-        graph = new Graph(chart,files,context);
+        realTimeGraph = new RealTimeGraph(chart,files,context);
 
         if(selectedLength == Float.MIN_VALUE)
         {
@@ -154,7 +140,7 @@ public class RealTimeFragment extends Fragment {
             {
                 selectedLength = e.getX();
                 selectedTemperature = e.getY();
-                listener.onValueSent(selectedLength,indexInSpinner);
+                listener.onValueSent(selectedLength);
                 setInformation(selectedLength,selectedTemperature,View.VISIBLE);
             }
             @Override

@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.whaskalmanik.dtssensor.Database.DownloadMeasurementTask;
 import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
@@ -32,7 +33,10 @@ import com.whaskalmanik.dtssensor.Fragments.TemperatureFragment;
 import com.whaskalmanik.dtssensor.R;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,RealTimeFragment.FragmentRealTimeListener
@@ -46,30 +50,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     private String selected;
     private DownloadMeasurementTask downloadMeasurementTask;
-    private Fragment selectedFragment;
+    private Map<Class, Fragment> fragments = new HashMap<>();
 
-    ArrayList<ExtractedFile> listOfFiles;
+    private static Class fragmentType;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         Preferences.initialize(getApplicationContext());
         pref = getApplicationContext().getSharedPreferences("SelectedPreferences", 0);
         selected = pref.getString("selected",null);
 
-
-        //Toast.makeText(getApplicationContext(),Preferences.getIP(),Toast.LENGTH_SHORT).show();
-        TemperatureFragment = TemperatureFragment.newInstance(Float.MIN_VALUE, Integer.MIN_VALUE);
-        HeatFragment = HeatFragment.newInstance(listOfFiles);
+        TemperatureFragment = TemperatureFragment.newInstance(Float.MIN_VALUE);
+        HeatFragment = HeatFragment.newInstance();
         RealTimeFragment = RealTimeFragment.newInstance(Integer.MIN_VALUE);
         MeasurementsFragment = MeasurementsFragment.newInstance();
 
+        fragments.put(TemperatureFragment.getClass(), TemperatureFragment);
+        fragments.put(HeatFragment.getClass(), HeatFragment);
+        fragments.put(RealTimeFragment.getClass(), RealTimeFragment);
+        fragments.put(MeasurementsFragment.getClass(), MeasurementsFragment);
 
         downloadMeasurementTask = new DownloadMeasurementTask(getApplicationContext(),selected,false);
         refreshTask = new PeriodicTask(getApplicationContext());
-        //refreshTask.disableRefresh();
+        if(!Preferences.isSynchronizationEnabled())
+        {
+            refreshTask.disableRefresh();
+        }
         refreshTask.setAction(this::refreshData);
+
         setContentView(R.layout.activity_main);
         createDrawer(savedInstanceState);
     }
@@ -85,23 +96,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
     }
 
+
+
     public void setHeader(Bundle savedInstanceState)
     {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         if (savedInstanceState == null) {
-            selectedFragment = MeasurementsFragment;
+            fragmentType = MeasurementsFragment.getClass();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, MeasurementsFragment).commit();
             navigationView.setCheckedItem(R.id.measurements);
         }
     }
-    private void reloadFragment(Fragment fragment)
+    private void reloadFragment()
     {
-        FragmentTransaction ft= getSupportFragmentManager().beginTransaction();
-        ft.detach(fragment);
-        ft.attach(fragment);
-        ft.replace(R.id.fragment_container, fragment);
-        ft.commit();
+        if (fragmentType == null) {
+            return;
+        }
+        Fragment selectedFragment = fragments.get(fragmentType);
+        Toast.makeText(getApplicationContext(), "BLICK FRAGMENT", Toast.LENGTH_SHORT).show();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.detach(selectedFragment);
+        ft.attach(selectedFragment);
+        ft.replace(R.id.fragment_container, selectedFragment);
+        ft.commitAllowingStateLoss();
     }
 
     @Override
@@ -120,31 +138,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item)
     {
-        refreshTask.enableRefresh();
+        if (Preferences.isSynchronizationEnabled()) {
+            refreshTask.enableRefresh();
+        }
         switch (item.getItemId())
         {
             case R.id.tempterature:
             {
-                selectedFragment=TemperatureFragment;
-                reloadFragment(TemperatureFragment);
+                fragmentType = TemperatureFragment.getClass();
+                reloadFragment();
                 break;
             }
             case R.id.heat:
             {
-                selectedFragment=HeatFragment;
-                reloadFragment(HeatFragment);
+                fragmentType = HeatFragment.getClass();
+                reloadFragment();
                 break;
             }
             case R.id.realTime:
             {
-                selectedFragment=RealTimeFragment;
-                reloadFragment(RealTimeFragment);
+                fragmentType = RealTimeFragment.getClass();
+                reloadFragment();
                 break;
             }
             case R.id.measurements:
             {
-                selectedFragment=MeasurementsFragment;
-                reloadFragment(MeasurementsFragment);
+                fragmentType = MeasurementsFragment.getClass();
+                reloadFragment();
                 refreshTask.disableRefresh();
                 break;
             }
@@ -158,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.refresh:
             {
                 refreshTask.manualRefresh();
-                reloadFragment(selectedFragment);
+                reloadFragment();
                 break;
             }
             case R.id.storageDelete:
@@ -185,8 +205,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onResume()
     {
         super.onResume();
-        //refreshTask.enableRefresh();
-        //reloadFragment(selectedFragment);
+        if(Preferences.isSynchronizationEnabled())
+        {
+            refreshTask.onRefreshFrequencyChanged();
+        }
+        reloadFragment();
     }
     @Override
     public void onPause()
@@ -199,6 +222,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     {
         super.onDestroy();
         refreshTask.disableRefresh();
+        downloadMeasurementTask.setCallback(null);
     }
 
 
@@ -206,19 +230,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         selected = pref.getString("selected",null);
         downloadMeasurementTask = new DownloadMeasurementTask(getApplicationContext(),selected,false);
         downloadMeasurementTask.setCallback(() -> {
-            reloadFragment(selectedFragment);
+            reloadFragment();
+           // Toast.makeText(getApplicationContext(), "BLICK", Toast.LENGTH_SHORT).show();
         });
         downloadMeasurementTask.execute();
     }
 
     @Override
-    public void onValueSent(float number, int indexInSpinner) {
-        TemperatureFragment = TemperatureFragment.newInstance(number,indexInSpinner);
-        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
+    public void onValueSent(float number) {
+        TemperatureFragment = TemperatureFragment.newInstance(number);
+        fragments.put(TemperatureFragment.getClass(), TemperatureFragment);
     }
 
-    @Override
-    public void onValueSent() {
-
-    }
 }

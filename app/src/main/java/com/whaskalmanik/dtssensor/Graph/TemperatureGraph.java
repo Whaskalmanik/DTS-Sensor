@@ -58,6 +58,7 @@ public class TemperatureGraph {
     {
         List<Entry> entries = new ArrayList<>();
         List<Entry> entries2 = new ArrayList<>();
+
         entries.add(new Entry(0,Preferences.getWarningTemp()));
         entries.add(new Entry(data.size()-1,Preferences.getWarningTemp()));
         dataSetWarning = new LineDataSet(entries,"Warning marker");
@@ -70,26 +71,24 @@ public class TemperatureGraph {
         setStyle(Color.RED, dataSetCritical);
     }
 
-    public void createGraph(float value)
-    {
-        if(data!=null)
-        {
-            fillDataSet(value);
-            LineData linedata;
-            if(Preferences.areMarkersEnabled())
-            {
-                fillDataSetMarker();
-                linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);
+    public void createGraph(float value) {
 
-            }
-            else
-            {
-                linedata= new LineData(dataSetData);
-            }
-            linedata.setHighlightEnabled(true);
-            graph.setData(linedata);
-            graph.getDescription().setEnabled(false);
-            graph.invalidate();
+        if (data == null  || data.isEmpty())
+        {
+            return;
         }
+        fillDataSet(value);
+        LineData linedata;
+        if (Preferences.areMarkersEnabled()) {
+            fillDataSetMarker();
+            linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);
+
+        } else {
+            linedata = new LineData(dataSetData);
+        }
+        linedata.setHighlightEnabled(false);
+        graph.setData(linedata);
+        graph.getDescription().setEnabled(false);
+        graph.invalidate();
     }
 }

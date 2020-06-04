@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
 
 public class PeriodicTask {
@@ -54,7 +55,7 @@ public class PeriodicTask {
 
     public void disableRefresh()
     {
-        if (Preferences.isSynchronizationEnabled() || refreshTimer == null) {
+        if (refreshTimer == null) {
             return;
         }
 
@@ -64,12 +65,8 @@ public class PeriodicTask {
 
     public void enableRefresh()
     {
-        if (!Preferences.isSynchronizationEnabled() ) {
-            return;
-        }
-
         if (refreshTimer != null) {
-            disableRefresh();
+            return;
         }
 
         refreshTimer = new Timer();
@@ -78,28 +75,13 @@ public class PeriodicTask {
 
     public void onRefreshFrequencyChanged()
     {
-        if (!Preferences.isSynchronizationEnabled())
-        {
-            return;
-        }
-
         disableRefresh();
         enableRefresh();
     }
 
     public void manualRefresh()
     {
-        if (refreshTimer == null)
-        {
-            refreshTimer = new Timer();
-        }
-
-        refreshTimer.schedule(getRefreshTask(), 0);
-
-        if (!Preferences.isSynchronizationEnabled())
-        {
-            disableRefresh();
-        }
+        ForkJoinPool.commonPool().execute(() -> getRefreshTask().run());
     }
 
     /**
