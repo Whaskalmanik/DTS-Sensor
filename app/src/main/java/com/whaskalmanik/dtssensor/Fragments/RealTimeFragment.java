@@ -1,13 +1,10 @@
 package com.whaskalmanik.dtssensor.Fragments;
 
-import android.accessibilityservice.AccessibilityService;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -26,31 +22,31 @@ import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 import com.whaskalmanik.dtssensor.Graph.Graph;
 
-import java.nio.channels.FileLock;
 import java.util.ArrayList;
-import java.util.Collections;
 
 
 public class RealTimeFragment extends Fragment {
 
     private static final String SELECTED_INDEX = "index";
     private static final String SELECTED_VALUE = "value";
+    private static final String LAST_INDEX = "lastIndex";
 
     public FragmentRealTimeListener listener;
 
     private LineChart chart;
     private Graph graph;
-    private TextView selectedTemperature;
+    private TextView selected;
     private TextView minValue;
     private TextView maxValue;
 
     private Spinner spinner;
     private Context context;
     private DocumentsLoader documentsLoader;
-    private Highlight high;
 
-    private int selectedIndex=0;
-    private float selectedValue = Float.MIN_VALUE;
+    private int indexInSpinner=0;
+    private float selectedLength = Float.MIN_VALUE;
+    private float selectedTemperature = Float.MIN_VALUE;
+    private int lastIndex;
 
     ArrayList<ExtractedFile> files = new ArrayList<>();
 
@@ -62,21 +58,28 @@ public class RealTimeFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_realtime,container,false);
         context = rootView.getContext();
 
-        if (savedInstanceState != null) {
-            selectedValue = savedInstanceState.getFloat(SELECTED_VALUE);
-            selectedIndex = savedInstanceState.getInt(SELECTED_INDEX);
+        Bundle arguments = getArguments();
+
+        if (arguments != null) {
+           lastIndex = arguments.getInt(LAST_INDEX,Integer.MIN_VALUE);
         }
-        selectedTemperature = (TextView) rootView.findViewById(R.id.selectedTemperature);
+
+        if (savedInstanceState != null) {
+            selectedLength = savedInstanceState.getFloat(SELECTED_VALUE);
+            indexInSpinner = savedInstanceState.getInt(SELECTED_INDEX);
+        }
+        selected = (TextView) rootView.findViewById(R.id.selectedTemperature);
         minValue = (TextView) rootView.findViewById(R.id.minValue);
         maxValue = (TextView) rootView.findViewById(R.id.maxValue);
         spinner = (Spinner) rootView.findViewById(R.id.spinner);
 
         chart = rootView.findViewById(R.id.chart);
 
-        receiveData();
+        documentsLoader = new DocumentsLoader(context);
+        files = documentsLoader.parseDataFromFiles();
+
         setSpinner();
         setGraph();
-
 
         return  rootView;
     }
@@ -85,22 +88,17 @@ public class RealTimeFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
-        outState.putInt(SELECTED_INDEX,selectedIndex);
-        outState.putFloat(SELECTED_VALUE,selectedValue);
+        outState.putInt(SELECTED_INDEX, indexInSpinner);
+        outState.putFloat(SELECTED_VALUE, selectedLength);
     }
 
     public interface FragmentRealTimeListener {
-        void onValueSent(float number);
+        void onValueSent(float number,int indexInSpinner);
+
+        void onValueSent();
     }
 
 
-    public void receiveData()
-    {
-        Bundle arguments = getArguments();
-        documentsLoader = new DocumentsLoader(context);
-
-        files = documentsLoader.parseDataFromFiles();
-    }
 
     public void setSpinner()
     {
@@ -116,30 +114,35 @@ public class RealTimeFragment extends Fragment {
         {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                graph.createRealTimeGraph(position);
-                if(selectedValue!=Float.MIN_VALUE)
+                graph.createGraph(position);
+                indexInSpinner = position;
+                if(selectedLength !=Float.MIN_VALUE)
                 {
-                    graph.higlightValue(selectedValue);
+                    graph.higlightValue(selectedLength);
                 }
             }
             public void onNothingSelected(AdapterView<?> parent)
             {
-                //graph.createRealTimeGraph(0);
+
             }
         });
+        if(lastIndex != Integer.MIN_VALUE)
+        {
+            spinner.setSelection(lastIndex);
+        }
     }
 
     public void setGraph()
     {
         graph = new Graph(chart,files,context);
 
-        if(selectedValue == Float.MIN_VALUE)
+        if(selectedLength == Float.MIN_VALUE)
         {
-            setInformation(0, View.GONE);
+            setInformation(0,0, View.GONE);
         }
         else
         {
-            setInformation(selectedValue, View.VISIBLE);
+            setInformation(selectedLength,selectedTemperature, View.VISIBLE);
 
         }
 
@@ -149,9 +152,10 @@ public class RealTimeFragment extends Fragment {
             @Override
             public void onValueSelected(Entry e, Highlight h)
             {
-                selectedValue = e.getX();
-                listener.onValueSent(selectedValue);
-                setInformation(selectedValue,View.VISIBLE);
+                selectedLength = e.getX();
+                selectedTemperature = e.getY();
+                listener.onValueSent(selectedLength,indexInSpinner);
+                setInformation(selectedLength,selectedTemperature,View.VISIBLE);
             }
             @Override
             public void onNothingSelected()
@@ -161,12 +165,12 @@ public class RealTimeFragment extends Fragment {
         });
     }
 
-    private void setInformation(float selectedX, int visibility)
+    private void setInformation(float selectedX,float selectedY, int visibility)
     {
-        selectedTemperature.setText("Selected: "+selectedX+" m");
-        selectedTemperature.setVisibility(visibility);
-        minValue.setText("Min: "+ Collections.min(files.get(selectedIndex).getTemperature())+" °C");
-        maxValue.setText("Max: "+ Collections.max(files.get(selectedIndex).getTemperature())+" °C");
+        selected.setText("Selected: " + selectedX + " m " + selectedY + " °C");
+        selected.setVisibility(visibility);
+        minValue.setText("Min: "+ files.get(indexInSpinner).getMinimumTemperature()+" °C");
+        maxValue.setText("Max: "+ files.get(indexInSpinner).getMaximumTemperature()+" °C");
 
     }
 
@@ -190,9 +194,11 @@ public class RealTimeFragment extends Fragment {
         listener=null;
     }
 
-    public static RealTimeFragment newInstance()
+    public static RealTimeFragment newInstance(int lastIndex)
     {
         RealTimeFragment fragment = new RealTimeFragment();
+        Bundle args = new Bundle();
+        fragment.setArguments(args);
         return fragment;
     }
 

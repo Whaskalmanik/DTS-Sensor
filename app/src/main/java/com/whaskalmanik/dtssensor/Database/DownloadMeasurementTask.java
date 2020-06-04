@@ -51,7 +51,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     private int notCachedIndex=0;
     private boolean showdialog;
     private Command callback;
-
+    private int lastIndex=0;
 
     public DownloadMeasurementTask(Context context, String collectionName,boolean showDialog)
     {
@@ -67,6 +67,11 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
 
     public void setCallback(final Command callback) {
         this.callback = callback;
+    }
+
+    public int getLastIndex()
+    {
+        return lastIndex;
     }
 
     @Override
@@ -139,6 +144,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
                             bufferedWriter = new BufferedWriter(fileWriter);
                             bufferedWriter.write(tmp);
                             bufferedWriter.close();
+                            this.lastIndex=i;
                         }
                     }
                     else

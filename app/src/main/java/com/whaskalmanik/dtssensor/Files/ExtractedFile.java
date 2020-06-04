@@ -148,4 +148,21 @@ public final class ExtractedFile implements Parcelable {
     public void setData(final ArrayList<Entry> data) {
         this.data = data;
     }
+
+    public float getMaximumLenght()
+    {
+        return Collections.max(getLength());
+    }
+    public float getMaximumTemperature()
+    {
+        return Collections.max(getTemperature());
+    }
+    public float getMinimumLenght()
+    {
+        return Collections.min(getLength());
+    }
+    public float getMinimumTemperature()
+    {
+        return Collections.min(getTemperature());
+    }
 }

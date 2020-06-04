@@ -2,6 +2,7 @@ package com.whaskalmanik.dtssensor.Graph;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -82,7 +83,7 @@ public class Graph
                 entriesForData.add(new Entry(lengths.get(i),temperatures.get(i)));
                 notificationsCheck(temperatures.get(i));
             }
-            dataSetData = new LineDataSet(entriesForData, data.get(selectedIndex).getDate().toString());
+            dataSetData = new LineDataSet(entriesForData, data.get(selectedIndex).getDate());
             dataSetData.setHighlightLineWidth(1.5f);
             dataSetData.setHighLightColor(context.getResources().getColor(R.color.colorYellow));
             setStyle(Color.BLUE,dataSetData,2.0f);
@@ -107,81 +108,28 @@ public class Graph
         setStyle(Color.RED, dataSetCritical,2.0f);
     }
 
-    public void createRealTimeGraph(int selectedIndex)
+    public void createGraph(int selectedIndex)
     {
-        if(data!=null) {
-            fillDataSet(selectedIndex);
-            if (Preferences.areMarkersEnabled()) {
-                fillDataForMarker(selectedIndex);
-                LineData linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);
-                graph.setData(linedata);
-            } else {
-                LineData lineData = new LineData(dataSetData);
-                graph.setData(lineData);
-            }
-            graph.getDescription().setEnabled(false);
-            graph.invalidate();
-        }
-        else
+        if (data==null)
         {
-            Toast.makeText(context,"Data null",Toast.LENGTH_LONG);
+            Log.d("Graph:" ,"Data are null when graph is being created!");
+            return;
         }
-    }
-
-    private void fillDataSetTemperatures(float value)
-    {
-        if (!Float.isNaN(value) && data != null && !data.isEmpty())
-        {
-            List<Entry> entries = new ArrayList<>();
-            int lengthIndex = data.get(0).getLength().indexOf(value);
-            for(int i = 0;i < data.size();i++)
-            {
-                entries.add(new Entry(i, (float)data.get(i).getEntries().get(lengthIndex).getTemp()));
-            }
-            dataSetData = new LineDataSet(entries, data.get(0).getDate());
-            dataSetData.setHighlightEnabled(false);
-            setStyle(Color.BLUE,dataSetData,2.0f);
-        }
-    }
-
-    private void fillDataSetTemperaturesMarker()
-    {
-        List<Entry> entries = new ArrayList<>();
-        List<Entry> entries2 = new ArrayList<>();
-        entries.add(new Entry(0,Preferences.getWarningTemp()));
-        entries.add(new Entry(data.size()-1,Preferences.getWarningTemp()));
-        dataSetWarning = new LineDataSet(entries,"Warning marker");
-
-        entries2.add(new Entry(0,Preferences.getCriticalTemp()));
-        entries2.add(new Entry(data.size()-1,Preferences.getCriticalTemp()));
-        dataSetCritical = new LineDataSet(entries2,"Critical marker");
-
-        setStyle(Color.parseColor("#CAB11B"),dataSetWarning,2.0f);
-        setStyle(Color.RED, dataSetCritical,2.0f);
-    }
-
-    public void createTemperatureGraph(float value)
-    {
-        if(data!=null)
-        {
-            fillDataSetTemperatures(value);
-            LineData linedata;
-            if(Preferences.areMarkersEnabled())
-            {
-                fillDataSetTemperaturesMarker();
-                linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);
-
-            }
-            else
-            {
-                linedata= new LineData(dataSetData);
-            }
-            linedata.setHighlightEnabled(true);
+        fillDataSet(selectedIndex);
+        if (Preferences.areMarkersEnabled()) {
+            fillDataForMarker(selectedIndex);
+            LineData linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);
             graph.setData(linedata);
-            graph.getDescription().setEnabled(false);
-            graph.invalidate();
+        } else {
+            LineData lineData = new LineData(dataSetData);
+            graph.setData(lineData);
         }
+        graph.getDescription().setEnabled(false);
+        graph.invalidate();
+
     }
+
+
     public void higlightValue(float value)
     {
         graph.highlightValue(value,0,true);

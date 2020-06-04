@@ -2,7 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="8dp"
+    android:paddingTop="5dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="5dp">
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart"
@@ -15,8 +19,37 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2"
-        android:orientation="vertical"/>
+        android:layout_weight="5"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/maxValueTemp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            android:text="TextView"
+            android:textColor="@color/colorRed"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/minValueTemp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            android:text="TextView"
+            android:textColor="@color/colorBlue"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/selectedTemperatureTemp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            android:text="TextView"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp" />
+
+    </LinearLayout>
 
 </LinearLayout>
 

@@ -17,6 +17,7 @@ import android.content.Intent;
 
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.whaskalmanik.dtssensor.Database.DownloadMeasurementTask;
 import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
@@ -40,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private HeatFragment HeatFragment;
     private RealTimeFragment RealTimeFragment;
     private MeasurementsFragment MeasurementsFragment;
-    private DocumentsLoader documentsLoader;
     private PeriodicTask refreshTask;
     private SharedPreferences pref;
     private DrawerLayout drawer;
@@ -60,9 +60,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         //Toast.makeText(getApplicationContext(),Preferences.getIP(),Toast.LENGTH_SHORT).show();
-        TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,Float.MIN_VALUE);
+        TemperatureFragment = TemperatureFragment.newInstance(Float.MIN_VALUE, Integer.MIN_VALUE);
         HeatFragment = HeatFragment.newInstance(listOfFiles);
-        RealTimeFragment = RealTimeFragment.newInstance();
+        RealTimeFragment = RealTimeFragment.newInstance(Integer.MIN_VALUE);
         MeasurementsFragment = MeasurementsFragment.newInstance();
 
 
@@ -185,7 +185,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onResume()
     {
         super.onResume();
-        refreshTask.enableRefresh();
+        //refreshTask.enableRefresh();
+        //reloadFragment(selectedFragment);
     }
     @Override
     public void onPause()
@@ -200,21 +201,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         refreshTask.disableRefresh();
     }
 
-    @Override
-    public void onValueSent(float number)
-    {
-        TemperatureFragment = TemperatureFragment.newInstance(listOfFiles,number);
-        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
-    }
 
     void refreshData() {
         selected = pref.getString("selected",null);
         downloadMeasurementTask = new DownloadMeasurementTask(getApplicationContext(),selected,false);
-
         downloadMeasurementTask.setCallback(() -> {
             reloadFragment(selectedFragment);
         });
         downloadMeasurementTask.execute();
     }
 
+    @Override
+    public void onValueSent(float number, int indexInSpinner) {
+        TemperatureFragment = TemperatureFragment.newInstance(number,indexInSpinner);
+        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, TemperatureFragment).commit();
+    }
+
+    @Override
+    public void onValueSent() {
+
+    }
 }
