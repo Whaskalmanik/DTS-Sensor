@@ -27,9 +27,7 @@ import java.util.ArrayList;
 
 public class RealTimeFragment extends Fragment {
 
-    private static final String SELECTED_INDEX = "index";
-    private static final String SELECTED_VALUE = "value";
-    private static final String LAST_INDEX = "lastIndex";
+    private static final String LAST_INDEX = "last_index";
 
     public FragmentRealTimeListener listener;
 
@@ -41,7 +39,6 @@ public class RealTimeFragment extends Fragment {
 
     private Spinner spinner;
     private Context context;
-    private DocumentsLoader documentsLoader;
 
     private int indexInSpinner=0;
     private static float selectedLength = Float.MIN_VALUE;
@@ -72,7 +69,7 @@ public class RealTimeFragment extends Fragment {
 
         chart = rootView.findViewById(R.id.chart);
 
-        documentsLoader = new DocumentsLoader(context);
+        DocumentsLoader documentsLoader = new DocumentsLoader(context);
         files = documentsLoader.parseDataFromFiles();
 
         setSpinner();
@@ -82,7 +79,8 @@ public class RealTimeFragment extends Fragment {
     }
 
 
-    public interface FragmentRealTimeListener {
+    public interface FragmentRealTimeListener
+    {
         void onValueSent(float valueX);
     }
 
@@ -102,7 +100,7 @@ public class RealTimeFragment extends Fragment {
             {
                 realTimeGraph.createGraph(position);
                 indexInSpinner = position;
-                if(selectedLength !=Float.MIN_VALUE)
+                if(selectedLength != Float.MIN_VALUE)
                 {
                     realTimeGraph.highlightValue(selectedLength);
                 }
@@ -157,7 +155,6 @@ public class RealTimeFragment extends Fragment {
         selected.setVisibility(visibility);
         minValue.setText("Min: "+ files.get(indexInSpinner).getMinimumTemperature()+" °C");
         maxValue.setText("Max: "+ files.get(indexInSpinner).getMaximumTemperature()+" °C");
-
     }
 
     @Override
@@ -184,6 +181,7 @@ public class RealTimeFragment extends Fragment {
     {
         RealTimeFragment fragment = new RealTimeFragment();
         Bundle args = new Bundle();
+        args.putInt(LAST_INDEX,lastIndex);
         fragment.setArguments(args);
         return fragment;
     }

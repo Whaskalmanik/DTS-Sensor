@@ -21,10 +21,10 @@ public class NotificationHelper {
         this.context=context;
     }
 
-    public void popWarning()
+    public void popWarning(float temp, float lenght)
     {
         String title=context.getResources().getString(R.string.warning_title_not);
-        String text=context.getResources().getString(R.string.warning_des_not);
+        String text=context.getResources().getString(R.string.warning_des_not) + " at " + lenght +" m" + "with " + temp + " °C";
         Notification notification = new NotificationCompat.Builder(context,CHANNEL_2_ID)
                 .setSmallIcon(R.drawable.ic_warning_black_24dp)
                 .setContentTitle(title)
@@ -34,15 +34,15 @@ public class NotificationHelper {
                 .build();
         notificationManager.notify(1,notification);
     }
-    public void popCritical()
+    public void popCritical(float temp, float lenght)
     {
         String title=context.getResources().getString(R.string.critical_title_not);
-        String text=context.getResources().getString(R.string.critical_des_not);
+        String text=context.getResources().getString(R.string.critical_des_not) + " at " + lenght +" m" + " with " + temp + " °C";
         Notification notification = new NotificationCompat.Builder(context,CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_report_black_24dp)
                 .setContentTitle(title)
                 .setContentText(text)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .build();
         notificationManager.notify(2,notification);

@@ -22,18 +22,15 @@ public class TemperatureGraph {
 
     private LineChart graph;
     private ArrayList<ExtractedFile> data;
-    private Preferences markers;
-    private Context context;
 
     private LineDataSet dataSetData;
     private LineDataSet dataSetWarning;
     private LineDataSet dataSetCritical;
 
-    public TemperatureGraph(LineChart graph, ArrayList<ExtractedFile> data, Context context)
+    public TemperatureGraph(LineChart graph, ArrayList<ExtractedFile> data)
     {
         this.graph = graph;
         this.data = data;
-        this.context = context;
     }
 
     private void setStyle(int color, LineDataSet dataSet)

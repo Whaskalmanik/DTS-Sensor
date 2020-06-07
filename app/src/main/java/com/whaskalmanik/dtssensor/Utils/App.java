@@ -27,8 +27,10 @@ public class App extends Application {
             channel_2.setDescription("Channel for warning markers");
 
             NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel_l);
-            manager.createNotificationChannel(channel_2);
+            if (manager != null) {
+                manager.createNotificationChannel(channel_l);
+                manager.createNotificationChannel(channel_2);
+            }
         }
     }
 }

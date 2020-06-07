@@ -36,7 +36,7 @@ public class RealTimeGraph
     private LineDataSet dataSetCritical;
 
     private NotificationHelper notifications;
-    boolean popped=false;
+    private boolean popped = false;
 
 
     public RealTimeGraph(LineChart graph, ArrayList<ExtractedFile> data, Context context)
@@ -55,20 +55,23 @@ public class RealTimeGraph
         dataSet.setDrawCircles(false);
     }
 
-    private void notificationsCheck(float yValue)
+    private void notificationsCheck(float length,float temp)
     {
-        if(Preferences.areMarkersEnabled())
+        if(!Preferences.areMarkersEnabled() || popped)
         {
-            if (!popped&&yValue >= Preferences.getWarningTemp())
-            {
-                notifications.popWarning();
-                popped=true;
-            }
-            else if (!popped&&yValue >= Preferences.getCriticalTemp())
-            {
-                notifications.popCritical();
-                popped=true;
-            }
+            return;
+        }
+
+        if (temp>= Preferences.getWarningTemp())
+        {
+            notifications.popWarning(temp,length);
+            popped = true;
+        }
+
+        else if (temp >= Preferences.getCriticalTemp())
+        {
+            notifications.popCritical(temp,length);
+            popped = true;
         }
     }
 
@@ -83,8 +86,14 @@ public class RealTimeGraph
             List<Float> temperatures = data.get(selectedIndex).getTemperature();
             for(int i = 0;i < lengths.size() ;i++)
             {
-                entriesForData.add(new Entry(lengths.get(i),temperatures.get(i)));
-                notificationsCheck(temperatures.get(i));
+                if(lengths.get(i)<Preferences.getGraphOffset())
+                {
+                    continue;
+                }
+                float length = lengths.get(i);
+                float temperature = temperatures.get(i);
+                entriesForData.add(new Entry(length,temperature));
+                notificationsCheck(length,temperature);
             }
             dataSetData = new LineDataSet(entriesForData, data.get(selectedIndex).getDate());
             dataSetData.setHighlightLineWidth(1.5f);
@@ -98,11 +107,11 @@ public class RealTimeGraph
         List<Entry> entries = new ArrayList<>();
         List<Entry> entries2 = new ArrayList<>();
 
-        entries.add(new Entry(0,Preferences.getWarningTemp()));
+        entries.add(new Entry(0+Preferences.getGraphOffset(),Preferences.getWarningTemp()));
         entries.add(new Entry(data.get(selectedIndex).getLength().size(),Preferences.getWarningTemp()));
         dataSetWarning = new LineDataSet(entries,"Warning marker");
 
-        entries2.add(new Entry(0,Preferences.getCriticalTemp()));
+        entries2.add(new Entry(0+Preferences.getGraphOffset(),Preferences.getCriticalTemp()));
         entries2.add(new Entry(data.get(selectedIndex).getTemperature().size(),Preferences.getCriticalTemp()));
         dataSetCritical = new LineDataSet(entries2,"Critical marker");
 

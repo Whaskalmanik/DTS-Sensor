@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 
 public class TemperatureFragment extends Fragment {
-    private LineChart chart;
     private float value;
     private TemperatureGraph graph;
     private ArrayList<ExtractedFile> files = new ArrayList<>();
@@ -38,7 +37,7 @@ public class TemperatureFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         View rootView =inflater.inflate(R.layout.fragment_temperature,container,false);
-        chart = rootView.findViewById(R.id.chart);
+        LineChart chart = rootView.findViewById(R.id.chart);
 
         selected = rootView.findViewById(R.id.selectedTemperatureTemp);
         maxValue = rootView.findViewById(R.id.maxValueTemp);
@@ -56,7 +55,7 @@ public class TemperatureFragment extends Fragment {
                 value=files.get(0).getLength().get(0);
             }
         }
-        graph = new TemperatureGraph(chart,files,rootView.getContext());
+        graph = new TemperatureGraph(chart,files);
         graph.createGraph(value);
         setInformation();
         return  rootView;

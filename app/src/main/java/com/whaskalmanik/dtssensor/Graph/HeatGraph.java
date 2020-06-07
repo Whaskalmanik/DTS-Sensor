@@ -18,8 +18,8 @@ public class HeatGraph {
 
     private ArrayList<ExtractedFile> data;
     private ImageView imageView;
-    TextView lenghtStart;
-    TextView lenghtEnd;
+    private TextView lenghtStart;
+    private TextView lenghtEnd;
 
     public HeatGraph(ArrayList<ExtractedFile> data, ImageView imageView, TextView lenghtStart, TextView lenghtEnd)
     {

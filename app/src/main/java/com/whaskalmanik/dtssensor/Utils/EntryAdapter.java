@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.whaskalmanik.dtssensor.Preferences.Preferences;
 import com.whaskalmanik.dtssensor.R;
 
 import java.io.File;
@@ -18,20 +19,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntryAdapter extends ArrayAdapter<ListEntry> {
-    int layoutResourceId;
-    Context context;
-    List<ListEntry> data = null;
+    private Context context;
 
     public EntryAdapter(Context context, List<ListEntry> users) {
         super(context, 0, users);
 
         this.context = context;
-        this.data = users;
     }
 
+    @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
         ListEntry entry = getItem(position);
         if(entry==null)
         {
@@ -48,14 +46,14 @@ public class EntryAdapter extends ArrayAdapter<ListEntry> {
         TextView tvDate = (TextView) convertView.findViewById(R.id.tvDate);
 
         // Populate the data into the template view using the data object
-        SharedPreferences pref= context.getSharedPreferences("SelectedPreferences",0);
-        String temp = pref.getString("selected",null);
+        String temp = Preferences.getSelectedValue();
         if(temp!=null)
         {
             File file = new File(context.getFilesDir(),entry.identifier+"_"+0);
             entry.downloaded = file.exists();
             entry.selected = entry.identifier.equals(temp);
         }
+        
         tvName.setText(entry.name);
         tvDate.setText(entry.date);
         decideImage(entry.selected, entry.downloaded, tvImage);
@@ -63,7 +61,7 @@ public class EntryAdapter extends ArrayAdapter<ListEntry> {
         return convertView;
     }
 
-    public void decideImage(boolean selected, boolean downloaded, ImageView image)
+    private void decideImage(boolean selected, boolean downloaded, ImageView image)
     {
         if(selected)
         {

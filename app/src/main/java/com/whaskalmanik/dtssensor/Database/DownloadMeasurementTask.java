@@ -40,9 +40,9 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     private final static CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
             fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 
-    private static final int CONNECTION_TIME_OUT_MS =3000;
-    private static final int SOCKET_TIME_OUT_MS =3000;
-    private static final int SERVER_SELECTION_TIMEOUT_MS = 3000;
+    private static final int CONNECTION_TIME_OUT_MS = 5000;
+    private static final int SOCKET_TIME_OUT_MS = 5000;
+    private static final int SERVER_SELECTION_TIMEOUT_MS = 5000;
 
     private Context context;
     private String collectionName;
@@ -54,10 +54,10 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     private ExtractedFile extractedFile;
     private ArrayList<ExtractedFile> extractedFiles;
     private Exception exception;
-    private int notCachedIndex=0;
+    private int notCachedIndex = 0;
     private boolean showdialog;
     private Command callback;
-    private int lastIndex=0;
+    private static int lastIndex;
     private static MongoClientOptions options;
 
     public DownloadMeasurementTask(Context context, String collectionName,boolean showDialog)
@@ -82,7 +82,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         this.callback = callback;
     }
 
-    public int getLastIndex()
+    public static int getLastIndex()
     {
         return lastIndex;
     }
@@ -105,7 +105,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
             MongoCollection<ExtractedFile> stronglyTyped = database.getCollection(collectionName, ExtractedFile.class);
             long count = stronglyTyped.countDocuments();
 
-            int notCachedIndex = 0;
+            notCachedIndex = 0;
             while (new File(context.getDataDir(),collectionName+"_"+notCachedIndex).exists())
             {
                 notCachedIndex++;
@@ -137,6 +137,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         if(exception != null)
         {
             Log.d("Exception",exception.getMessage());
+            return;
         }
 
         BufferedWriter bufferedWriter;
@@ -146,6 +147,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         {
             String tmp = gson.toJson(extractedFiles.get(i));
             File file = new File(context.getFilesDir(),collectionName+"_"+i);
+            lastIndex = i;
             if(!file.exists())
             {
                 try
@@ -157,7 +159,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
                             bufferedWriter = new BufferedWriter(fileWriter);
                             bufferedWriter.write(tmp);
                             bufferedWriter.close();
-                            this.lastIndex=i;
+
                         }
                     }
                     else

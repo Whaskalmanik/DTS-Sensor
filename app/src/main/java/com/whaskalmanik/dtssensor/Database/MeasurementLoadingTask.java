@@ -2,7 +2,6 @@ package com.whaskalmanik.dtssensor.Database;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ListView;
@@ -13,7 +12,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
-import com.whaskalmanik.dtssensor.Files.PeriodicTask;
+
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
 import com.whaskalmanik.dtssensor.Utils.EntryAdapter;
 import com.whaskalmanik.dtssensor.Utils.ListEntry;
@@ -21,7 +20,6 @@ import com.whaskalmanik.dtssensor.Utils.ListEntry;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -29,9 +27,13 @@ import java.util.stream.Collectors;
 
 public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
 
-    private static final int CONNECTION_TIME_OUT_MS =3000;
-    private static final int SOCKET_TIME_OUT_MS =3000;
-    private static final int SERVER_SELECTION_TIMEOUT_MS = 3000;
+    private static final int CONNECTION_TIME_OUT_MS =5000;
+    private static final int SOCKET_TIME_OUT_MS =5000;
+    private static final int SERVER_SELECTION_TIMEOUT_MS = 5000;
+
+    private static final DateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
+    private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
 
     private Exception exception;
     private String ip;
@@ -41,13 +43,10 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
     private Context context;
     private List<String> collectionNames;
     private ListView lv;
-    ProgressDialog dialog;
-    PeriodicTask watcher;
-    MongoClientOptions options;
+    private ProgressDialog dialog;
+    private MongoClientOptions options;
 
-    static final DateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
-    static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
-    static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+
 
 
     public MeasurementLoadingTask(Context context, ListView lv)
@@ -57,7 +56,6 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
         ip = Preferences.getIP();
         port = Preferences.getPort();
         databaseName = Preferences.getDatabaseName();
-        watcher= new PeriodicTask();
 
         MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
         optionsBuilder.connectTimeout(CONNECTION_TIME_OUT_MS);
@@ -77,8 +75,6 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
     protected Integer doInBackground(Void... voids) {
         try {
             mongoClient = new MongoClient(new ServerAddress(ip,port),options);
-            //mongoClient = new MongoClient(ip,port);
-            List<String> dbNames = Lists.newArrayList(mongoClient.listDatabaseNames());
             MongoDatabase database = mongoClient.getDatabase(databaseName);
             collectionNames = Lists.newArrayList(database.listCollectionNames());
             return 0;
@@ -98,7 +94,7 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
             Date date = DATETIME_FORMAT.parse(timestamp);
             return new ListEntry(value,DATE_FORMAT.format(date),TIME_FORMAT.format(date));
         } catch (ParseException e) {
-            e.printStackTrace();
+            exception = e;
             return null;
         }
     }
@@ -107,11 +103,10 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         dialog.cancel();
-        SharedPreferences pref = context.getSharedPreferences("SelectedPreferences", 0);
-        SharedPreferences.Editor editor = pref.edit();
         if (result == null)
         {
             Toast.makeText(context, "Connection failed", Toast.LENGTH_LONG).show();
+            Log.d("ListView",exception.getMessage());
             return;
         }
         Toast.makeText(context, "Connection established", Toast.LENGTH_LONG).show();
@@ -122,8 +117,7 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
         lv.setAdapter(adapter);
         lv.setOnItemClickListener((adapterView, view, i, l) -> {
             ListEntry temp = listEntries.get(i);
-            editor.putString("selected", temp.identifier);
-            editor.apply();
+            Preferences.setSelectedValue(temp.identifier);
             adapter.notifyDataSetChanged();
             DownloadMeasurementTask task = new DownloadMeasurementTask(context, temp.identifier,true);
             task.execute();

@@ -49,9 +49,9 @@ public final class ExtractedFile implements Parcelable {
         }
     }
 
-    static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
-    static final DateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+    private static final DateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private Date timestamp;
     private ArrayList<Entry> data;

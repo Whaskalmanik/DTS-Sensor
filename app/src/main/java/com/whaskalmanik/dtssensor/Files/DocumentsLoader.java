@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.whaskalmanik.dtssensor.Preferences.Preferences;
 
 import org.apache.commons.io.FileUtils;
 import org.bson.Document;
@@ -21,14 +22,13 @@ import java.util.ArrayList;
 public class DocumentsLoader {
     private String selectedFile;
     private Context context;
-    ArrayList<File> files;
-    ArrayList<ExtractedFile> extractedFiles;
+    private ArrayList<File> files;
+    private ArrayList<ExtractedFile> extractedFiles;
 
     public DocumentsLoader(Context context)
     {
         this.context=context;
-        SharedPreferences selectedPreferences = context.getSharedPreferences("SelectedPreferences", 0);
-        selectedFile = selectedPreferences.getString("selected",null);
+        selectedFile = Preferences.getSelectedValue();
         files = new ArrayList<>();
         extractedFiles = new ArrayList<>();
     }
@@ -51,7 +51,7 @@ public class DocumentsLoader {
         if(files==null) {
             return null;
         }
-        String response=null;
+        String response = null;
         for (File file:files) {
             if(!file.exists()) {
                 continue;

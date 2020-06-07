@@ -42,10 +42,10 @@
     <string name="pref_title_sync_type">Connection type </string>
 
     <!--Notifications-->
-    <string name="warning_title_not">Warning</string>
-    <string name="warning_des_not">Value exceeded warning marker</string>
-    <string name="critical_title_not">Critical</string>
-    <string name="critical_des_not">Value exceeded critical marker</string>
+    <string name="warning_title_not">Warning marker exceeded!</string>
+    <string name="warning_des_not">Warning temperature</string>
+    <string name="critical_title_not">Critical marker exceeded!</string>
+    <string name="critical_des_not">Critical temperature</string>
     <!--Connection-->
     <string name="connection_category">Database connection</string>
     <string name="connection_ip">IP address</string>
