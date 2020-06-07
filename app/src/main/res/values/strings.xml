@@ -14,13 +14,14 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Marker settings -->
-    <string name="marker_category">Markers</string>
+    <string name="marker_category">Graph</string>
 
     <string name="marker_switch_title">Enable markers</string>
     <string name="marker_switch_description">Show markers on graph</string>
 
     <string name="warning_title">Warning marker</string>
     <string name="critical_marker">Critical marker</string>
+    <string name="graph_offset">Graph offset</string>
 
     <!-- NotificationsPref settings -->
     <string name="notifications_category">Notifications</string>

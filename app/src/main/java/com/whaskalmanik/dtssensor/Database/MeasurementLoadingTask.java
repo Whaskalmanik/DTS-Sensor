@@ -29,9 +29,9 @@ import java.util.stream.Collectors;
 
 public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
 
-    private static final int CONNECTION_TIME_OUT_MS =5000;
-    private static final int SOCKET_TIME_OUT_MS =5000;
-    private static final int SERVER_SELECTION_TIMEOUT_MS = 5000;
+    private static final int CONNECTION_TIME_OUT_MS =3000;
+    private static final int SOCKET_TIME_OUT_MS =3000;
+    private static final int SERVER_SELECTION_TIMEOUT_MS = 3000;
 
     private Exception exception;
     private String ip;
@@ -57,7 +57,7 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
         ip = Preferences.getIP();
         port = Preferences.getPort();
         databaseName = Preferences.getDatabaseName();
-        watcher= new PeriodicTask(context);
+        watcher= new PeriodicTask();
 
         MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
         optionsBuilder.connectTimeout(CONNECTION_TIME_OUT_MS);
@@ -123,7 +123,7 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
         lv.setOnItemClickListener((adapterView, view, i, l) -> {
             ListEntry temp = listEntries.get(i);
             editor.putString("selected", temp.identifier);
-            editor.commit();
+            editor.apply();
             adapter.notifyDataSetChanged();
             DownloadMeasurementTask task = new DownloadMeasurementTask(context, temp.identifier,true);
             task.execute();

@@ -5,7 +5,9 @@
     <item
         android:id="@+id/measurements"
         android:title="Measurements" />
-    <item android:title="Graphs">
+    <item
+        android:id="@+id/navGraphs"
+        android:title="Graphs">
 
         <menu>
             <item

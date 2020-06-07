@@ -40,9 +40,9 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     private final static CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
             fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 
-    private static final int CONNECTION_TIME_OUT_MS =5000;
-    private static final int SOCKET_TIME_OUT_MS =5000;
-    private static final int SERVER_SELECTION_TIMEOUT_MS = 5000;
+    private static final int CONNECTION_TIME_OUT_MS =3000;
+    private static final int SOCKET_TIME_OUT_MS =3000;
+    private static final int SERVER_SELECTION_TIMEOUT_MS = 3000;
 
     private Context context;
     private String collectionName;

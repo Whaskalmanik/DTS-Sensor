@@ -52,9 +52,9 @@ public class EntryAdapter extends ArrayAdapter<ListEntry> {
         String temp = pref.getString("selected",null);
         if(temp!=null)
         {
-            File file = new File(context.getFilesDir(),temp+"_"+0);
-            entry.downloaded=file.exists();
-            entry.selected=entry.identifier.equals(temp);
+            File file = new File(context.getFilesDir(),entry.identifier+"_"+0);
+            entry.downloaded = file.exists();
+            entry.selected = entry.identifier.equals(temp);
         }
         tvName.setText(entry.name);
         tvDate.setText(entry.date);

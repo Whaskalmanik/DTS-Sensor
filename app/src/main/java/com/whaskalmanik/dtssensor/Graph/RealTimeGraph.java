@@ -6,16 +6,21 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.highlight.ChartHighlighter;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.Utils.NotificationHelper;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,11 +124,36 @@ public class RealTimeGraph
             graph.setData(linedata);
         } else {
             LineData lineData = new LineData(dataSetData);
+            lineData.setValueFormatter(new ValueFormatter() {
+                @Override
+                public String getPointLabel(Entry entry) {
+                    return super.getPointLabel(entry)+" °C";
+                }
+            });
             graph.setData(lineData);
         }
         graph.getDescription().setEnabled(false);
+        graph.getXAxis().setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, AxisBase axis) {
+                return super.getAxisLabel(value, axis) +" m";
+            }
+        });
+        graph.getAxisLeft().setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, AxisBase axis) {
+                return super.getAxisLabel(roundFloat(value,2), axis) +" °C";
+            }
+        });
+        graph.getAxisRight().setDrawLabels(false);
         graph.invalidate();
 
+    }
+    private static float roundFloat(float f, int places) {
+
+        BigDecimal bigDecimal = new BigDecimal(Float.toString(f));
+        bigDecimal = bigDecimal.setScale(places, RoundingMode.HALF_UP);
+        return bigDecimal.floatValue();
     }
 
 
@@ -132,3 +162,4 @@ public class RealTimeGraph
         graph.highlightValue(value,0,true);
     }
 }
+

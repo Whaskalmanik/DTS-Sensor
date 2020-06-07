@@ -39,6 +39,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
     {
         // For all other preferences, set the summary to the value's
         // simple string representation.
+
         preference.setSummary(stringValue);
     }
         return true;
@@ -81,6 +82,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
             bindPreferenceSummaryToValue(findPreference("database_name"));
             bindPreferenceSummaryToValue(findPreference("database_ip"));
             bindPreferenceSummaryToValue(findPreference("database_port"));
+            bindPreferenceSummaryToValue(findPreference("graph_offset"));
         }
     }
 }

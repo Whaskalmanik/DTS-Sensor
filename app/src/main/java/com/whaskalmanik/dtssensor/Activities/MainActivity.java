@@ -18,15 +18,11 @@ import android.content.Intent;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.whaskalmanik.dtssensor.Database.DownloadMeasurementTask;
-import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
 import com.whaskalmanik.dtssensor.Files.PeriodicTask;
 import com.whaskalmanik.dtssensor.Fragments.MeasurementsFragment;
 import com.whaskalmanik.dtssensor.Preferences.Preferences;
-import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 import com.whaskalmanik.dtssensor.Fragments.RealTimeFragment;
 import com.whaskalmanik.dtssensor.Fragments.HeatFragment;
 import com.whaskalmanik.dtssensor.Fragments.TemperatureFragment;
@@ -34,8 +30,6 @@ import com.whaskalmanik.dtssensor.Fragments.TemperatureFragment;
 import com.whaskalmanik.dtssensor.R;
 
 import java.io.File;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String selected;
     private DownloadMeasurementTask downloadMeasurementTask;
     private Map<Class, Fragment> fragments = new HashMap<>();
+    private NavigationView navigationView;
 
     private static Class fragmentType;
 
@@ -61,6 +56,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         Preferences.initialize(getApplicationContext());
+
+        refreshTask = new PeriodicTask();
+        if(!Preferences.isSynchronizationEnabled())
+        {
+            refreshTask.disableRefresh();
+        }
+        refreshTask.setAction(this::refreshData);
+
         pref = getApplicationContext().getSharedPreferences("SelectedPreferences", 0);
         selected = pref.getString("selected",null);
 
@@ -74,14 +77,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragments.put(RealTimeFragment.getClass(), RealTimeFragment);
         fragments.put(MeasurementsFragment.getClass(), MeasurementsFragment);
 
-        downloadMeasurementTask = new DownloadMeasurementTask(getApplicationContext(),selected,false);
-        refreshTask = new PeriodicTask(getApplicationContext());
-        if(!Preferences.isSynchronizationEnabled())
-        {
-            refreshTask.disableRefresh();
-        }
-        refreshTask.setAction(this::refreshData);
-
         setContentView(R.layout.activity_main);
         createDrawer(savedInstanceState);
     }
@@ -93,13 +88,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer = findViewById(R.id.drawer_layout);
         setHeader(savedInstanceState);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
         toggle.syncState();
     }
 
+    private void checkForEnabledHeader()
+    {
+        if(selected==null)
+        {
+            navigationView.getMenu().findItem(R.id.realTime).setEnabled(false);
+            navigationView.getMenu().findItem(R.id.tempterature).setEnabled(false);
+            navigationView.getMenu().findItem(R.id.heat).setEnabled(false);
+        }
+        else
+        {
+            navigationView.getMenu().findItem(R.id.realTime).setEnabled(true);
+            navigationView.getMenu().findItem(R.id.tempterature).setEnabled(true);
+            navigationView.getMenu().findItem(R.id.heat).setEnabled(true);
+        }
+    }
+
+
     public void setHeader(Bundle savedInstanceState)
     {
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
+        checkForEnabledHeader();
         navigationView.setNavigationItemSelectedListener(this);
         if (savedInstanceState == null) {
             fragmentType = MeasurementsFragment.getClass();
@@ -182,7 +194,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case R.id.storageDelete:
             {
+                fragmentType=MeasurementsFragment.getClass();
                 deleteRecursive(getApplicationContext().getFilesDir());
+                unselected();
+                reloadFragment();
                 break;
             }
         }
@@ -224,8 +239,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         downloadMeasurementTask.setCallback(null);
     }
 
+    private void unselected()
+    {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("SelectedPreferences", 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("selected", null);
+        editor.apply();
+        checkForEnabledHeader();
+    }
 
-    void refreshData() {
+
+    private void refreshData() {
         selected = pref.getString("selected",null);
         downloadMeasurementTask = new DownloadMeasurementTask(getApplicationContext(),selected,false);
         downloadMeasurementTask.setCallback(this::reloadFragment);

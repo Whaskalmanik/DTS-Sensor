@@ -16,12 +16,10 @@ import java.util.function.Consumer;
 public class PeriodicTask {
     private Timer refreshTimer = new Timer();
     private Boolean isRefreshing = false;
-    private Context context;
     private Command action;
 
-    public PeriodicTask(Context context)
+    public PeriodicTask()
     {
-        this.context = context;
         Preferences.areMarkersEnabled();
 
         if (Preferences.isSynchronizationEnabled())
