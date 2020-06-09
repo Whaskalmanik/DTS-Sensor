@@ -16,18 +16,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity
 
     if (preference instanceof ListPreference)
     {
-        // For list preferences, look up the correct display value in
-        // the preference's 'entries' list.
         ListPreference listPreference = (ListPreference) preference;
         int index = listPreference.findIndexOfValue(stringValue);
-
-        // Set the summary to reflect the new value.
         preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
     }
     else
     {
-        // For all other preferences, set the summary to the value's
-        // simple string representation.
+        if(stringValue.isEmpty())
+        {
+            return false;
+        }
         preference.setSummary(stringValue);
     }
         return true;
@@ -39,21 +37,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // load settings fragment
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MainPreferenceFragment()).commit();
     }
 
     private static void bindPreferenceSummaryToValue(Preference preference)
     {
-        // Set the listener to watch for value changes.
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
-        // Trigger the listener immediately with the preference's
-        // current value.
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), "0"));
+                        .getString(preference.getKey(), ""));
     }
 
     public static class MainPreferenceFragment extends PreferenceFragment
