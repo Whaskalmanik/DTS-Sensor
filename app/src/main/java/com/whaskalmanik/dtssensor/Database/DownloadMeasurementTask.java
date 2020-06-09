@@ -75,7 +75,6 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         optionsBuilder.socketTimeout(SOCKET_TIME_OUT_MS);
         optionsBuilder.serverSelectionTimeout(SERVER_SELECTION_TIMEOUT_MS);
         options = optionsBuilder.build();
-
     }
 
     public void setCallback(final Command callback) {

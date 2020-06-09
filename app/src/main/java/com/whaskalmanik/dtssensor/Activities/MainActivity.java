@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void checkForEnabledHeader(String selectedValue)
     {
-        if(selectedValue==null)
+        if(selectedValue == null)
         {
             navigationView.getMenu().findItem(R.id.realTime).setEnabled(false);
             navigationView.getMenu().findItem(R.id.tempterature).setEnabled(false);

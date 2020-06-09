@@ -51,7 +51,7 @@ public class DocumentsLoader {
         if(files==null) {
             return null;
         }
-        String response = null;
+        String response;
         for (File file:files) {
             if(!file.exists()) {
                 continue;

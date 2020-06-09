@@ -20,10 +20,13 @@ public class App extends Application {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel_l = new NotificationChannel(CHANNEL_1_ID,"CriticalMarker",NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel channel_l;
+            NotificationChannel channel_2;
+
+            channel_l = new NotificationChannel(CHANNEL_1_ID,"CriticalMarker",NotificationManager.IMPORTANCE_HIGH);
             channel_l.setDescription("Channel for critical markers");
 
-            NotificationChannel channel_2 = new NotificationChannel(CHANNEL_2_ID,"WarningMarker",NotificationManager.IMPORTANCE_DEFAULT);
+            channel_2 = new NotificationChannel(CHANNEL_2_ID,"WarningMarker",NotificationManager.IMPORTANCE_DEFAULT);
             channel_2.setDescription("Channel for warning markers");
 
             NotificationManager manager = getSystemService(NotificationManager.class);

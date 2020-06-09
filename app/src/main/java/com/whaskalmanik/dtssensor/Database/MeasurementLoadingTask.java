@@ -51,8 +51,8 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
 
     public MeasurementLoadingTask(Context context, ListView lv)
     {
-        this.context=context;
-        this.lv=lv;
+        this.context = context;
+        this.lv = lv;
         ip = Preferences.getIP();
         port = Preferences.getPort();
         databaseName = Preferences.getDatabaseName();
@@ -109,9 +109,6 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
             Log.d("ListView",exception.getMessage());
             return;
         }
-        Toast.makeText(context, "Connection established", Toast.LENGTH_LONG).show();
-
-
         List<ListEntry> listEntries = collectionNames.stream().map(this::getEntry).filter(Objects::nonNull).collect(Collectors.toList());
         EntryAdapter adapter = new EntryAdapter(context, listEntries);
         lv.setAdapter(adapter);

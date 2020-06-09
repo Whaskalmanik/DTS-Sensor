@@ -11,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
@@ -31,16 +29,7 @@ public class HeatFragment extends Fragment {
 
         DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
         files = documentsLoader.parseDataFromFiles();
-
-        ImageView imageView = (ImageView) rootView.findViewById(R.id.imageView);
-        TextView lengthStart = (TextView) rootView.findViewById(R.id.lenghtStart);
-        TextView lengthEnd = (TextView) rootView.findViewById(R.id.lenghtEnd);
-        TextView tempMin = (TextView) rootView.findViewById(R.id.lenghtStart);
-        TextView tempMax = (TextView) rootView.findViewById(R.id.lenghtEnd);
-        ImageView bar = (ImageView) rootView.findViewById(R.id.imageViewBar);
-
-        HeatGraph graph= new HeatGraph(files,imageView,lengthStart,lengthEnd);
-        graph.createBar(bar);
+        HeatGraph graph= new HeatGraph(files,rootView);
         graph.createGraph();
         return rootView;
     }

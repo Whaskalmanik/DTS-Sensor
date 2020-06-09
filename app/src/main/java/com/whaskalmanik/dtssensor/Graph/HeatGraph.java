@@ -2,14 +2,18 @@ package com.whaskalmanik.dtssensor.Graph;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 import com.whaskalmanik.dtssensor.R;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,15 +22,32 @@ public class HeatGraph {
 
     private ArrayList<ExtractedFile> data;
     private ImageView imageView;
-    private TextView lenghtStart;
-    private TextView lenghtEnd;
+    private TextView lengthStart;
+    private TextView lengthEnd;
+    private TextView tempMin;
+    private TextView tempMax;
+    private TextView timeStart;
+    private TextView timeEnd;
+    private LinearLayout layout;
+    private TableLayout table;
 
-    public HeatGraph(ArrayList<ExtractedFile> data, ImageView imageView, TextView lenghtStart, TextView lenghtEnd)
+    private static final float MIN_TEMP = 20;
+    private static final float MAX_TEMP = 30;
+    private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+
+    public HeatGraph(ArrayList<ExtractedFile> data, View rootView)
     {
-        this.data=data;
-        this.imageView=imageView;
-        this.lenghtEnd=lenghtEnd;
-        this.lenghtStart=lenghtStart;
+        this.data = data;
+        imageView = (ImageView) rootView.findViewById(R.id.imageView);
+        lengthStart = (TextView) rootView.findViewById(R.id.lenghtStart);
+        lengthEnd = (TextView) rootView.findViewById(R.id.lenghtEnd);
+        tempMin = (TextView) rootView.findViewById(R.id.minTmp);
+        tempMax = (TextView) rootView.findViewById(R.id.maxTmp);
+        timeEnd = (TextView) rootView.findViewById(R.id.timeEnd);
+        timeStart = (TextView) rootView.findViewById(R.id.timeStart);
+        layout = (LinearLayout)rootView.findViewById(R.id.layoutForPadding);
+        table = (TableLayout) rootView.findViewById(R.id.tableLayout);
+      //  bar = (ImageView) rootView.findViewById(R.id.imageViewBar);
     }
 
     private float interpolate(float a, float b, float proportion) {
@@ -56,9 +77,7 @@ public class HeatGraph {
     }
 
     private int getHeatColor(float temp) {
-        float minTemp = 20;
-        float maxTemp = 30;
-        float t = Math.min(Math.max((temp - minTemp) / (maxTemp - minTemp), 0f), 1f);
+        float t = Math.min(Math.max((temp - MIN_TEMP) / (MAX_TEMP - MIN_TEMP), 0f), 1f);
         return interpolateColor(Color.BLUE,Color.RED,t);
     }
 
@@ -75,6 +94,18 @@ public class HeatGraph {
         image.setImageBitmap(bitmap);
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
     }
+    private void setTextView(float min, float max,int start, int end)
+    {
+        tempMin.setText(MIN_TEMP+" °C");
+        tempMax.setText(MAX_TEMP+" °C");
+        lengthEnd.setText(min+" m");
+        lengthStart.setText(max+" m");
+        timeEnd.setText(end+" s");
+        timeStart.setText(start+" s");
+        int number =layout.getWidth();
+        table.setPadding(layout.getWidth(),0,0,0);
+
+    }
 
 
     public void createGraph()
@@ -84,14 +115,13 @@ public class HeatGraph {
             return;
         }
 
-        Date startingTime = data.get(0).getTimestamp();
-        Date endingTime = data.get(data.size() - 1).getTimestamp();
+        int startingTime = 0;
+        int endingTime = startingTime+data.size()*10;
         float minLength = data.get(0).getMinimumLenght();
         float maxLength = data.get(0).getMaximumLenght();
         int lengthCount = data.get(0).getLength().size();
 
-        lenghtStart.setText(minLength+" m");
-        lenghtEnd.setText(maxLength+" m");
+        setTextView(minLength,maxLength,startingTime,endingTime);
 
         Bitmap bitmap = Bitmap.createBitmap(lengthCount, data.size(), Bitmap.Config.ARGB_8888);
 
