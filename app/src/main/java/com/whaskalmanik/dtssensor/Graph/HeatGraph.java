@@ -28,12 +28,9 @@ public class HeatGraph {
     private TextView tempMax;
     private TextView timeStart;
     private TextView timeEnd;
-    private LinearLayout layout;
-    private TableLayout table;
-
+    private TextView paddingText;
     private static final float MIN_TEMP = 20;
     private static final float MAX_TEMP = 30;
-    private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
 
     public HeatGraph(ArrayList<ExtractedFile> data, View rootView)
     {
@@ -45,8 +42,7 @@ public class HeatGraph {
         tempMax = (TextView) rootView.findViewById(R.id.maxTmp);
         timeEnd = (TextView) rootView.findViewById(R.id.timeEnd);
         timeStart = (TextView) rootView.findViewById(R.id.timeStart);
-        layout = (LinearLayout)rootView.findViewById(R.id.layoutForPadding);
-        table = (TableLayout) rootView.findViewById(R.id.tableLayout);
+        paddingText = (TextView) rootView.findViewById(R.id.paddingText);
       //  bar = (ImageView) rootView.findViewById(R.id.imageViewBar);
     }
 
@@ -102,9 +98,7 @@ public class HeatGraph {
         lengthStart.setText(max+" m");
         timeEnd.setText(end+" s");
         timeStart.setText(start+" s");
-        int number =layout.getWidth();
-        table.setPadding(layout.getWidth(),0,0,0);
-
+        paddingText.setText(end+" s");
     }
 
 
