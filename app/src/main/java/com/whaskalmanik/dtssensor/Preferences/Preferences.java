@@ -56,6 +56,15 @@ public final class Preferences {
         return Integer.parseInt(instance.sharedPreferences.getString("sync_frequency","10"));
     }
 
+    public static int getHeatMax()
+    {
+        return Integer.parseInt(instance.sharedPreferences.getString("graph_heat_max","20"));
+    }
+    public static int getHeatMin()
+    {
+        return Integer.parseInt(instance.sharedPreferences.getString("graph_heat_min","30"));
+    }
+
     public static String getIP()
     {
         return instance.sharedPreferences.getString("database_ip","192.168.4.1");

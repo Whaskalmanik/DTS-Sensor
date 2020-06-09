@@ -75,7 +75,7 @@ public class TemperatureGraph {
 
     public void createGraph(float value) {
 
-        if (data == null  || data.isEmpty())
+        if(data==null||data.isEmpty()||data.get(0).getEntries().isEmpty())
         {
             return;
         }

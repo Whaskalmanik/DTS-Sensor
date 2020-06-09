@@ -2,26 +2,22 @@ package com.whaskalmanik.dtssensor.Graph;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.util.Log;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
+import com.whaskalmanik.dtssensor.Preferences.Preferences;
 import com.whaskalmanik.dtssensor.R;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class HeatGraph {
 
     private ArrayList<ExtractedFile> data;
-    private ImageView imageView;
+    private ImageView heatGraph;
     private TextView lengthStart;
     private TextView lengthEnd;
     private TextView tempMin;
@@ -29,13 +25,16 @@ public class HeatGraph {
     private TextView timeStart;
     private TextView timeEnd;
     private TextView paddingText;
-    private static final float MIN_TEMP = 20;
-    private static final float MAX_TEMP = 30;
+    private ImageView bar;
+    private TextView middleTemperature;
+    private int heat_min;
+    private int heat_max;
+
 
     public HeatGraph(ArrayList<ExtractedFile> data, View rootView)
     {
         this.data = data;
-        imageView = (ImageView) rootView.findViewById(R.id.imageView);
+        heatGraph = (ImageView) rootView.findViewById(R.id.imageView);
         lengthStart = (TextView) rootView.findViewById(R.id.lenghtStart);
         lengthEnd = (TextView) rootView.findViewById(R.id.lenghtEnd);
         tempMin = (TextView) rootView.findViewById(R.id.minTmp);
@@ -43,7 +42,12 @@ public class HeatGraph {
         timeEnd = (TextView) rootView.findViewById(R.id.timeEnd);
         timeStart = (TextView) rootView.findViewById(R.id.timeStart);
         paddingText = (TextView) rootView.findViewById(R.id.paddingText);
-      //  bar = (ImageView) rootView.findViewById(R.id.imageViewBar);
+        middleTemperature = (TextView) rootView.findViewById(R.id.middleTmp);
+        bar = (ImageView) rootView.findViewById(R.id.imageBar);
+
+        heat_min = Preferences.getHeatMin();
+        heat_max = Preferences.getHeatMax();
+
     }
 
     private float interpolate(float a, float b, float proportion) {
@@ -73,46 +77,51 @@ public class HeatGraph {
     }
 
     private int getHeatColor(float temp) {
-        float t = Math.min(Math.max((temp - MIN_TEMP) / (MAX_TEMP - MIN_TEMP), 0f), 1f);
+        float t = Math.min(Math.max((temp - heat_min) / (heat_max - heat_min), 0f), 1f);
         return interpolateColor(Color.BLUE,Color.RED,t);
     }
 
-    public void createBar(ImageView image)
+    public void createBar()
     {
-        Bitmap bitmap = Bitmap.createBitmap(100, 10, Bitmap.Config.ARGB_8888);
-        for(int i = 0;i<100;i++)
+        int width=heat_max-heat_min;
+        Bitmap bitmap = Bitmap.createBitmap(width, 10, Bitmap.Config.ARGB_8888);
+        for(int i = 0;i<width;i++)
         {
             for(int j = 0;j<10;j++)
             {
-                bitmap.setPixel(i, j, getHeatColor(i/100));
+                bitmap.setPixel(i, j, getHeatColor(i+heat_min));
             }
         }
-        image.setImageBitmap(bitmap);
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        bar.setImageBitmap(bitmap);
+        bar.setScaleType(ImageView.ScaleType.FIT_XY);
     }
     private void setTextView(float min, float max,int start, int end)
     {
-        tempMin.setText(MIN_TEMP+" °C");
-        tempMax.setText(MAX_TEMP+" °C");
-        lengthEnd.setText(min+" m");
-        lengthStart.setText(max+" m");
+        tempMin.setText(heat_min +" °C");
+        tempMax.setText(heat_max +" °C");
+        lengthEnd.setText(max+" m");
+        lengthStart.setText(min+" m");
         timeEnd.setText(end+" s");
         timeStart.setText(start+" s");
         paddingText.setText(end+" s");
+        int midPoint=(heat_max+heat_min)/2;
+        middleTemperature.setText((midPoint)+" °C");
     }
 
 
     public void createGraph()
     {
-        if (data==null) {
-            Log.d("HeatGraph","Data in heat RealTimeGraph are null");
+        if(data==null||data.isEmpty()||data.get(0).getEntries().isEmpty())
+        {
+            setTextView(0,0,0,0);
             return;
         }
 
         int startingTime = 0;
+
         int endingTime = startingTime+data.size()*10;
-        float minLength = data.get(0).getMinimumLenght();
-        float maxLength = data.get(0).getMaximumLenght();
+        float minLength = data.get(0).getMinimumLength();
+        float maxLength = data.get(0).getMaximumLength();
         int lengthCount = data.get(0).getLength().size();
 
         setTextView(minLength,maxLength,startingTime,endingTime);
@@ -125,11 +134,12 @@ public class HeatGraph {
 
             for(int j=0;j<entries.size();j++)
             {
-                bitmap.setPixel(j, i, getHeatColor((float)entries.get(j).getTemp()));
+                bitmap.setPixel(j, data.size()-1-i, getHeatColor((float)entries.get(j).getTemp()));
             }
         }
-        imageView.setImageBitmap(bitmap);
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        heatGraph.setImageBitmap(bitmap);
+        heatGraph.setScaleType(ImageView.ScaleType.FIT_XY);
+        createBar();
     }
 
 }

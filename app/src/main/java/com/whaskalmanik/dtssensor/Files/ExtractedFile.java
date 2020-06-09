@@ -110,6 +110,10 @@ public final class ExtractedFile implements Parcelable {
         return Collections.unmodifiableList(data);
     }
 
+    public void setEntries(final List<Entry> entries) {
+        data = new ArrayList<>(entries);
+    }
+
     public String getDate()
     {
         return DATE_FORMAT.format(timestamp);
@@ -149,7 +153,7 @@ public final class ExtractedFile implements Parcelable {
         this.data = data;
     }
 
-    public float getMaximumLenght()
+    public float getMaximumLength()
     {
         return Collections.max(getLength());
     }
@@ -157,7 +161,7 @@ public final class ExtractedFile implements Parcelable {
     {
         return Collections.max(getTemperature());
     }
-    public float getMinimumLenght()
+    public float getMinimumLength()
     {
         return Collections.min(getLength());
     }

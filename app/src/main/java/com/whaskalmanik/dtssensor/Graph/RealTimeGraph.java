@@ -86,10 +86,6 @@ public class RealTimeGraph
             List<Float> temperatures = data.get(selectedIndex).getTemperature();
             for(int i = 0;i < lengths.size() ;i++)
             {
-                if(lengths.get(i)<Preferences.getGraphOffset())
-                {
-                    continue;
-                }
                 float length = lengths.get(i);
                 float temperature = temperatures.get(i);
                 entriesForData.add(new Entry(length,temperature));
@@ -107,12 +103,12 @@ public class RealTimeGraph
         List<Entry> entries = new ArrayList<>();
         List<Entry> entries2 = new ArrayList<>();
 
-        entries.add(new Entry(0+Preferences.getGraphOffset(),Preferences.getWarningTemp()));
-        entries.add(new Entry(data.get(selectedIndex).getLength().size(),Preferences.getWarningTemp()));
+        entries.add(new Entry(data.get(0).getMinimumLength(),Preferences.getWarningTemp()));
+        entries.add(new Entry(data.get(0).getMaximumLength(),Preferences.getWarningTemp()));
         dataSetWarning = new LineDataSet(entries,"Warning marker");
 
-        entries2.add(new Entry(0+Preferences.getGraphOffset(),Preferences.getCriticalTemp()));
-        entries2.add(new Entry(data.get(selectedIndex).getTemperature().size(),Preferences.getCriticalTemp()));
+        entries2.add(new Entry(data.get(0).getMinimumLength(),Preferences.getCriticalTemp()));
+        entries2.add(new Entry(data.get(0).getMaximumLength(),Preferences.getCriticalTemp()));
         dataSetCritical = new LineDataSet(entries2,"Critical marker");
 
         setStyle(Color.parseColor("#CAB11B"),dataSetWarning,2.0f);
@@ -121,9 +117,8 @@ public class RealTimeGraph
 
     public void createGraph(int selectedIndex)
     {
-        if (data==null)
+        if(data==null||data.isEmpty()||data.get(0).getEntries().isEmpty())
         {
-            Log.d("RealTimeGraph:" ,"Data are null when graph is being created!");
             return;
         }
         fillDataSet(selectedIndex);

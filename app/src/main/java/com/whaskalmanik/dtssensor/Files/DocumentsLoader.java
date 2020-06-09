@@ -17,6 +17,8 @@ import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class DocumentsLoader {
@@ -62,8 +64,13 @@ public class DocumentsLoader {
                 Log.d("String",response);
                 Gson gson = new Gson();
                 ExtractedFile extractedFile = gson.fromJson(response, ExtractedFile.class);
+                float offset = Preferences.getGraphOffset();
+                if(offset!=0.0f)
+                {
+                    List<ExtractedFile.Entry> entries = extractedFile.getEntries().stream().filter(x -> x.getLength() > offset).collect(Collectors.toList());
+                    extractedFile.setEntries(entries);
+                }
                 extractedFiles.add(extractedFile);
-
             }
             catch (Exception ex)
             {

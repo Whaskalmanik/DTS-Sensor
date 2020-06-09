@@ -17,15 +17,12 @@ import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.Files.ExtractedFile;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.stream.Collectors;
 
 
 public class TemperatureFragment extends Fragment {
     private float value;
     private TemperatureGraph graph;
-    private ArrayList<ExtractedFile> files = new ArrayList<>();
+    private ArrayList<ExtractedFile> data = new ArrayList<>();
     DocumentsLoader documentsLoader;
 
     TextView selected;
@@ -43,19 +40,13 @@ public class TemperatureFragment extends Fragment {
         maxValue = rootView.findViewById(R.id.maxValueTemp);
         minValue = rootView.findViewById(R.id.minValueTemp);
 
-        Bundle arguments = getArguments();
+
         documentsLoader = new DocumentsLoader(rootView.getContext());
 
-        files = documentsLoader.parseDataFromFiles();
-        if (arguments != null)
-        {
-            value = arguments.getFloat("xValue");
-            if(value==Float.MIN_VALUE)
-            {
-                value=files.get(0).getLength().get(0);
-            }
-        }
-        graph = new TemperatureGraph(chart,files);
+        data = documentsLoader.parseDataFromFiles();
+
+        loadArguments();
+        graph = new TemperatureGraph(chart, data);
         graph.createGraph(value);
         setInformation();
         return  rootView;
@@ -65,24 +56,45 @@ public class TemperatureFragment extends Fragment {
     public void onResume()
     {
         super.onResume();
-        if (files == null || files.isEmpty()) {
+        if (data == null || data.isEmpty()||data.get(0).getEntries().isEmpty()) {
             return;
         }
         graph.createGraph(value);
     }
 
+    private void loadArguments()
+    {
+        if (data == null || data.isEmpty()||data.get(0).getEntries().isEmpty()) {
+            return;
+        }
+        Bundle arguments = getArguments();
+        if (arguments != null)
+        {
+            value = arguments.getFloat("xValue");
+        }
+
+        if(value==Float.MIN_VALUE)
+        {
+            value=data.get(0).getLength().get(0);
+        }
+    }
+
     private void setInformation()
     {
-        if (files == null || files.isEmpty()) {
+        if (data == null || data.isEmpty() || data.get(0).getEntries().isEmpty()) {
+            selected.setText("Length: " + 0 + " m ");
+            minValue.setText("Min: "+ 0 + " °C");
+            maxValue.setText("Max: "+ 0 + " °C");
+
             return;
         }
 
         selected.setText("Length: " + value + " m ");
 
-        int lengthIndex = files.get(0).getLength().indexOf(value);
+        int lengthIndex = data.get(0).getLength().indexOf(value);
 
-        double maxTemp = files.stream().map(x -> x.getData().get(lengthIndex).getTemp()).max(Double::compare).get();
-        double minTemp = files.stream().map(x -> x.getData().get(lengthIndex).getTemp()).min(Double::compare).get();
+        double maxTemp = data.stream().map(x -> x.getData().get(lengthIndex).getTemp()).max(Double::compare).get();
+        double minTemp = data.stream().map(x -> x.getData().get(lengthIndex).getTemp()).min(Double::compare).get();
 
         minValue.setText("Min: "+ minTemp + " °C");
         maxValue.setText("Max: "+ maxTemp + " °C");

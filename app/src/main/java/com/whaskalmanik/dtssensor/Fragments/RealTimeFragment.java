@@ -46,7 +46,7 @@ public class RealTimeFragment extends Fragment {
     private int lastIndex;
 
 
-    ArrayList<ExtractedFile> files = new ArrayList<>();
+    ArrayList<ExtractedFile> data = new ArrayList<>();
 
 
     @Nullable
@@ -70,7 +70,7 @@ public class RealTimeFragment extends Fragment {
         chart = rootView.findViewById(R.id.chart);
 
         DocumentsLoader documentsLoader = new DocumentsLoader(context);
-        files = documentsLoader.parseDataFromFiles();
+        data = documentsLoader.parseDataFromFiles();
 
         setSpinner();
         setGraph();
@@ -86,10 +86,14 @@ public class RealTimeFragment extends Fragment {
 
     public void setSpinner()
     {
-        ArrayList<String> nameList = new ArrayList<>();
-        for(int i = 0; i < files.size(); i++)
+        if(data==null||data.get(0).getEntries().isEmpty()|data.isEmpty())
         {
-            nameList.add(files.get(i).getDate() + " " + files.get(i).getTime());
+            return;
+        }
+        ArrayList<String> nameList = new ArrayList<>();
+        for(int i = 0; i < data.size(); i++)
+        {
+            nameList.add(data.get(i).getDate() + " " + data.get(i).getTime());
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, nameList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -118,7 +122,12 @@ public class RealTimeFragment extends Fragment {
 
     public void setGraph()
     {
-        realTimeGraph = new RealTimeGraph(chart,files,context);
+        if(data==null||data.isEmpty()||data.get(0).getEntries().isEmpty())
+        {
+            setInformation(0,0,View.GONE);
+            return;
+        }
+        realTimeGraph = new RealTimeGraph(chart, data,context);
 
         if(selectedLength == Float.MIN_VALUE)
         {
@@ -151,10 +160,18 @@ public class RealTimeFragment extends Fragment {
 
     private void setInformation(float selectedX,float selectedY, int visibility)
     {
+        if(data==null||data.isEmpty()||data.get(0).getEntries().isEmpty())
+        {
+            selected.setText("Selected: " + selectedX + " m " + selectedY + " °C");
+            selected.setVisibility(visibility);
+            minValue.setText("Min: "+0+" °C");
+            maxValue.setText("Max: "+0+" °C");
+            return;
+        }
         selected.setText("Selected: " + selectedX + " m " + selectedY + " °C");
         selected.setVisibility(visibility);
-        minValue.setText("Min: "+ files.get(indexInSpinner).getMinimumTemperature()+" °C");
-        maxValue.setText("Max: "+ files.get(indexInSpinner).getMaximumTemperature()+" °C");
+        minValue.setText("Min: "+ data.get(indexInSpinner).getMinimumTemperature()+" °C");
+        maxValue.setText("Max: "+ data.get(indexInSpinner).getMaximumTemperature()+" °C");
     }
 
     @Override

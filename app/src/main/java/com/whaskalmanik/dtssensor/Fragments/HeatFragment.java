@@ -29,6 +29,7 @@ public class HeatFragment extends Fragment {
 
         DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
         files = documentsLoader.parseDataFromFiles();
+
         HeatGraph graph= new HeatGraph(files,rootView);
         graph.createGraph();
         return rootView;

@@ -3,23 +3,12 @@ package com.whaskalmanik.dtssensor.Activities;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
 import com.whaskalmanik.dtssensor.R;
 
-/**
- * A {@link PreferenceActivity} that presents a set of application settings. On
- * handset devices, settings are presented as a single list. On tablets,
- * settings are split by category, with category headers shown to the left of
- * the list of settings.
- * <p>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
- * Android Design: Settings</a> for design guidelines and the <a
- * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
- * API Guide</a> for more information on developing a Settings UI.
- */
+
 public class SettingsActivity extends AppCompatPreferenceActivity
 {
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, newValue) -> {
@@ -39,7 +28,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity
     {
         // For all other preferences, set the summary to the value's
         // simple string representation.
-
         preference.setSummary(stringValue);
     }
         return true;
@@ -65,7 +53,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+                        .getString(preference.getKey(), "0"));
     }
 
     public static class MainPreferenceFragment extends PreferenceFragment
@@ -78,11 +66,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity
             bindPreferenceSummaryToValue(findPreference("warning_marker"));
             bindPreferenceSummaryToValue(findPreference("critical_marker"));
             bindPreferenceSummaryToValue(findPreference("sync_frequency"));
-            bindPreferenceSummaryToValue(findPreference("sync_type"));
             bindPreferenceSummaryToValue(findPreference("database_name"));
             bindPreferenceSummaryToValue(findPreference("database_ip"));
             bindPreferenceSummaryToValue(findPreference("database_port"));
             bindPreferenceSummaryToValue(findPreference("graph_offset"));
+            bindPreferenceSummaryToValue(findPreference("graph_heat_max"));
+            bindPreferenceSummaryToValue(findPreference("graph_heat_min"));
         }
     }
 }
