@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -31,9 +32,9 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
     private static final int SOCKET_TIME_OUT_MS =5000;
     private static final int SERVER_SELECTION_TIMEOUT_MS = 5000;
 
-    private static final DateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
-    private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+    private static final DateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.US);
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy",Locale.US);
+    private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss",Locale.US);
 
     private Exception exception;
     private String ip;
@@ -107,6 +108,12 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
         {
             Toast.makeText(context, "Connection failed", Toast.LENGTH_LONG).show();
             Log.d("ListView",exception.getMessage());
+            return;
+        }
+        if(collectionNames.isEmpty())
+        {
+            Toast.makeText(context,"Database is empty or doesn't exists",Toast.LENGTH_LONG).show();
+            Preferences.setSelectedValue(null);
             return;
         }
         List<ListEntry> listEntries = collectionNames.stream().map(this::getEntry).filter(Objects::nonNull).collect(Collectors.toList());

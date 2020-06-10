@@ -41,19 +41,18 @@ public class EntryAdapter extends ArrayAdapter<ListEntry> {
         }
         // Lookup view for data population
 
-        TextView tvName = (TextView) convertView.findViewById(R.id.tvName);
-        ImageView tvImage = (ImageView) convertView.findViewById(R.id.tvImage);
-        TextView tvDate = (TextView) convertView.findViewById(R.id.tvDate);
+        TextView tvName =  convertView.findViewById(R.id.tvName);
+        ImageView tvImage = convertView.findViewById(R.id.tvImage);
+        TextView tvDate = convertView.findViewById(R.id.tvDate);
 
         // Populate the data into the template view using the data object
         String temp = Preferences.getSelectedValue();
+        File file = new File(context.getFilesDir(),entry.identifier+"_"+0);
         if(temp!=null)
         {
-            File file = new File(context.getFilesDir(),entry.identifier+"_"+0);
-            entry.downloaded = file.exists();
             entry.selected = entry.identifier.equals(temp);
         }
-        
+        entry.downloaded = file.exists();
         tvName.setText(entry.name);
         tvDate.setText(entry.date);
         decideImage(entry.selected, entry.downloaded, tvImage);
