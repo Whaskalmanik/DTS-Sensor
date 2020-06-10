@@ -1,4 +1,4 @@
-package com.whaskalmanik.dtssensor.Database;
+package com.whaskalmanik.dtssensor.database;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -13,9 +13,10 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
-import com.whaskalmanik.dtssensor.Preferences.Preferences;
-import com.whaskalmanik.dtssensor.Utils.EntryAdapter;
-import com.whaskalmanik.dtssensor.Utils.ListEntry;
+import com.whaskalmanik.dtssensor.preferences.Preferences;
+import com.whaskalmanik.dtssensor.utils.EntryAdapter;
+import com.whaskalmanik.dtssensor.utils.ListEntry;
+import com.whaskalmanik.dtssensor.utils.Utils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -27,14 +28,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
-
-    private static final int CONNECTION_TIME_OUT_MS =5000;
-    private static final int SOCKET_TIME_OUT_MS =5000;
-    private static final int SERVER_SELECTION_TIMEOUT_MS = 5000;
-
-    private static final DateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.US);
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy",Locale.US);
-    private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss",Locale.US);
 
     private Exception exception;
     private String ip;
@@ -59,9 +52,9 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
         databaseName = Preferences.getDatabaseName();
 
         MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
-        optionsBuilder.connectTimeout(CONNECTION_TIME_OUT_MS);
-        optionsBuilder.socketTimeout(SOCKET_TIME_OUT_MS);
-        optionsBuilder.serverSelectionTimeout(SERVER_SELECTION_TIMEOUT_MS);
+        optionsBuilder.connectTimeout(Utils.CONNECTION_TIME_OUT_MS);
+        optionsBuilder.socketTimeout(Utils.SOCKET_TIME_OUT_MS);
+        optionsBuilder.serverSelectionTimeout(Utils.SERVER_SELECTION_TIMEOUT_MS);
         options = optionsBuilder.build();
     }
 
@@ -92,8 +85,8 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
         int index = value.indexOf('_');
         String timestamp = value.substring(index+1);
         try {
-            Date date = DATETIME_FORMAT.parse(timestamp);
-            return new ListEntry(value,DATE_FORMAT.format(date),TIME_FORMAT.format(date));
+            Date date = Utils.DATETIME_FORMAT_LIST.parse(timestamp);
+            return new ListEntry(value,Utils.DATE_FORMAT_LIST.format(date),Utils.TIME_FORMAT.format(date));
         } catch (ParseException e) {
             exception = e;
             return null;

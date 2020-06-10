@@ -1,4 +1,4 @@
-package com.whaskalmanik.dtssensor.Fragments;
+package com.whaskalmanik.dtssensor.fragments;
 
 
 import android.os.Bundle;
@@ -11,10 +11,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
-import com.whaskalmanik.dtssensor.Graph.TemperatureGraph;
+import com.whaskalmanik.dtssensor.files.DocumentsLoader;
+import com.whaskalmanik.dtssensor.graph.TemperatureGraph;
 import com.whaskalmanik.dtssensor.R;
-import com.whaskalmanik.dtssensor.Files.ExtractedFile;
+import com.whaskalmanik.dtssensor.files.ExtractedFile;
 
 import java.util.ArrayList;
 

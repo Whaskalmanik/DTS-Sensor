@@ -1,21 +1,15 @@
-package com.whaskalmanik.dtssensor.Files;
+package com.whaskalmanik.dtssensor.files;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.whaskalmanik.dtssensor.Preferences.Preferences;
+import com.whaskalmanik.dtssensor.preferences.Preferences;
 
 import org.apache.commons.io.FileUtils;
-import org.bson.Document;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

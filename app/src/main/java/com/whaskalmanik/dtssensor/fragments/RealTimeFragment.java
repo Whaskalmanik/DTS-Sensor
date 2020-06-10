@@ -1,4 +1,4 @@
-package com.whaskalmanik.dtssensor.Fragments;
+package com.whaskalmanik.dtssensor.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -17,10 +17,10 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.whaskalmanik.dtssensor.Files.DocumentsLoader;
+import com.whaskalmanik.dtssensor.files.DocumentsLoader;
 import com.whaskalmanik.dtssensor.R;
-import com.whaskalmanik.dtssensor.Files.ExtractedFile;
-import com.whaskalmanik.dtssensor.Graph.RealTimeGraph;
+import com.whaskalmanik.dtssensor.files.ExtractedFile;
+import com.whaskalmanik.dtssensor.graph.RealTimeGraph;
 
 import java.util.ArrayList;
 

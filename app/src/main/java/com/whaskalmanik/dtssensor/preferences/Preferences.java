@@ -1,9 +1,8 @@
-package com.whaskalmanik.dtssensor.Preferences;
+package com.whaskalmanik.dtssensor.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.text.BoringLayout;
 
 import java.util.function.Consumer;
 

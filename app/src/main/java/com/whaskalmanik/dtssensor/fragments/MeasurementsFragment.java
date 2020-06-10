@@ -1,4 +1,4 @@
-package com.whaskalmanik.dtssensor.Fragments;
+package com.whaskalmanik.dtssensor.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,10 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.whaskalmanik.dtssensor.R;
-import com.whaskalmanik.dtssensor.Utils.ListEntry;
-import com.whaskalmanik.dtssensor.Database.MeasurementLoadingTask;
-
-import java.util.ArrayList;
+import com.whaskalmanik.dtssensor.database.MeasurementLoadingTask;
 
 
 public class MeasurementsFragment extends Fragment {

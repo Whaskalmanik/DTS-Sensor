@@ -1,4 +1,4 @@
-package com.whaskalmanik.dtssensor.Database;
+package com.whaskalmanik.dtssensor.database;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -15,11 +14,10 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import com.whaskalmanik.dtssensor.Preferences.Preferences;
-import com.whaskalmanik.dtssensor.Files.ExtractedFile;
-import com.whaskalmanik.dtssensor.Utils.Command;
+import com.whaskalmanik.dtssensor.preferences.Preferences;
+import com.whaskalmanik.dtssensor.files.ExtractedFile;
+import com.whaskalmanik.dtssensor.utils.Command;
 
-import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
@@ -28,7 +26,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
@@ -40,9 +37,6 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     private final static CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
             fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 
-    private static final int CONNECTION_TIME_OUT_MS = 5000;
-    private static final int SOCKET_TIME_OUT_MS = 5000;
-    private static final int SERVER_SELECTION_TIMEOUT_MS = 5000;
 
     private Context context;
     private String collectionName;
@@ -71,9 +65,6 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         this.showdialog=showDialog;
 
         MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
-        optionsBuilder.connectTimeout(CONNECTION_TIME_OUT_MS);
-        optionsBuilder.socketTimeout(SOCKET_TIME_OUT_MS);
-        optionsBuilder.serverSelectionTimeout(SERVER_SELECTION_TIMEOUT_MS);
         options = optionsBuilder.build();
     }
 

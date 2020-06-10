@@ -1,8 +1,6 @@
-package com.whaskalmanik.dtssensor.Utils;
+package com.whaskalmanik.dtssensor.utils;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.whaskalmanik.dtssensor.Preferences.Preferences;
+import com.whaskalmanik.dtssensor.preferences.Preferences;
 import com.whaskalmanik.dtssensor.R;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class EntryAdapter extends ArrayAdapter<ListEntry> {

@@ -1,17 +1,11 @@
-package com.whaskalmanik.dtssensor.Files;
+package com.whaskalmanik.dtssensor.files;
 
-import android.content.Context;
+import com.whaskalmanik.dtssensor.preferences.Preferences;
+import com.whaskalmanik.dtssensor.utils.Command;
 
-import com.whaskalmanik.dtssensor.Preferences.Preferences;
-import com.whaskalmanik.dtssensor.Utils.Command;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ForkJoinPool;
-import java.util.function.Consumer;
 
 public class PeriodicTask {
     private Timer refreshTimer = new Timer();

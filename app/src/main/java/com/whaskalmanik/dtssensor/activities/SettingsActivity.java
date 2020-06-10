@@ -1,4 +1,4 @@
-package com.whaskalmanik.dtssensor.Activities;
+package com.whaskalmanik.dtssensor.activities;
 
 import android.os.Bundle;
 import android.preference.ListPreference;

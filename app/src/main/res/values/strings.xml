@@ -27,6 +27,7 @@
     <string name="warning_title">Warning marker</string>
     <string name="critical_marker">Critical marker</string>
 
+
     <!-- NotificationsPref settings -->
     <string name="notifications_category">Notifications</string>
     <string name="notifications_title_switch">Enable notifications</string>
@@ -34,9 +35,15 @@
     <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
 
-    <string name="notifications_vibrate_switch">Vibrations</string>
-    <!-- SynchronizationPref settings -->
+    <string name="warningMarker">WarningMarker</string>
+    <string name="criticalMarker">CriticalMarker</string>
 
+    <string name="channel_desc_warning">"Channel for warning markers"</string>
+    <string name="channel_desc_critical">"Channel for critical markers"</string>
+
+    <string name="notifications_vibrate_switch">Vibrations</string>
+
+    <!-- SynchronizationPref settings -->
     <string name="synchronizations_category">Synchronization</string>
 
     <string name="synchronizations_switch_description">Get data from database</string>

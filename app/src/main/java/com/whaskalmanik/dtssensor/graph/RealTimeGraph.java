@@ -1,9 +1,7 @@
-package com.whaskalmanik.dtssensor.Graph;
+package com.whaskalmanik.dtssensor.graph;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -11,13 +9,10 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.highlight.ChartHighlighter;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.utils.ViewPortHandler;
-import com.whaskalmanik.dtssensor.Preferences.Preferences;
-import com.whaskalmanik.dtssensor.Files.ExtractedFile;
+import com.whaskalmanik.dtssensor.preferences.Preferences;
+import com.whaskalmanik.dtssensor.files.ExtractedFile;
 import com.whaskalmanik.dtssensor.R;
-import com.whaskalmanik.dtssensor.Utils.NotificationHelper;
+import com.whaskalmanik.dtssensor.utils.NotificationHelper;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

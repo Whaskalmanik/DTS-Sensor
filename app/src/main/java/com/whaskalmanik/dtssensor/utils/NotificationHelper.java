@@ -1,4 +1,4 @@
-package com.whaskalmanik.dtssensor.Utils;
+package com.whaskalmanik.dtssensor.utils;
 
 
 import android.app.Notification;
@@ -8,8 +8,8 @@ import android.support.v4.app.NotificationManagerCompat;
 
 import com.whaskalmanik.dtssensor.R;
 
-import static com.whaskalmanik.dtssensor.Utils.App.CHANNEL_1_ID;
-import static com.whaskalmanik.dtssensor.Utils.App.CHANNEL_2_ID;
+import static com.whaskalmanik.dtssensor.utils.App.CHANNEL_1_ID;
+import static com.whaskalmanik.dtssensor.utils.App.CHANNEL_2_ID;
 
 public class NotificationHelper {
     private NotificationManagerCompat notificationManager;

@@ -1,4 +1,4 @@
-package com.whaskalmanik.dtssensor.Utils;
+package com.whaskalmanik.dtssensor.utils;
 import java.util.function.Function;
 
 public interface Command extends Function<Void, Void> {

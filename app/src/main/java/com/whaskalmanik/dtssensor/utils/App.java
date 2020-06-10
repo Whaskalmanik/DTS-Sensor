@@ -1,9 +1,13 @@
-package com.whaskalmanik.dtssensor.Utils;
+package com.whaskalmanik.dtssensor.utils;
 
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.res.Resources;
 import android.os.Build;
+
+import com.whaskalmanik.dtssensor.preferences.Preferences;
+import com.whaskalmanik.dtssensor.R;
 
 
 public class App extends Application {
@@ -14,6 +18,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         createNotificationChannel();
+        Preferences.initialize(getApplicationContext());
     }
 
     private void createNotificationChannel() {
@@ -22,12 +27,13 @@ public class App extends Application {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel_l;
             NotificationChannel channel_2;
+            Resources res= getResources();
 
-            channel_l = new NotificationChannel(CHANNEL_1_ID,"CriticalMarker",NotificationManager.IMPORTANCE_HIGH);
-            channel_l.setDescription("Channel for critical markers");
+            channel_l = new NotificationChannel(CHANNEL_1_ID,res.getString(R.string.criticalMarker),NotificationManager.IMPORTANCE_HIGH);
+            channel_l.setDescription(res.getString(R.string.channel_desc_critical));
 
-            channel_2 = new NotificationChannel(CHANNEL_2_ID,"WarningMarker",NotificationManager.IMPORTANCE_DEFAULT);
-            channel_2.setDescription("Channel for warning markers");
+            channel_2 = new NotificationChannel(CHANNEL_2_ID,res.getString(R.string.warningMarker),NotificationManager.IMPORTANCE_DEFAULT);
+            channel_2.setDescription(res.getString(R.string.channel_desc_warning));
 
             NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) {

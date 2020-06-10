@@ -1,6 +1,5 @@
-package com.whaskalmanik.dtssensor.Graph;
+package com.whaskalmanik.dtssensor.graph;
 
-import android.content.Context;
 import android.graphics.Color;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -9,8 +8,8 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.whaskalmanik.dtssensor.Files.ExtractedFile;
-import com.whaskalmanik.dtssensor.Preferences.Preferences;
+import com.whaskalmanik.dtssensor.files.ExtractedFile;
+import com.whaskalmanik.dtssensor.preferences.Preferences;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

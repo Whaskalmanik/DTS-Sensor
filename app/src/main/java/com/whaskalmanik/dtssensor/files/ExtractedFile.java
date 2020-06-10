@@ -1,12 +1,11 @@
-package com.whaskalmanik.dtssensor.Files;
+package com.whaskalmanik.dtssensor.files;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
 
-import org.bson.Document;
-import org.bson.types.ObjectId;
+import com.whaskalmanik.dtssensor.utils.Utils;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -49,9 +48,7 @@ public final class ExtractedFile implements Parcelable {
         }
     }
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    private static final DateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
-    private static final DateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 
     private Date timestamp;
     private ArrayList<Entry> data;
@@ -64,7 +61,7 @@ public final class ExtractedFile implements Parcelable {
         String date = in.readString();
         String time = in.readString();
         try {
-            DATETIME_FORMAT.parse(date + " " + time);
+            Utils.DATETIME_FORMAT.parse(date + " " + time);
         }
         catch (ParseException e) {
 
@@ -116,12 +113,12 @@ public final class ExtractedFile implements Parcelable {
 
     public String getDate()
     {
-        return DATE_FORMAT.format(timestamp);
+        return Utils.DATE_FORMAT.format(timestamp);
     }
 
     public String getTime()
     {
-        return TIME_FORMAT.format(timestamp);
+        return Utils.TIME_FORMAT.format(timestamp);
     }
 
     @Override
