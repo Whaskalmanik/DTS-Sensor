@@ -4,39 +4,39 @@
     tools:showIn="navigation_view">
     <item
         android:id="@+id/measurements"
-        android:title="Measurements" />
+        android:title="@string/measurements" />
     <item
         android:id="@+id/navGraphs"
-        android:title="Graphs">
+        android:title="@string/graphs">
 
         <menu>
             <item
                 android:id="@+id/realTime"
-                android:title="Real time graph" />
+                android:title="@string/real_time_graph" />
             <item
-                android:id="@+id/tempterature"
-                android:title="Temperature graph" />
+                android:id="@+id/temperature"
+                android:title="@string/temperature_graph" />
             <item
                 android:id="@+id/heat"
-                android:title="Heat graph" />
+                android:title="@string/heat_graph" />
         </menu>
 
     </item>
-    <item android:title="Application">
+    <item android:title="@string/application">
         <menu>
             <item
                 android:id="@+id/refresh"
                 android:icon="@drawable/ic_refresh_black_24dp"
-                android:title="Refresh" />
+                android:title="@string/refresh" />
 
             <item
                 android:id="@+id/storageDelete"
                 android:icon="@drawable/ic_delete_black_24dp"
-                android:title="Delete data" />
+                android:title="@string/delete_data" />
             <item
                 android:id="@+id/settings"
                 android:icon="@drawable/ic_settings_black_24dp"
-                android:title="Settings" />
+                android:title="@string/settings" />
         </menu>
     </item>
 </menu>

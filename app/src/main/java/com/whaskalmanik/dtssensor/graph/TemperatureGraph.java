@@ -10,9 +10,8 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.whaskalmanik.dtssensor.files.ExtractedFile;
 import com.whaskalmanik.dtssensor.preferences.Preferences;
+import com.whaskalmanik.dtssensor.utils.Utils;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,18 +94,18 @@ public class TemperatureGraph {
         });
         linedata.setHighlightEnabled(false);
         graph.setData(linedata);
-        DecimalFormat dformat = new DecimalFormat();
-        dformat.setMaximumFractionDigits(2);
+        DecimalFormat decimalFormat = new DecimalFormat();
+        decimalFormat.setMaximumFractionDigits(2);
         graph.getXAxis().setValueFormatter(new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                return super.getAxisLabel(roundFloat(value*10,2), axis) +" s";
+                return super.getAxisLabel(Utils.roundFloat(value*10,2), axis) +" s";
             }
         });
         graph.getAxisLeft().setValueFormatter(new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                return super.getAxisLabel(roundFloat(value,2), axis) +" °C";
+                return super.getAxisLabel(Utils.roundFloat(value,2), axis) +" °C";
             }
         });
 
@@ -114,11 +113,5 @@ public class TemperatureGraph {
         graph.getDescription().setEnabled(false);
         graph.invalidate();
 
-    }
-    private static float roundFloat(float f, int places) {
-
-        BigDecimal bigDecimal = new BigDecimal(Float.toString(f));
-        bigDecimal = bigDecimal.setScale(places, RoundingMode.HALF_UP);
-        return bigDecimal.floatValue();
     }
 }

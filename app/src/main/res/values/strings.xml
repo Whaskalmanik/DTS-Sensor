@@ -1,17 +1,14 @@
 <resources>
     <string name="app_name">DTS Sensor</string>
-
     <string name="settings">Settings</string>
     <string name="refresh">Refresh</string>
-
     <string name="connection_error">Unable to load content. Check your network connection.</string>
-
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!-- Strings related to Settings -->
     <string name="title_activity_settings">Settings</string>
+
     <!-- Graph settings -->
     <string name="graph_category">Graph</string>
     <string name="graph_heat_max">Graph maximum temperature</string>
@@ -20,10 +17,8 @@
 
     <!-- Marker settings -->
     <string name="marker_category">Markers</string>
-
     <string name="marker_switch_title">Enable markers</string>
     <string name="marker_switch_description">Show markers on graph</string>
-
     <string name="warning_title">Warning marker</string>
     <string name="critical_marker">Critical marker</string>
 
@@ -31,25 +26,19 @@
     <!-- NotificationsPref settings -->
     <string name="notifications_category">Notifications</string>
     <string name="notifications_title_switch">Enable notifications</string>
-
     <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
-
     <string name="warningMarker">WarningMarker</string>
     <string name="criticalMarker">CriticalMarker</string>
-
     <string name="channel_desc_warning">"Channel for warning markers"</string>
     <string name="channel_desc_critical">"Channel for critical markers"</string>
-
     <string name="notifications_vibrate_switch">Vibrations</string>
 
     <!-- SynchronizationPref settings -->
     <string name="synchronizations_category">Synchronization</string>
-
     <string name="synchronizations_switch_description">Get data from database</string>
     <string name="synchronizations_switch_title">Enable synchronization</string>
     <string name="pref_title_sync_frequency">Synchronization frequency </string>
-
     <string name="pref_title_sync_type">Connection type </string>
 
     <!--Notifications-->
@@ -57,9 +46,26 @@
     <string name="warning_des_not">Warning temperature</string>
     <string name="critical_title_not">Critical marker exceeded!</string>
     <string name="critical_des_not">Critical temperature</string>
+
     <!--Connection-->
     <string name="connection_category">Database connection</string>
     <string name="connection_ip">IP address</string>
     <string name="connection_name">Database name</string>
     <string name="connection_port">Port</string>
+    <!--XML-->
+    <string name="entry_description">Image for entry</string>
+    <string name="measurements">Measurements</string>
+    <string name="graphs">Graphs</string>
+    <string name="real_time_graph">Real time graph</string>
+    <string name="temperature_graph">Temperature graph</string>
+    <string name="heat_graph">Heat graph</string>
+    <string name="application">Application</string>
+    <string name="delete_data">Delete data</string>
+    <!--Units-->
+    <string name="degree_format">%d °C</string>
+    <string name="seconds_format">%d s</string>
+    <string name="metres_format">%.3f m</string>
+    <string name="degree_format_float">%.3f °C</string>
+    <string name="selected_meters_degrees"> Selected: %.3f m %.3f °C</string>
+    <string name="selected_meters"> Selected: %.3f m</string>
 </resources>

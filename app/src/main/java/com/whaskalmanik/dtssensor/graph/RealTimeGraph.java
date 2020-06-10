@@ -13,9 +13,8 @@ import com.whaskalmanik.dtssensor.preferences.Preferences;
 import com.whaskalmanik.dtssensor.files.ExtractedFile;
 import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.utils.NotificationHelper;
+import com.whaskalmanik.dtssensor.utils.Utils;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +22,6 @@ public class RealTimeGraph
 {
     private LineChart graph;
     private ArrayList<ExtractedFile> data;
-    private Context context;
-
 
     private LineDataSet dataSetData;
     private LineDataSet dataSetWarning;
@@ -38,15 +35,14 @@ public class RealTimeGraph
     {
         this.graph = graph;
         this.data = data;
-        this.context = context;
         notifications = new NotificationHelper(context);
     }
 
-    private void setStyle(int color,LineDataSet dataSet,float lineWidth)
+    private void setStyle(int color, LineDataSet dataSet)
     {
         dataSet.setColor(color);
         dataSet.setCircleColor(color);
-        dataSet.setLineWidth(lineWidth);
+        dataSet.setLineWidth(2.0f);
         dataSet.setDrawCircles(false);
     }
 
@@ -72,7 +68,7 @@ public class RealTimeGraph
 
     private void fillDataSet(int selectedIndex)
     {
-        List<Entry> entriesForData = new ArrayList<>();;
+        List<Entry> entriesForData = new ArrayList<>();
         entriesForData.clear();
 
         if(data != null && !data.isEmpty())
@@ -88,12 +84,12 @@ public class RealTimeGraph
             }
             dataSetData = new LineDataSet(entriesForData, data.get(selectedIndex).getDate());
             dataSetData.setHighlightLineWidth(1.5f);
-            dataSetData.setHighLightColor(context.getResources().getColor(R.color.colorYellow));
-            setStyle(Color.BLUE,dataSetData,2.0f);
+            dataSetData.setHighLightColor(Color.parseColor("#F05837"));
+            setStyle(Color.BLUE,dataSetData);
         }
     }
 
-    private void fillDataForMarker(int selectedIndex)
+    private void fillDataForMarker()
     {
         List<Entry> entries = new ArrayList<>();
         List<Entry> entries2 = new ArrayList<>();
@@ -106,8 +102,8 @@ public class RealTimeGraph
         entries2.add(new Entry(data.get(0).getMaximumLength(),Preferences.getCriticalTemp()));
         dataSetCritical = new LineDataSet(entries2,"Critical marker");
 
-        setStyle(Color.parseColor("#CAB11B"),dataSetWarning,2.0f);
-        setStyle(Color.RED, dataSetCritical,2.0f);
+        setStyle(Color.parseColor("#CAB11B"),dataSetWarning);
+        setStyle(Color.RED, dataSetCritical);
     }
 
     public void createGraph(int selectedIndex)
@@ -118,7 +114,7 @@ public class RealTimeGraph
         }
         fillDataSet(selectedIndex);
         if (Preferences.areMarkersEnabled()) {
-            fillDataForMarker(selectedIndex);
+            fillDataForMarker();
             LineData linedata = new LineData(dataSetData, dataSetCritical, dataSetWarning);
             graph.setData(linedata);
         } else {
@@ -141,20 +137,13 @@ public class RealTimeGraph
         graph.getAxisLeft().setValueFormatter(new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                return super.getAxisLabel(roundFloat(value,2), axis) +" °C";
+                return super.getAxisLabel(Utils.roundFloat(value,2), axis) +" °C";
             }
         });
         graph.getAxisRight().setDrawLabels(false);
         graph.invalidate();
 
     }
-    private static float roundFloat(float f, int places) {
-
-        BigDecimal bigDecimal = new BigDecimal(Float.toString(f));
-        bigDecimal = bigDecimal.setScale(places, RoundingMode.HALF_UP);
-        return bigDecimal.floatValue();
-    }
-
 
     public void highlightValue(float value)
     {

@@ -18,13 +18,12 @@ public class NotificationHelper {
     public NotificationHelper(Context context)
     {
         notificationManager = NotificationManagerCompat.from(context);
-        this.context=context;
     }
 
-    public void popWarning(float temp, float lenght)
+    public void popWarning(float temp, float length)
     {
         String title=context.getResources().getString(R.string.warning_title_not);
-        String text=context.getResources().getString(R.string.warning_des_not) + " at " + lenght +" m" + "with " + temp + " °C";
+        String text=context.getResources().getString(R.string.warning_des_not) + " at " + length +" m" + "with " + temp + " °C";
         Notification notification = new NotificationCompat.Builder(context,CHANNEL_2_ID)
                 .setSmallIcon(R.drawable.ic_warning_black_24dp)
                 .setContentTitle(title)
@@ -34,10 +33,10 @@ public class NotificationHelper {
                 .build();
         notificationManager.notify(1,notification);
     }
-    public void popCritical(float temp, float lenght)
+    public void popCritical(float temp, float length)
     {
         String title=context.getResources().getString(R.string.critical_title_not);
-        String text=context.getResources().getString(R.string.critical_des_not) + " at " + lenght +" m" + " with " + temp + " °C";
+        String text=context.getResources().getString(R.string.critical_des_not) + " at " + length +" m" + " with " + temp + " °C";
         Notification notification = new NotificationCompat.Builder(context,CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_report_black_24dp)
                 .setContentTitle(title)

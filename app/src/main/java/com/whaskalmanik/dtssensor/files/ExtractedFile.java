@@ -7,9 +7,7 @@ import android.util.Log;
 
 import com.whaskalmanik.dtssensor.utils.Utils;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -25,7 +23,7 @@ public final class ExtractedFile implements Parcelable {
 
         public Entry() {}
 
-        public Entry(double length, double temp)
+        Entry(double length, double temp)
         {
             this.length = length;
             this.temp = temp;

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -24,27 +23,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:alpha="0"
-                android:text="TextView"
                 android:textColor="@android:color/background_light"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/lenghtStart"
+                android:id="@+id/lengthStart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="3dp"
-                android:text="TextView"
+                android:paddingStart="3dp"
                 android:textColor="@android:color/black"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/lenghtEnd"
+                android:id="@+id/lengthEnd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="TextView"
+                android:gravity="end"
                 android:textColor="@android:color/black"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
         </TableRow>
     </TableLayout>
 
@@ -63,9 +59,8 @@
                 android:id="@+id/timeEnd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
                 android:textColor="@android:color/black"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -79,9 +74,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="bottom|end"
-                    android:text="TextView"
                     android:textColor="@android:color/black"
-                    android:textSize="10sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
         </LinearLayout>
@@ -91,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:paddingLeft="3dp"
+            android:paddingStart="3dp"
             android:paddingTop="3dp"
             app:srcCompat="?attr/colorPrimary" />
 
@@ -125,7 +119,6 @@
                     android:id="@+id/minTmp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
                     android:textColor="@android:color/black" />
 
                 <TextView
@@ -133,15 +126,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="TextView"
                     android:textColor="@android:color/black" />
 
                 <TextView
                     android:id="@+id/maxTmp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
-                    android:text="TextView"
+                    android:gravity="end"
                     android:textColor="@android:color/black" />
             </TableRow>
 

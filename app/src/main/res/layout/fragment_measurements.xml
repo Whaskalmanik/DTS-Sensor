@@ -15,7 +15,7 @@
         android:orientation="vertical" >
 
         <ListView
-            android:id="@+id/measurement_llist"
+            android:id="@+id/measurement_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>

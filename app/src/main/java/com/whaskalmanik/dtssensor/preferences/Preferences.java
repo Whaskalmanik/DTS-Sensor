@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 
 import java.util.function.Consumer;
 
-//todo dodelat dalsi nastaveni
 public final class Preferences {
     private static Preferences instance;
 

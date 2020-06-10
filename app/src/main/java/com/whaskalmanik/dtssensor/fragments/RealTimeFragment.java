@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -21,6 +22,7 @@ import com.whaskalmanik.dtssensor.files.DocumentsLoader;
 import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.files.ExtractedFile;
 import com.whaskalmanik.dtssensor.graph.RealTimeGraph;
+import com.whaskalmanik.dtssensor.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -46,7 +48,7 @@ public class RealTimeFragment extends Fragment {
     private int lastIndex;
 
 
-    ArrayList<ExtractedFile> data = new ArrayList<>();
+    private ArrayList<ExtractedFile> data = new ArrayList<>();
 
 
     @Nullable
@@ -84,7 +86,7 @@ public class RealTimeFragment extends Fragment {
         void onValueSent(float valueX);
     }
 
-    public void setSpinner()
+    private void setSpinner()
     {
         if(data==null||data.get(0).getEntries().isEmpty()|data.isEmpty())
         {
@@ -120,7 +122,7 @@ public class RealTimeFragment extends Fragment {
         }
     }
 
-    public void setGraph()
+    private void setGraph()
     {
         if(data==null||data.isEmpty()||data.get(0).getEntries().isEmpty())
         {
@@ -160,12 +162,12 @@ public class RealTimeFragment extends Fragment {
 
     private void setInformation(float selectedX,float selectedY, int visibility)
     {
-        if(data==null||data.isEmpty()||data.get(0).getEntries().isEmpty())
+        if(!Utils.isDataValid(data))
         {
-            selected.setText("Selected: " + selectedX + " m " + selectedY + " °C");
             selected.setVisibility(visibility);
-            minValue.setText("Min: "+0+" °C");
-            maxValue.setText("Max: "+0+" °C");
+            minValue.setVisibility(visibility);
+            maxValue.setVisibility(visibility);
+            Toast.makeText(getContext(), "Graph offset is out of range", Toast.LENGTH_SHORT).show();
             return;
         }
         selected.setText("Selected: " + selectedX + " m " + selectedY + " °C");

@@ -18,12 +18,9 @@ import com.whaskalmanik.dtssensor.utils.EntryAdapter;
 import com.whaskalmanik.dtssensor.utils.ListEntry;
 import com.whaskalmanik.dtssensor.utils.Utils;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -39,9 +36,6 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
     private ListView lv;
     private ProgressDialog dialog;
     private MongoClientOptions options;
-
-
-
 
     public MeasurementLoadingTask(Context context, ListView lv)
     {
@@ -109,6 +103,7 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
             Preferences.setSelectedValue(null);
             return;
         }
+        Toast.makeText(context, "Connection established", Toast.LENGTH_LONG).show();
         List<ListEntry> listEntries = collectionNames.stream().map(this::getEntry).filter(Objects::nonNull).collect(Collectors.toList());
         EntryAdapter adapter = new EntryAdapter(context, listEntries);
         lv.setAdapter(adapter);

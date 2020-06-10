@@ -1,7 +1,5 @@
 package com.whaskalmanik.dtssensor.activities;
 
-
-
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -9,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -115,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     {
         boolean enabled = selectedValue != null;
         navigationView.getMenu().findItem(R.id.realTime).setEnabled(enabled);
-        navigationView.getMenu().findItem(R.id.tempterature).setEnabled(enabled);
+        navigationView.getMenu().findItem(R.id.temperature).setEnabled(enabled);
         navigationView.getMenu().findItem(R.id.heat).setEnabled(enabled);
     }
 
@@ -163,6 +162,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(n);
     }
 
+    private AlertDialog askOption()
+    {
+        return new AlertDialog.Builder(this)
+                .setTitle("Delete")
+                .setMessage("Do you really want to delete all files?")
+                .setIcon(R.drawable.ic_delete_black_24dp)
+                .setPositiveButton("Delete", (dialog, whichButton) -> {
+                    fragmentType= measurementsFragment.getClass();
+                    Preferences.setSelectedValue(null);
+                    if(Utils.deleteRecursive(getApplicationContext().getFilesDir()))
+                    {
+                        Toast.makeText(getApplicationContext(), "Data was removed", Toast.LENGTH_SHORT).show();
+                    }
+                    reloadFragment();
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create();
+    }
+
     @Override
     public void onBackPressed()
     {
@@ -184,25 +203,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         switch (item.getItemId())
         {
-            case R.id.tempterature:
+            case R.id.temperature:
             {
                 fragmentType = temperatureFragment.getClass();
+                reloadFragment();
                 break;
             }
             case R.id.heat:
             {
                 fragmentType = heatFragment.getClass();
+                reloadFragment();
                 break;
             }
             case R.id.realTime:
             {
                 fragmentType = realTimeFragment.getClass();
+                reloadFragment();
                 break;
             }
             case R.id.measurements:
             {
                 fragmentType = measurementsFragment.getClass();
                 refreshTask.disableRefresh();
+                reloadFragment();
                 break;
             }
             case R.id.settings:
@@ -213,23 +236,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.refresh:
             {
                 refreshTask.manualRefresh();
+                reloadFragment();
                 break;
             }
             case R.id.storageDelete:
             {
-                fragmentType= measurementsFragment.getClass();
-                Preferences.setSelectedValue(null);
-                if(Utils.deleteRecursive(getApplicationContext().getFilesDir()))
-                {
-                    Toast.makeText(getApplicationContext(), "Data was removed", Toast.LENGTH_SHORT).show();
-                }
+                AlertDialog dialog = askOption();
+                dialog.show();
                 break;
             }
         }
-        if (item.getItemId() != R.id.settings) {
-            reloadFragment();
-        }
-
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

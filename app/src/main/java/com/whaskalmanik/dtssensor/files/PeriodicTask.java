@@ -10,6 +10,7 @@ import java.util.concurrent.ForkJoinPool;
 public class PeriodicTask {
     private Timer refreshTimer = new Timer();
     private Boolean isRefreshing = false;
+    private final Object refreshLock = new Object();
     private Command action;
 
     public PeriodicTask()
@@ -28,7 +29,7 @@ public class PeriodicTask {
             @Override
             public void run()
             {
-                synchronized (isRefreshing)
+                synchronized (refreshLock)
                 {
                     if (isRefreshing) {
                         return;
@@ -76,10 +77,6 @@ public class PeriodicTask {
         ForkJoinPool.commonPool().execute(() -> getRefreshTask().run());
     }
 
-    /**
-     *
-     * @param action A functoid that accepts a collection of new file paths
-     */
     public void setAction(Command action)
     {
         this.action = action;

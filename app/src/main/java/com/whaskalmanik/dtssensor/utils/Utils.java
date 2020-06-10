@@ -3,6 +3,8 @@ package com.whaskalmanik.dtssensor.utils;
 import com.whaskalmanik.dtssensor.files.ExtractedFile;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -34,5 +36,11 @@ public class Utils
     public static boolean isDataValid(List<ExtractedFile> data)
     {
         return data != null && !data.isEmpty() && !data.get(0).getEntries().isEmpty();
+    }
+    public static float roundFloat(float f, int places) {
+
+        BigDecimal bigDecimal = new BigDecimal(Float.toString(f));
+        bigDecimal = bigDecimal.setScale(places, RoundingMode.HALF_UP);
+        return bigDecimal.floatValue();
     }
 }

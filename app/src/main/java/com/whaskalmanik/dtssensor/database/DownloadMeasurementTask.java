@@ -45,11 +45,10 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     private int port;
     private String databaseName;
     private MongoClient mongoClient;
-    private ExtractedFile extractedFile;
     private ArrayList<ExtractedFile> extractedFiles;
     private Exception exception;
     private int notCachedIndex = 0;
-    private boolean showdialog;
+    private boolean showDialog;
     private Command callback;
     private static int lastIndex;
     private static MongoClientOptions options;
@@ -62,7 +61,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         port = Preferences.getPort();
         databaseName = Preferences.getDatabaseName();
         extractedFiles = new ArrayList<>();
-        this.showdialog=showDialog;
+        this.showDialog=showDialog;
 
         MongoClientOptions.Builder optionsBuilder = MongoClientOptions.builder();
         options = optionsBuilder.build();
@@ -80,7 +79,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     @Override
     protected void onPreExecute()
     {
-        if(showdialog) {
+        if(showDialog) {
             dialog = ProgressDialog.show(context, "",
                     "Downloading. Please wait...", true);
         }
@@ -105,7 +104,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
                 MongoCursor<ExtractedFile> cursor = stronglyTyped.find().skip(notCachedIndex).iterator();
                 try {
                     while (cursor.hasNext()) {
-                        extractedFile = cursor.next();
+                        ExtractedFile extractedFile = cursor.next();
                         extractedFiles.add(extractedFile);
                     }
                 } catch (Exception e) {
@@ -167,7 +166,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         if (callback != null) {
             callback.apply();
         }
-        if(showdialog)
+        if(showDialog)
         {
             dialog.cancel();
         }

@@ -20,8 +20,7 @@ public class MeasurementsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         View rootView =inflater.inflate(R.layout.fragment_measurements,container,false);
-        Bundle arguments = getArguments();
-        ListView lv = (ListView)rootView.findViewById(R.id.measurement_llist);
+        ListView lv = rootView.findViewById(R.id.measurement_list);
         MeasurementLoadingTask task=new MeasurementLoadingTask(getContext(),lv);
         task.execute();
         return  rootView;
@@ -29,8 +28,7 @@ public class MeasurementsFragment extends Fragment {
 
     public static MeasurementsFragment newInstance()
     {
-        MeasurementsFragment fragment = new MeasurementsFragment();
-        return fragment;
+        return new MeasurementsFragment();
     }
 
 }

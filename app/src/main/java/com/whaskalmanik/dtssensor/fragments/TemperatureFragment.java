@@ -9,12 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.whaskalmanik.dtssensor.files.DocumentsLoader;
 import com.whaskalmanik.dtssensor.graph.TemperatureGraph;
 import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.files.ExtractedFile;
+import com.whaskalmanik.dtssensor.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -23,11 +25,11 @@ public class TemperatureFragment extends Fragment {
     private float value;
     private TemperatureGraph graph;
     private ArrayList<ExtractedFile> data = new ArrayList<>();
-    DocumentsLoader documentsLoader;
+    private DocumentsLoader documentsLoader;
 
-    TextView selected;
-    TextView minValue;
-    TextView maxValue;
+    private TextView selected;
+    private TextView minValue;
+    private TextView maxValue;
 
     @Nullable
     @Override
@@ -39,7 +41,6 @@ public class TemperatureFragment extends Fragment {
         selected = rootView.findViewById(R.id.selectedTemperatureTemp);
         maxValue = rootView.findViewById(R.id.maxValueTemp);
         minValue = rootView.findViewById(R.id.minValueTemp);
-
 
         documentsLoader = new DocumentsLoader(rootView.getContext());
 
@@ -81,11 +82,12 @@ public class TemperatureFragment extends Fragment {
 
     private void setInformation()
     {
-        if (data == null || data.isEmpty() || data.get(0).getEntries().isEmpty()) {
-            selected.setText("Length: " + 0 + " m ");
-            minValue.setText("Min: "+ 0 + " °C");
-            maxValue.setText("Max: "+ 0 + " °C");
-
+        if(!Utils.isDataValid(data))
+        {
+            selected.setVisibility(View.GONE);
+            maxValue.setVisibility(View.GONE);
+            minValue.setVisibility(View.GONE);
+            Toast.makeText(getContext(), "Graph offset is out of range", Toast.LENGTH_SHORT).show();
             return;
         }
 

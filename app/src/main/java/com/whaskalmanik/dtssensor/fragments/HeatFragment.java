@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.whaskalmanik.dtssensor.files.DocumentsLoader;
@@ -19,6 +20,7 @@ import com.whaskalmanik.dtssensor.files.ExtractedFile;
 import com.whaskalmanik.dtssensor.graph.HeatGraph;
 import com.whaskalmanik.dtssensor.preferences.Preferences;
 import com.whaskalmanik.dtssensor.R;
+import com.whaskalmanik.dtssensor.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -45,6 +47,10 @@ public class HeatFragment extends Fragment {
         DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
         data = documentsLoader.parseDataFromFiles();
 
+        if(!Utils.isDataValid(data))
+        {
+            Toast.makeText(getContext(), "Graph offset is out of range", Toast.LENGTH_SHORT).show();
+        }
         HeatGraph graph= new HeatGraph(data,heatGraph,bar);
         graph.createGraph();
         setTextView();
@@ -54,8 +60,8 @@ public class HeatFragment extends Fragment {
     public void findViewElements(View rootView)
     {
         heatGraph = rootView.findViewById(R.id.imageView);
-        lengthStart = rootView.findViewById(R.id.lenghtStart);
-        lengthEnd = rootView.findViewById(R.id.lenghtEnd);
+        lengthStart = rootView.findViewById(R.id.lengthStart);
+        lengthEnd = rootView.findViewById(R.id.lengthEnd);
         tempMin = rootView.findViewById(R.id.minTmp);
         tempMax = rootView.findViewById(R.id.maxTmp);
         timeEnd = rootView.findViewById(R.id.timeEnd);
@@ -66,23 +72,40 @@ public class HeatFragment extends Fragment {
     }
     private void setTextView()
     {
+        String degrees = getResources().getString(R.string.degree_format);
+        String meters = getResources().getString(R.string.metres_format);
+        String seconds = getResources().getString(R.string.seconds_format);
+
         int startingTime = 0;
-        int endingTime = startingTime+data.size()*10;
-        int heat_max = Preferences.getHeatMax();
-        int heat_min = Preferences.getHeatMin();
-        int midPoint=(heat_max+heat_min)/2;
+        int endingTime = 0;
+        int heat_max = 0;
+        int heat_min = 0;
+        int midPoint = 0;
+        float minLength = 0;
+        float maxLength = 0;
 
-        tempMin.setText(heat_min +" °C");
-        tempMax.setText(heat_max +" °C");
+        if(Utils.isDataValid(data))
+        {
+            startingTime = 0;
+            endingTime = startingTime + data.size() * 10;
+            heat_max = Preferences.getHeatMax();
+            heat_min = Preferences.getHeatMin();
+            midPoint = (heat_max+heat_min) / 2;
+            minLength = data.get(0).getMinimumLength();
+            maxLength = data.get(0).getMaximumLength();
 
-        lengthEnd.setText(data.get(0).getMaximumLength()+" m");
-        lengthStart.setText(data.get(0).getMinimumLength()+" m");
+        }
+        lengthStart.setText(String.format(meters,minLength));
+        lengthEnd.setText(String.format(meters,maxLength));
 
-        timeEnd.setText(endingTime + " s");
-        timeStart.setText(startingTime +" s");
+        tempMin.setText(String.format(degrees,heat_min));
+        tempMax.setText(String.format(degrees,heat_max));
 
-        paddingText.setText(endingTime+" s");
-        middleTemperature.setText(midPoint+" °C");
+        timeStart.setText(String.format(seconds,startingTime));
+        timeEnd.setText(String.format(seconds,endingTime));
+
+        paddingText.setText(String.format(seconds,endingTime));
+        middleTemperature.setText(String.format(degrees,midPoint));
     }
 
 
