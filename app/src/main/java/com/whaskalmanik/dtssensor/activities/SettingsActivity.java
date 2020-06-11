@@ -1,5 +1,7 @@
 package com.whaskalmanik.dtssensor.activities;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -9,39 +11,55 @@ import android.preference.PreferenceManager;
 import com.whaskalmanik.dtssensor.R;
 
 
-public class SettingsActivity extends AppCompatPreferenceActivity
-{
+public class SettingsActivity extends AppCompatPreferenceActivity {
+
+    private static boolean databaseKey = false;
     private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, newValue) -> {
     String stringValue = newValue.toString();
-
-    if (preference instanceof ListPreference)
-    {
+    if (preference instanceof ListPreference) {
         ListPreference listPreference = (ListPreference) preference;
         int index = listPreference.findIndexOfValue(stringValue);
         preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
     }
-    else
-    {
-        if(stringValue.isEmpty())
-        {
+    else {
+        if(stringValue.isEmpty()) {
             return false;
         }
         preference.setSummary(stringValue);
     }
-        return true;
+    if(preference.getKey().equals("database_ip") || preference.getKey().equals("database_port")||preference.getKey().equals("database_name"))
+    {
+        databaseKey=true;
+    }
+    else
+    {
+        databaseKey=false;
+    }
+    return true;
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    public void onBackPressed() {
+        if(databaseKey)
+        {
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("result",1);
+            setResult(Activity.RESULT_OK,returnIntent);
+            finish();
+        }
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getFragmentManager().beginTransaction().replace(android.R.id.content, new MainPreferenceFragment()).commit();
+
     }
 
-    private static void bindPreferenceSummaryToValue(Preference preference)
-    {
+    private static void bindPreferenceSummaryToValue(Preference preference) {
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
@@ -50,11 +68,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity
                         .getString(preference.getKey(), ""));
     }
 
-    public static class MainPreferenceFragment extends PreferenceFragment
-    {
+    public static class MainPreferenceFragment extends PreferenceFragment {
         @Override
-        public void onCreate(final Bundle savedInstanceState)
-        {
+        public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_settings);
             bindPreferenceSummaryToValue(findPreference("warning_marker"));
@@ -66,6 +82,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity
             bindPreferenceSummaryToValue(findPreference("graph_offset"));
             bindPreferenceSummaryToValue(findPreference("graph_heat_max"));
             bindPreferenceSummaryToValue(findPreference("graph_heat_min"));
+
         }
     }
 }

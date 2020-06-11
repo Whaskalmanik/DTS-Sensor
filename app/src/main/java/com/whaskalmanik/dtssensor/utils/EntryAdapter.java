@@ -20,7 +20,6 @@ public class EntryAdapter extends ArrayAdapter<ListEntry> {
 
     public EntryAdapter(Context context, List<ListEntry> users) {
         super(context, 0, users);
-
         this.context = context;
     }
 
@@ -28,8 +27,7 @@ public class EntryAdapter extends ArrayAdapter<ListEntry> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ListEntry entry = getItem(position);
-        if(entry==null)
-        {
+        if(entry==null) {
             throw new NullPointerException();
         }
         // Check if an existing view is being reused, otherwise inflate the view
@@ -45,8 +43,7 @@ public class EntryAdapter extends ArrayAdapter<ListEntry> {
         // Populate the data into the template view using the data object
         String temp = Preferences.getSelectedValue();
         File file = new File(context.getFilesDir(),entry.identifier+"_"+0);
-        if(temp!=null)
-        {
+        if(temp!=null) {
             entry.selected = entry.identifier.equals(temp);
         }
         entry.downloaded = file.exists();
@@ -57,18 +54,14 @@ public class EntryAdapter extends ArrayAdapter<ListEntry> {
         return convertView;
     }
 
-    private void decideImage(boolean selected, boolean downloaded, ImageView image)
-    {
-        if(selected)
-        {
+    private void decideImage(boolean selected, boolean downloaded, ImageView image) {
+        if(selected) {
             image.setImageDrawable(getContext().getDrawable(R.drawable.ic_save_green_24dp));
         }
-        else if(downloaded)
-        {
+        else if(downloaded) {
             image.setImageDrawable(getContext().getDrawable(R.drawable.ic_save_yellow_24dp));
         }
-        else
-        {
+        else {
             image.setImageDrawable(getContext().getDrawable(R.drawable.ic_save_black_24dp));
         }
     }

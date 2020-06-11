@@ -1,5 +1,6 @@
 package com.whaskalmanik.dtssensor.activities;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -52,8 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -62,46 +62,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         initializeFragments();
         initializePeriodicTask();
         createDrawer(savedInstanceState);
-        if(Preferences.isFirstStart())
-        {
+        if(Preferences.isFirstStart()) {
             firstTimeSetup();
         }
     }
 
-    private void initializePeriodicTask()
-    {
+    private void initializePeriodicTask() {
         refreshTask = new PeriodicTask();
-        if(!Preferences.isSynchronizationEnabled())
-        {
+        if(!Preferences.isSynchronizationEnabled()) {
             refreshTask.disableRefresh();
         }
         refreshTask.setAction(this::refreshData);
     }
 
-    private void initializeFragments()
-    {
+    private void initializeFragments() {
         temperatureFragment = createFragment(() -> TemperatureFragment.newInstance(Float.MIN_VALUE));
         heatFragment = createFragment(HeatFragment::newInstance);
         realTimeFragment = createFragment(() -> RealTimeFragment.newInstance(Integer.MIN_VALUE));
         measurementsFragment = createFragment(MeasurementsFragment::newInstance);
     }
 
-    private <T extends Fragment> T createFragment(Supplier<T> factory)
-    {
+    private <T extends Fragment> T createFragment(Supplier<T> factory) {
         T fragment = factory.get();
         fragments.put(fragment.getClass(), fragment);
         return fragment;
     }
 
-    private void firstTimeSetup()
-    {
+    private void firstTimeSetup() {
         runOptionsActivity();
         Preferences.setFirstStart(false);
         checkForEnabledHeader(null);
     }
 
-    private void createDrawer(Bundle savedInstanceState)
-    {
+    private void createDrawer(Bundle savedInstanceState) {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
@@ -110,34 +103,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
     }
 
-    private void checkForEnabledHeader(String selectedValue)
-    {
+    private void checkForEnabledHeader(String selectedValue) {
         boolean enabled = selectedValue != null;
         navigationView.getMenu().findItem(R.id.realTime).setEnabled(enabled);
         navigationView.getMenu().findItem(R.id.temperature).setEnabled(enabled);
         navigationView.getMenu().findItem(R.id.heat).setEnabled(enabled);
     }
 
-    public void setHeader(Bundle savedInstanceState)
-    {
+    public void setHeader(Bundle savedInstanceState) {
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if (savedInstanceState != null)
-        {
+        if (savedInstanceState != null) {
             return;
         }
         fragmentType = measurementsFragment.getClass();
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, measurementsFragment).commit();
         navigationView.setCheckedItem(R.id.measurements);
     }
-    private void reloadFragment()
-    {
+    private void reloadFragment() {
         if (fragmentType == null) {
             return;
         }
-        if(downloadMeasurementTask != null && fragmentType.equals(realTimeFragment.getClass()))
-        {
+        if(downloadMeasurementTask != null && fragmentType.equals(realTimeFragment.getClass())) {
             realTimeFragment = createFragment(() -> RealTimeFragment.newInstance(DownloadMeasurementTask.getLastIndex()));
         }
         Log.d("MainActivity","Fragment refreshed");
@@ -155,15 +143,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         downloadMeasurementTask.execute();
     }
 
-    private void runOptionsActivity()
-    {
+    private void runOptionsActivity() {
         refreshTask.disableRefresh();
         Intent n = new Intent(this, SettingsActivity.class);
-        startActivity(n);
+        startActivityForResult(n,0);
     }
 
-    private AlertDialog askOption()
-    {
+    private AlertDialog askOption() {
         return new AlertDialog.Builder(this)
                 .setTitle("Delete")
                 .setMessage("Do you really want to delete all files?")
@@ -182,65 +168,77 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .create();
     }
 
+
     @Override
-    public void onBackPressed()
-    {
-        if (drawer.isDrawerOpen(GravityCompat.START))
-        {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 0) {
+            if(resultCode == Activity.RESULT_OK){
+                int result=data.getIntExtra("result",0);
+                switch (result)
+                {
+                    case 1:
+                    {
+                        fragmentType = measurementsFragment.getClass();
+                        reloadFragment();
+                        break;
+                    }
+                }
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }//onActivityResult
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
-        else
-        {
+        else {
             super.onBackPressed();
         }
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item)
-    {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (Preferences.isSynchronizationEnabled()) {
             refreshTask.enableRefresh();
         }
-        switch (item.getItemId())
-        {
-            case R.id.temperature:
-            {
+        switch (item.getItemId()) {
+            case R.id.temperature: {
                 fragmentType = temperatureFragment.getClass();
                 reloadFragment();
                 break;
             }
-            case R.id.heat:
-            {
+            case R.id.heat: {
                 fragmentType = heatFragment.getClass();
                 reloadFragment();
                 break;
             }
-            case R.id.realTime:
-            {
+            case R.id.realTime: {
                 fragmentType = realTimeFragment.getClass();
                 reloadFragment();
                 break;
             }
-            case R.id.measurements:
-            {
+            case R.id.measurements: {
                 fragmentType = measurementsFragment.getClass();
-                refreshTask.disableRefresh();
+                //refreshTask.disableRefresh();
                 reloadFragment();
                 break;
             }
-            case R.id.settings:
-            {
+            case R.id.settings: {
                 runOptionsActivity();
                 break;
             }
-            case R.id.refresh:
-            {
+            case R.id.refresh: {
                 refreshTask.manualRefresh();
                 reloadFragment();
                 break;
             }
-            case R.id.storageDelete:
-            {
+            case R.id.storageDelete: {
                 AlertDialog dialog = askOption();
                 dialog.show();
                 break;
@@ -252,24 +250,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
-        if(Preferences.isSynchronizationEnabled())
-        {
+        if(Preferences.isSynchronizationEnabled()) {
             refreshTask.onRefreshFrequencyChanged();
         }
         reloadFragment();
     }
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
         refreshTask.disableRefresh();
     }
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
         if (downloadMeasurementTask != null) {
             downloadMeasurementTask.setCallback(null);

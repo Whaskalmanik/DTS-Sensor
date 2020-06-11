@@ -16,8 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public final class ExtractedFile implements Parcelable {
-    public static final class Entry
-    {
+    public static final class Entry {
         private double length;
         private double temp;
 
@@ -54,8 +53,7 @@ public final class ExtractedFile implements Parcelable {
 
     public ExtractedFile() {}
 
-    protected ExtractedFile(Parcel in)
-    {
+    protected ExtractedFile(Parcel in) {
         String date = in.readString();
         String time = in.readString();
         try {
@@ -74,8 +72,7 @@ public final class ExtractedFile implements Parcelable {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public static final Creator<ExtractedFile> CREATOR = new Creator<ExtractedFile>()
-    {
+    public static final Creator<ExtractedFile> CREATOR = new Creator<ExtractedFile>() {
         @Override
         public ExtractedFile createFromParcel(Parcel in)
         {
@@ -90,13 +87,11 @@ public final class ExtractedFile implements Parcelable {
 
     };
 
-    public List<Float> getLength()
-    {
+    public List<Float> getLength() {
         return data.stream().map(x -> Float.valueOf((float)x.length)).collect(Collectors.toList());
     }
 
-    public List<Float> getTemperature()
-    {
+    public List<Float> getTemperature() {
         return data.stream().map(x -> Float.valueOf((float)x.temp)).collect(Collectors.toList());
     }
 

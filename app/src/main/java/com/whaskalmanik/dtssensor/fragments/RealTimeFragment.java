@@ -22,6 +22,7 @@ import com.whaskalmanik.dtssensor.files.DocumentsLoader;
 import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.files.ExtractedFile;
 import com.whaskalmanik.dtssensor.graph.RealTimeGraph;
+import com.whaskalmanik.dtssensor.preferences.Preferences;
 import com.whaskalmanik.dtssensor.utils.Utils;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class RealTimeFragment extends Fragment {
     private Spinner spinner;
     private Context context;
 
-    private int indexInSpinner=0;
+    private static int indexInSpinner=0;
     private static float selectedLength = Float.MIN_VALUE;
     private static float selectedTemperature = Float.MIN_VALUE;
     private int lastIndex;
@@ -53,8 +54,7 @@ public class RealTimeFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_realtime,container,false);
         context = rootView.getContext();
 
@@ -80,30 +80,23 @@ public class RealTimeFragment extends Fragment {
         return  rootView;
     }
 
-
-    public interface FragmentRealTimeListener
-    {
+    public interface FragmentRealTimeListener {
         void onValueSent(float valueX);
     }
 
-    private void setSpinner()
-    {
-        if(data==null||data.get(0).getEntries().isEmpty()|data.isEmpty())
-        {
+    private void setSpinner() {
+        if(!Utils.isDataValid(data)) {
             return;
         }
         ArrayList<String> nameList = new ArrayList<>();
-        for(int i = 0; i < data.size(); i++)
-        {
+        for(int i = 0; i < data.size(); i++) {
             nameList.add(data.get(i).getDate() + " " + data.get(i).getTime());
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, nameList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 realTimeGraph.createGraph(position);
                 indexInSpinner = position;
                 if(selectedLength != Float.MIN_VALUE)
@@ -111,59 +104,50 @@ public class RealTimeFragment extends Fragment {
                     realTimeGraph.highlightValue(selectedLength);
                 }
             }
-            public void onNothingSelected(AdapterView<?> parent)
-            {
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
-        if(lastIndex != Integer.MIN_VALUE)
-        {
+        if(lastIndex != Integer.MIN_VALUE && Preferences.isSynchronizationEnabled()) {
             spinner.setSelection(lastIndex);
+        }
+        else {
+            spinner.setSelection(indexInSpinner);
         }
     }
 
     private void setGraph()
     {
-        if(data==null||data.isEmpty()||data.get(0).getEntries().isEmpty())
-        {
+        if(data==null||data.isEmpty()||data.get(0).getEntries().isEmpty()) {
             setInformation(0,0,View.GONE);
             return;
         }
         realTimeGraph = new RealTimeGraph(chart, data,context);
 
-        if(selectedLength == Float.MIN_VALUE)
-        {
+        if(selectedLength == Float.MIN_VALUE) {
             setInformation(0,0, View.GONE);
         }
-        else
-        {
+        else {
             setInformation(selectedLength,selectedTemperature, View.VISIBLE);
-
         }
-
-        chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener()
-        {
+        chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
 
             @Override
-            public void onValueSelected(Entry e, Highlight h)
-            {
+            public void onValueSelected(Entry e, Highlight h) {
                 selectedLength = e.getX();
                 selectedTemperature = e.getY();
                 listener.onValueSent(selectedLength);
                 setInformation(selectedLength,selectedTemperature,View.VISIBLE);
             }
             @Override
-            public void onNothingSelected()
-            {
+            public void onNothingSelected() {
 
             }
         });
     }
 
-    private void setInformation(float selectedX,float selectedY, int visibility)
-    {
-        if(!Utils.isDataValid(data))
-        {
+    private void setInformation(float selectedX,float selectedY, int visibility) {
+        if(!Utils.isDataValid(data)) {
             selected.setVisibility(visibility);
             minValue.setVisibility(visibility);
             maxValue.setVisibility(visibility);
@@ -179,12 +163,10 @@ public class RealTimeFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof FragmentRealTimeListener)
-        {
+        if(context instanceof FragmentRealTimeListener) {
             listener=(FragmentRealTimeListener)context;
         }
-        else
-        {
+        else {
             throw new RuntimeException(context.toString() + "Must implement FragmentListener");
         }
     }
@@ -196,8 +178,7 @@ public class RealTimeFragment extends Fragment {
         listener=null;
     }
 
-    public static RealTimeFragment newInstance(int lastIndex)
-    {
+    public static RealTimeFragment newInstance(int lastIndex) {
         RealTimeFragment fragment = new RealTimeFragment();
         Bundle args = new Bundle();
         args.putInt(LAST_INDEX,lastIndex);

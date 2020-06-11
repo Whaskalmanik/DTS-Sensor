@@ -21,8 +21,7 @@ public class DocumentsLoader {
     private ArrayList<File> files;
     private ArrayList<ExtractedFile> extractedFiles;
 
-    public DocumentsLoader(Context context)
-    {
+    public DocumentsLoader(Context context) {
         this.context=context;
         selectedFile = Preferences.getSelectedValue();
         files = new ArrayList<>();
@@ -41,8 +40,7 @@ public class DocumentsLoader {
             }
         }
     }
-    public ArrayList<ExtractedFile> parseDataFromFiles()
-    {
+    public ArrayList<ExtractedFile> parseDataFromFiles() {
         getSelectedFiles();
         if(files==null) {
             return null;
@@ -52,8 +50,7 @@ public class DocumentsLoader {
             if(!file.exists()) {
                 continue;
             }
-            try
-            {
+            try {
                 response = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                 Log.d("String",response);
                 Gson gson = new Gson();
@@ -66,13 +63,11 @@ public class DocumentsLoader {
                 }
                 extractedFiles.add(extractedFile);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Log.d("Exceptions",ex.getMessage());
                 return null;
             }
         }
         return extractedFiles;
-
     }
 }

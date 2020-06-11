@@ -13,12 +13,10 @@ public class PeriodicTask {
     private final Object refreshLock = new Object();
     private Command action;
 
-    public PeriodicTask()
-    {
+    public PeriodicTask() {
         Preferences.areMarkersEnabled();
 
-        if (Preferences.isSynchronizationEnabled())
-        {
+        if (Preferences.isSynchronizationEnabled()) {
             refreshTimer.schedule(getRefreshTask(), 0, Preferences.getFrequency() * 1000);
         }
     }
@@ -46,8 +44,7 @@ public class PeriodicTask {
         };
     }
 
-    public void disableRefresh()
-    {
+    public void disableRefresh() {
         if (refreshTimer == null) {
             return;
         }
@@ -56,8 +53,7 @@ public class PeriodicTask {
         refreshTimer = null;
     }
 
-    public void enableRefresh()
-    {
+    public void enableRefresh() {
         if (refreshTimer != null) {
             return;
         }
@@ -66,8 +62,7 @@ public class PeriodicTask {
         refreshTimer.schedule(getRefreshTask(), 0, Preferences.getFrequency() * 1000);
     }
 
-    public void onRefreshFrequencyChanged()
-    {
+    public void onRefreshFrequencyChanged() {
         disableRefresh();
         enableRefresh();
     }

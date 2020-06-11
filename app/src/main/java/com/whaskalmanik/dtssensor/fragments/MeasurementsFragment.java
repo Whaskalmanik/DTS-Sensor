@@ -17,17 +17,15 @@ public class MeasurementsFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView =inflater.inflate(R.layout.fragment_measurements,container,false);
         ListView lv = rootView.findViewById(R.id.measurement_list);
-        MeasurementLoadingTask task=new MeasurementLoadingTask(getContext(),lv);
+        MeasurementLoadingTask task = new MeasurementLoadingTask(getContext(),lv);
         task.execute();
         return  rootView;
     }
 
-    public static MeasurementsFragment newInstance()
-    {
+    public static MeasurementsFragment newInstance() {
         return new MeasurementsFragment();
     }
 

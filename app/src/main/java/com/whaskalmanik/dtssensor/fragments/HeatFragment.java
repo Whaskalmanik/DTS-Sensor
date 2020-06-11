@@ -40,8 +40,7 @@ public class HeatFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_heat, container, false);
         findViewElements(rootView);
         DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
@@ -57,8 +56,7 @@ public class HeatFragment extends Fragment {
         return rootView;
     }
 
-    public void findViewElements(View rootView)
-    {
+    public void findViewElements(View rootView) {
         heatGraph = rootView.findViewById(R.id.imageView);
         lengthStart = rootView.findViewById(R.id.lengthStart);
         lengthEnd = rootView.findViewById(R.id.lengthEnd);
@@ -70,8 +68,7 @@ public class HeatFragment extends Fragment {
         middleTemperature = rootView.findViewById(R.id.middleTmp);
         bar = rootView.findViewById(R.id.imageBar);
     }
-    private void setTextView()
-    {
+    private void setTextView() {
         String degrees = getResources().getString(R.string.degree_format);
         String meters = getResources().getString(R.string.metres_format);
         String seconds = getResources().getString(R.string.seconds_format);
@@ -84,8 +81,7 @@ public class HeatFragment extends Fragment {
         float minLength = 0;
         float maxLength = 0;
 
-        if(Utils.isDataValid(data))
-        {
+        if(Utils.isDataValid(data)) {
             startingTime = 0;
             endingTime = startingTime + data.size() * 10;
             heat_max = Preferences.getHeatMax();
@@ -109,8 +105,7 @@ public class HeatFragment extends Fragment {
     }
 
 
-    public static HeatFragment newInstance()
-    {
+    public static HeatFragment newInstance() {
         return new HeatFragment();
     }
 }

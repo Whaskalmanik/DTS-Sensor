@@ -20,8 +20,7 @@ public class HeatGraph {
     private int heat_max;
 
 
-    public HeatGraph(ArrayList<ExtractedFile> data,ImageView heatImage, ImageView barImage)
-    {
+    public HeatGraph(ArrayList<ExtractedFile> data,ImageView heatImage, ImageView barImage) {
         this.data = data;
         this.heatImage = heatImage;
         this.barImage = barImage;
@@ -64,8 +63,7 @@ public class HeatGraph {
         int width=heat_max-heat_min;
         Bitmap bitmap = Bitmap.createBitmap(width, 10, Bitmap.Config.ARGB_8888);
         for(int i = 0;i<width;i++) {
-            for(int j = 0;j<10;j++)
-            {
+            for(int j = 0;j<10;j++) {
                 bitmap.setPixel(i, j, getHeatColor(i+heat_min));
             }
         }
@@ -82,12 +80,10 @@ public class HeatGraph {
 
         Bitmap bitmap = Bitmap.createBitmap(lengthCount, data.size(), Bitmap.Config.ARGB_8888);
 
-        for(int i=0;i<data.size();i++)
-        {
+        for(int i=0;i<data.size();i++) {
             List<ExtractedFile.Entry> entries = data.get(i).getEntries();
 
-            for(int j=0;j<entries.size();j++)
-            {
+            for(int j=0;j<entries.size();j++) {
                 bitmap.setPixel(j, data.size()-1-i, getHeatColor((float)entries.get(j).getTemp()));
             }
         }

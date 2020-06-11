@@ -37,8 +37,7 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
     private ProgressDialog dialog;
     private MongoClientOptions options;
 
-    public MeasurementLoadingTask(Context context, ListView lv)
-    {
+    public MeasurementLoadingTask(Context context, ListView lv) {
         this.context = context;
         this.lv = lv;
         ip = Preferences.getIP();
@@ -53,8 +52,7 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
     }
 
     @Override
-    protected void onPreExecute()
-    {
+    protected void onPreExecute() {
         dialog = ProgressDialog.show(context, "",
             "Loading. Please wait...", true);
     }
@@ -74,8 +72,7 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
             mongoClient.close();
         }
     }
-    private ListEntry getEntry(String value)
-    {
+    private ListEntry getEntry(String value) {
         int index = value.indexOf('_');
         String timestamp = value.substring(index+1);
         try {
@@ -90,20 +87,27 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
 
     @Override
     protected void onPostExecute(Integer result) {
-        dialog.cancel();
-        if (result == null)
-        {
+        if(dialog!=null) {
+            try {
+                dialog.dismiss();
+            }
+            catch (final IllegalArgumentException e) {
+                Log.d("Exception",exception.getMessage());
+            }
+            finally {
+                dialog = null;
+            }
+        }
+        if (result == null) {
             Toast.makeText(context, "Connection failed", Toast.LENGTH_LONG).show();
-            Log.d("ListView",exception.getMessage());
+            Preferences.setSelectedValue(null);
             return;
         }
-        if(collectionNames.isEmpty())
-        {
+        if(collectionNames.isEmpty()) {
             Toast.makeText(context,"Database is empty or doesn't exists",Toast.LENGTH_LONG).show();
             Preferences.setSelectedValue(null);
             return;
         }
-        Toast.makeText(context, "Connection established", Toast.LENGTH_LONG).show();
         List<ListEntry> listEntries = collectionNames.stream().map(this::getEntry).filter(Objects::nonNull).collect(Collectors.toList());
         EntryAdapter adapter = new EntryAdapter(context, listEntries);
         lv.setAdapter(adapter);

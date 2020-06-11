@@ -24,22 +24,23 @@ public class App extends Application {
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel_l;
-            NotificationChannel channel_2;
-            Resources res= getResources();
-
-            channel_l = new NotificationChannel(CHANNEL_1_ID,res.getString(R.string.criticalMarker),NotificationManager.IMPORTANCE_HIGH);
-            channel_l.setDescription(res.getString(R.string.channel_desc_critical));
-
-            channel_2 = new NotificationChannel(CHANNEL_2_ID,res.getString(R.string.warningMarker),NotificationManager.IMPORTANCE_DEFAULT);
-            channel_2.setDescription(res.getString(R.string.channel_desc_warning));
-
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            if (manager != null) {
-                manager.createNotificationChannel(channel_l);
-                manager.createNotificationChannel(channel_2);
-            }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return;
         }
+        NotificationChannel channel_l;
+        NotificationChannel channel_2;
+
+        channel_l = new NotificationChannel(CHANNEL_1_ID,"warningMarker",NotificationManager.IMPORTANCE_HIGH);
+        channel_l.setDescription("Warning temperature");
+
+        channel_2 = new NotificationChannel(CHANNEL_2_ID,"criticalMarker",NotificationManager.IMPORTANCE_DEFAULT);
+        channel_2.setDescription("Critical temperature");
+
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        if (manager == null) {
+            return;
+        }
+        manager.createNotificationChannel(channel_l);
+        manager.createNotificationChannel(channel_2);
     }
 }

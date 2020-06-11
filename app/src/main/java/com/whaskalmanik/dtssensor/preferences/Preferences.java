@@ -12,8 +12,7 @@ public final class Preferences {
     private SharedPreferences sharedPreferences;
     private Consumer<String> onSelectedChanged;
 
-    private static void editValue(Consumer<SharedPreferences.Editor> editAction)
-    {
+    private static void editValue(Consumer<SharedPreferences.Editor> editAction) {
         if (editAction == null) {
             return;
         }
@@ -27,79 +26,65 @@ public final class Preferences {
             instance = new Preferences();
         }
         instance.sharedPreferences =  PreferenceManager.getDefaultSharedPreferences(context);
-
     }
-    public static float getWarningTemp()
-    {
+
+    public static float getWarningTemp() {
         return Float.parseFloat(instance.sharedPreferences.getString("warning_marker","0.0f"));
     }
 
-    public static float getCriticalTemp()
-    {
+    public static float getCriticalTemp() {
         return Float.parseFloat(instance.sharedPreferences.getString("critical_marker","0.0f"));
     }
 
-    public static boolean areMarkersEnabled()
-    {
+    public static boolean areMarkersEnabled() {
         return instance.sharedPreferences.getBoolean("marker_switch",true);
     }
 
-    public static boolean isSynchronizationEnabled()
-    {
+    public static boolean isSynchronizationEnabled() {
         return instance.sharedPreferences.getBoolean("synchronizations_switch",true);
     }
 
-    public static int getFrequency()
-    {
+    public static int getFrequency() {
         return Integer.parseInt(instance.sharedPreferences.getString("sync_frequency","10"));
     }
 
-    public static int getHeatMax()
-    {
+    public static int getHeatMax() {
         return Integer.parseInt(instance.sharedPreferences.getString("graph_heat_max","20"));
     }
-    public static int getHeatMin()
-    {
+
+    public static int getHeatMin() {
         return Integer.parseInt(instance.sharedPreferences.getString("graph_heat_min","30"));
     }
 
-    public static String getIP()
-    {
+    public static String getIP() {
         return instance.sharedPreferences.getString("database_ip","192.168.4.1");
     }
 
-    public static int getPort()
-    {
+    public static int getPort() {
         return Integer.parseInt(instance.sharedPreferences.getString("database_port","27017"));
     }
 
-    public static String getDatabaseName()
-    {
+    public static String getDatabaseName() {
         return instance.sharedPreferences.getString("database_name","DTS");
     }
 
-    public static String getSelectedValue()
-    {
+    public static String getSelectedValue() {
         return instance.sharedPreferences.getString("selected",null);
     }
 
-    public static boolean isFirstStart()
-    {
+    public static boolean isFirstStart() {
         return instance.sharedPreferences.getBoolean("first_start",true);
     }
 
-    public static float getGraphOffset()
-    {
+    public static float getGraphOffset() {
         return Float.parseFloat(instance.sharedPreferences.getString("graph_offset","0.0f"));
     }
 
-    public static void setFirstStart(boolean value)
-    {
+    public static void setFirstStart(boolean value) {
         editValue(x -> x.putBoolean("first_start",value));
     }
 
-    public static void setSelectedValue(String value)
-    {
+    public static void setSelectedValue(String value) {
         editValue(x -> x.putString("selected",value));
         if (instance.onSelectedChanged != null) {
             instance.onSelectedChanged.accept(value);

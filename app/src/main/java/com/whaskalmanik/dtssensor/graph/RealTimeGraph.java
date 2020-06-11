@@ -11,7 +11,6 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.whaskalmanik.dtssensor.preferences.Preferences;
 import com.whaskalmanik.dtssensor.files.ExtractedFile;
-import com.whaskalmanik.dtssensor.R;
 import com.whaskalmanik.dtssensor.utils.NotificationHelper;
 import com.whaskalmanik.dtssensor.utils.Utils;
 
@@ -31,66 +30,57 @@ public class RealTimeGraph
     private boolean popped = false;
 
 
-    public RealTimeGraph(LineChart graph, ArrayList<ExtractedFile> data, Context context)
-    {
+    public RealTimeGraph(LineChart graph, ArrayList<ExtractedFile> data, Context context) {
         this.graph = graph;
         this.data = data;
         notifications = new NotificationHelper(context);
     }
 
-    private void setStyle(int color, LineDataSet dataSet)
-    {
+    private void setStyle(int color, LineDataSet dataSet) {
         dataSet.setColor(color);
         dataSet.setCircleColor(color);
         dataSet.setLineWidth(2.0f);
         dataSet.setDrawCircles(false);
     }
 
-    private void notificationsCheck(float length,float temp)
-    {
-        if(!Preferences.areMarkersEnabled() || popped)
-        {
+    private void notificationsCheck(float length,float temp) {
+        if(!Preferences.areMarkersEnabled() || popped) {
             return;
         }
 
-        if (temp>= Preferences.getWarningTemp())
-        {
+        if (temp>= Preferences.getWarningTemp()) {
             notifications.popWarning(temp,length);
             popped = true;
         }
 
-        else if (temp >= Preferences.getCriticalTemp())
-        {
+        else if (temp >= Preferences.getCriticalTemp()) {
             notifications.popCritical(temp,length);
             popped = true;
         }
     }
 
-    private void fillDataSet(int selectedIndex)
-    {
+    private void fillDataSet(int selectedIndex) {
         List<Entry> entriesForData = new ArrayList<>();
         entriesForData.clear();
 
-        if(data != null && !data.isEmpty())
-        {
-            List<Float> lengths = data.get(selectedIndex).getLength();
-            List<Float> temperatures = data.get(selectedIndex).getTemperature();
-            for(int i = 0;i < lengths.size() ;i++)
-            {
-                float length = lengths.get(i);
-                float temperature = temperatures.get(i);
-                entriesForData.add(new Entry(length,temperature));
-                notificationsCheck(length,temperature);
-            }
-            dataSetData = new LineDataSet(entriesForData, data.get(selectedIndex).getDate());
-            dataSetData.setHighlightLineWidth(1.5f);
-            dataSetData.setHighLightColor(Color.parseColor("#F05837"));
-            setStyle(Color.BLUE,dataSetData);
+        if(!Utils.isDataValid(data)) {
+            return;
         }
+        List<Float> lengths = data.get(selectedIndex).getLength();
+        List<Float> temperatures = data.get(selectedIndex).getTemperature();
+        for(int i = 0;i < lengths.size() ;i++) {
+            float length = lengths.get(i);
+            float temperature = temperatures.get(i);
+            entriesForData.add(new Entry(length,temperature));
+            notificationsCheck(length,temperature);
+        }
+        dataSetData = new LineDataSet(entriesForData, data.get(selectedIndex).getDate());
+        dataSetData.setHighlightLineWidth(1.5f);
+        dataSetData.setHighLightColor(Color.parseColor("#F05837"));
+        setStyle(Color.BLUE,dataSetData);
     }
 
-    private void fillDataForMarker()
-    {
+    private void fillDataForMarker() {
         List<Entry> entries = new ArrayList<>();
         List<Entry> entries2 = new ArrayList<>();
 
@@ -106,10 +96,8 @@ public class RealTimeGraph
         setStyle(Color.RED, dataSetCritical);
     }
 
-    public void createGraph(int selectedIndex)
-    {
-        if(data==null||data.isEmpty()||data.get(0).getEntries().isEmpty())
-        {
+    public void createGraph(int selectedIndex) {
+        if(data==null||data.isEmpty()||data.get(0).getEntries().isEmpty()) {
             return;
         }
         fillDataSet(selectedIndex);

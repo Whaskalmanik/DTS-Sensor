@@ -25,7 +25,6 @@ public class TemperatureFragment extends Fragment {
     private float value;
     private TemperatureGraph graph;
     private ArrayList<ExtractedFile> data = new ArrayList<>();
-    private DocumentsLoader documentsLoader;
 
     private TextView selected;
     private TextView minValue;
@@ -33,8 +32,7 @@ public class TemperatureFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView =inflater.inflate(R.layout.fragment_temperature,container,false);
         LineChart chart = rootView.findViewById(R.id.chart);
 
@@ -42,7 +40,7 @@ public class TemperatureFragment extends Fragment {
         maxValue = rootView.findViewById(R.id.maxValueTemp);
         minValue = rootView.findViewById(R.id.minValueTemp);
 
-        documentsLoader = new DocumentsLoader(rootView.getContext());
+        DocumentsLoader documentsLoader = new DocumentsLoader(rootView.getContext());
 
         data = documentsLoader.parseDataFromFiles();
 
@@ -54,8 +52,7 @@ public class TemperatureFragment extends Fragment {
 
     }
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
         if (data == null || data.isEmpty()||data.get(0).getEntries().isEmpty()) {
             return;
@@ -68,22 +65,19 @@ public class TemperatureFragment extends Fragment {
         if (data == null || data.isEmpty()||data.get(0).getEntries().isEmpty()) {
             return;
         }
+
         Bundle arguments = getArguments();
-        if (arguments != null)
-        {
+        if (arguments != null) {
             value = arguments.getFloat("xValue");
         }
 
-        if(value==Float.MIN_VALUE)
-        {
+        if(value==Float.MIN_VALUE) {
             value=data.get(0).getLength().get(0);
         }
     }
 
-    private void setInformation()
-    {
-        if(!Utils.isDataValid(data))
-        {
+    private void setInformation() {
+        if(!Utils.isDataValid(data)) {
             selected.setVisibility(View.GONE);
             maxValue.setVisibility(View.GONE);
             minValue.setVisibility(View.GONE);
@@ -100,11 +94,9 @@ public class TemperatureFragment extends Fragment {
 
         minValue.setText("Min: "+ minTemp + " °C");
         maxValue.setText("Max: "+ maxTemp + " °C");
-
     }
 
-    public static TemperatureFragment newInstance(float value)
-    {
+    public static TemperatureFragment newInstance(float value) {
         TemperatureFragment fragment = new TemperatureFragment();
         Bundle args = new Bundle();
         args.putFloat("xValue",value);

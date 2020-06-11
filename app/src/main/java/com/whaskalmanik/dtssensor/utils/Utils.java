@@ -22,19 +22,15 @@ public class Utils
     public static final int SOCKET_TIME_OUT_MS = 5000;
     public static final int SERVER_SELECTION_TIMEOUT_MS = 5000;
 
-    public static boolean deleteRecursive(final File fileOrDirectory)
-    {
-        if (fileOrDirectory.isDirectory())
-        {
-            for (File child : fileOrDirectory.listFiles())
-            {
+    public static boolean deleteRecursive(final File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory()) {
+            for (File child : fileOrDirectory.listFiles()) {
                 deleteRecursive(child);
             }
         }
         return fileOrDirectory.delete();
     }
-    public static boolean isDataValid(List<ExtractedFile> data)
-    {
+    public static boolean isDataValid(List<ExtractedFile> data) {
         return data != null && !data.isEmpty() && !data.get(0).getEntries().isEmpty();
     }
     public static float roundFloat(float f, int places) {

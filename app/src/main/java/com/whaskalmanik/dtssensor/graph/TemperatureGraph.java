@@ -25,23 +25,19 @@ public class TemperatureGraph {
     private LineDataSet dataSetWarning;
     private LineDataSet dataSetCritical;
 
-    public TemperatureGraph(LineChart graph, ArrayList<ExtractedFile> data)
-    {
+    public TemperatureGraph(LineChart graph, ArrayList<ExtractedFile> data) {
         this.graph = graph;
         this.data = data;
     }
 
-    private void setStyle(int color, LineDataSet dataSet)
-    {
+    private void setStyle(int color, LineDataSet dataSet) {
         dataSet.setColor(color);
         dataSet.setCircleColor(color);
         dataSet.setLineWidth((float) 2.0);
         dataSet.setDrawCircles(false);
     }
-    private void fillDataSet(float value)
-    {
-        if (!Float.isNaN(value) && data != null && !data.isEmpty())
-        {
+    private void fillDataSet(float value) {
+        if (!Float.isNaN(value) && data != null && !data.isEmpty()) {
             List<Entry> entries = new ArrayList<>();
             int lengthIndex = data.get(0).getLength().indexOf(value);
             for(int i = 0;i < data.size();i++)
@@ -54,8 +50,7 @@ public class TemperatureGraph {
         }
     }
 
-    private void fillDataSetMarker()
-    {
+    private void fillDataSetMarker() {
         List<Entry> entries = new ArrayList<>();
         List<Entry> entries2 = new ArrayList<>();
 
@@ -73,8 +68,7 @@ public class TemperatureGraph {
 
     public void createGraph(float value) {
 
-        if(data==null||data.isEmpty()||data.get(0).getEntries().isEmpty())
-        {
+        if(data==null||data.isEmpty()||data.get(0).getEntries().isEmpty()) {
             return;
         }
         fillDataSet(value);

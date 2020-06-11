@@ -53,8 +53,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     private static int lastIndex;
     private static MongoClientOptions options;
 
-    public DownloadMeasurementTask(Context context, String collectionName,boolean showDialog)
-    {
+    public DownloadMeasurementTask(Context context, String collectionName,boolean showDialog) {
         this.collectionName = collectionName;
         this.context = context;
         ip = Preferences.getIP();
@@ -77,8 +76,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     }
 
     @Override
-    protected void onPreExecute()
-    {
+    protected void onPreExecute() {
         if(showDialog) {
             dialog = ProgressDialog.show(context, "",
                     "Downloading. Please wait...", true);
@@ -95,12 +93,10 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
             long count = stronglyTyped.countDocuments();
 
             notCachedIndex = 0;
-            while (new File(context.getDataDir(),collectionName+"_"+notCachedIndex).exists())
-            {
+            while (new File(context.getDataDir(),collectionName+"_"+notCachedIndex).exists()) {
                 notCachedIndex++;
             }
-            if(count > notCachedIndex)
-            {
+            if(count > notCachedIndex) {
                 MongoCursor<ExtractedFile> cursor = stronglyTyped.find().skip(notCachedIndex).iterator();
                 try {
                     while (cursor.hasNext()) {
@@ -123,8 +119,7 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
     }
     @Override
     protected void onPostExecute(Integer result) {
-        if(exception != null)
-        {
+        if(exception != null) {
             Log.d("Exception",exception.getMessage());
             return;
         }
@@ -132,32 +127,25 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         BufferedWriter bufferedWriter;
         Gson gson = new Gson();
 
-        for(int i = notCachedIndex;i<extractedFiles.size();i++)
-        {
+        for(int i = notCachedIndex;i<extractedFiles.size();i++) {
             String tmp = gson.toJson(extractedFiles.get(i));
             File file = new File(context.getFilesDir(),collectionName+"_"+i);
             lastIndex = i;
-            if(!file.exists())
-            {
-                try
-                {
-                    if (file.createNewFile())
-                    {
-                        try (FileWriter fileWriter = new FileWriter(file.getAbsoluteFile()))
-                        {
+            if(!file.exists()) {
+                try {
+                    if (file.createNewFile()) {
+                        try (FileWriter fileWriter = new FileWriter(file.getAbsoluteFile())) {
                             bufferedWriter = new BufferedWriter(fileWriter);
                             bufferedWriter.write(tmp);
                             bufferedWriter.close();
 
                         }
                     }
-                    else
-                    {
+                    else {
                         Toast.makeText(context, "File unable to create", Toast.LENGTH_SHORT).show();
                     }
                 }
-                catch (IOException e)
-                {
+                catch (IOException e) {
                     Log.d("Exceptions", e.getMessage());
                 }
             }
@@ -166,9 +154,17 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
         if (callback != null) {
             callback.apply();
         }
-        if(showDialog)
-        {
-            dialog.cancel();
+        if(showDialog) {
+            try {
+                dialog.cancel();
+            }
+            catch (final IllegalArgumentException e) {
+                Log.d("Exceptions", e.getMessage());
+            }
+            finally {
+                dialog=null;
+            }
+
         }
     }
 }
