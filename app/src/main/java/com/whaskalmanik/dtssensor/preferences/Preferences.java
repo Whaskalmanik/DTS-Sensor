@@ -49,11 +49,11 @@ public final class Preferences {
     }
 
     public static int getHeatMax() {
-        return Integer.parseInt(instance.sharedPreferences.getString("graph_heat_max","20"));
+        return Integer.parseInt(instance.sharedPreferences.getString("graph_heat_max","30"));
     }
 
     public static int getHeatMin() {
-        return Integer.parseInt(instance.sharedPreferences.getString("graph_heat_min","30"));
+        return Integer.parseInt(instance.sharedPreferences.getString("graph_heat_min","20"));
     }
 
     public static String getIP() {

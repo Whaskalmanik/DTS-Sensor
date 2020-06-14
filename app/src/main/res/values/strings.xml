@@ -11,9 +11,9 @@
 
     <!-- Graph settings -->
     <string name="graph_category">Graph</string>
-    <string name="graph_heat_max">Graph maximum temperature</string>
-    <string name="graph_heat_min">Graph minimum temperature</string>
-    <string name="graph_offset">Graph offset</string>
+    <string name="graph_heat_max">Heat maximal temperature</string>
+    <string name="graph_heat_min">Heat minimal temperature</string>
+    <string name="graph_offset">Offset</string>
 
     <!-- Marker settings -->
     <string name="marker_category">Markers</string>

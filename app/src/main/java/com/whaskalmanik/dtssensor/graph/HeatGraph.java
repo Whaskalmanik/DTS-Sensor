@@ -3,6 +3,7 @@ package com.whaskalmanik.dtssensor.graph;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.whaskalmanik.dtssensor.files.ExtractedFile;
 import com.whaskalmanik.dtssensor.preferences.Preferences;
@@ -55,12 +56,20 @@ public class HeatGraph {
     }
 
     private int getHeatColor(float temp) {
+        if(heat_max<heat_min)
+        {
+            return Color.BLUE;
+        }
         float t = Math.min(Math.max((temp - heat_min) / (heat_max - heat_min), 0f), 1f);
         return interpolateColor(Color.BLUE,Color.RED,t);
     }
 
     private void createBar() {
         int width=heat_max-heat_min;
+        if(width<=0)
+        {
+            return;
+        }
         Bitmap bitmap = Bitmap.createBitmap(width, 10, Bitmap.Config.ARGB_8888);
         for(int i = 0;i<width;i++) {
             for(int j = 0;j<10;j++) {
