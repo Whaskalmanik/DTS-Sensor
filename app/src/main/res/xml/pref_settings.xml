@@ -1,7 +1,8 @@
+
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
+    <com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory
         android:key="connection_category"
         android:title="@string/connection_category">
 
@@ -31,10 +32,8 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/connection_name" />
-
-
-    </PreferenceCategory>
-    <PreferenceCategory
+    </com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory>
+    <com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory
         android:key="synchronizations_category"
         android:title="@string/synchronizations_category">
         <SwitchPreference
@@ -51,8 +50,8 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_title_sync_frequency" />
-    </PreferenceCategory>
-    <PreferenceCategory
+    </com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory>
+    <com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory
         android:key="graph_category"
         android:title="@string/graph_category">
         <EditTextPreference
@@ -79,9 +78,9 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/graph_heat_max" />
-    </PreferenceCategory>
+    </com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory>
 
-    <PreferenceCategory
+    <com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory
         android:key="markers_category"
         android:title="@string/marker_category">
 
@@ -112,7 +111,5 @@
             android:title="@string/critical_marker" />
 
 
-    </PreferenceCategory><![CDATA[
-    >
-]]>
+    </com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory>
 </PreferenceScreen>

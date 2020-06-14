@@ -16,7 +16,7 @@
         android:supportsRtl="true">
         <activity
             android:name=".activities.SettingsActivity"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
+            android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
             android:label="@string/title_activity_settings">
         </activity>
         <activity

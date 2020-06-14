@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private DrawerLayout drawer;
     private NavigationView navigationView;
+    private Toolbar toolbar;
 
 
     @Override
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(Preferences.isFirstStart()) {
             firstTimeSetup();
         }
+        checkForEnabledHeader(Preferences.getSelectedValue());
     }
 
     private void initializePeriodicTask() {
@@ -96,7 +98,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void createDrawer(Bundle savedInstanceState) {
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Measurements");
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
         setHeader(savedInstanceState);
@@ -122,6 +125,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, measurementsFragment).commit();
         navigationView.setCheckedItem(R.id.measurements);
     }
+    public void setTitle()
+    {
+        if(fragmentType==measurementsFragment.getClass())
+        {
+            toolbar.setTitle("Measurements");
+        }
+        else if(fragmentType==realTimeFragment.getClass())
+        {
+            toolbar.setTitle("Real time graph");
+        }
+        else if(fragmentType==temperatureFragment.getClass())
+        {
+            toolbar.setTitle("Temperature graph");
+        }
+        else if(fragmentType==heatFragment.getClass())
+        {
+            toolbar.setTitle("Heat graph");
+        }
+    }
     private void reloadFragment() {
         if (fragmentType == null) {
             return;
@@ -129,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(downloadMeasurementTask != null && fragmentType.equals(realTimeFragment.getClass())) {
             realTimeFragment = createFragment(() -> RealTimeFragment.newInstance(DownloadMeasurementTask.getLastIndex()));
         }
+        setTitle();
         Log.d("MainActivity","Fragment refreshed");
         Fragment selectedFragment = fragments.get(fragmentType);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
