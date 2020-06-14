@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.content.Intent;
 
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -151,15 +152,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private AlertDialog askOption() {
         return new AlertDialog.Builder(this)
-                .setTitle("Delete")
-                .setMessage("Do you really want to delete all files?")
+                .setTitle("Delete data")
+                .setMessage("Do you really want to delete all files downloaded from database?")
                 .setIcon(R.drawable.ic_delete_black_24dp)
-                .setPositiveButton("Delete", (dialog, whichButton) -> {
+                .setPositiveButton(Html.fromHtml("<font color='#b31e0b'>Delete</font>"), (dialog, whichButton) -> {
                     fragmentType= measurementsFragment.getClass();
                     Preferences.setSelectedValue(null);
                     if(Utils.deleteRecursive(getApplicationContext().getFilesDir()))
                     {
-                        Toast.makeText(getApplicationContext(), "Data was removed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Data was deleted!", Toast.LENGTH_SHORT).show();
                     }
                     reloadFragment();
                     dialog.dismiss();
