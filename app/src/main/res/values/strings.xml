@@ -10,10 +10,16 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Graph settings -->
-    <string name="graph_category">Graph</string>
+    <string name="graph_category">Graph offset</string>
+    <string name="graph_offset_min">Min</string>
+    <string name="graph_offset_max">Max</string>
+
+    <!-- Heat Graph settings -->
+    <string name="heat_graph_category">Heat Graph</string>
+    <string name="graph_heat_switch_name">Override values</string>
+    <string name="graph_heat_switch_desc">Override min and max values from data</string>
     <string name="graph_heat_max">Heat maximal temperature</string>
     <string name="graph_heat_min">Heat minimal temperature</string>
-    <string name="graph_offset">Offset</string>
 
     <!-- Marker settings -->
     <string name="marker_category">Markers</string>
@@ -21,7 +27,6 @@
     <string name="marker_switch_description">Show markers on graph</string>
     <string name="warning_title">Warning marker</string>
     <string name="critical_marker">Critical marker</string>
-
 
     <!-- NotificationsPref settings -->
     <string name="notifications_category">Notifications</string>

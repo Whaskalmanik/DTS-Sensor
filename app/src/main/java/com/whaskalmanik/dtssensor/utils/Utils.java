@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,4 +41,13 @@ public class Utils
         bigDecimal = bigDecimal.setScale(places, RoundingMode.HALF_UP);
         return bigDecimal.floatValue();
     }
+    public static float getDataMaxTemperature(final Collection<ExtractedFile> data)
+    {
+        return data.stream().map(ExtractedFile::getMaximumTemperature).max(Float::compareTo).get();
+    }
+    public static float getDataMinTemperature(final Collection<ExtractedFile> data)
+    {
+        return data.stream().map(ExtractedFile::getMinimumTemperature).min(Float::compareTo).get();
+    }
+
 }

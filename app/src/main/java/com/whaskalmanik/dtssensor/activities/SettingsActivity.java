@@ -81,10 +81,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("database_name"));
             bindPreferenceSummaryToValue(findPreference("database_ip"));
             bindPreferenceSummaryToValue(findPreference("database_port"));
-            bindPreferenceSummaryToValue(findPreference("graph_offset"));
+            bindPreferenceSummaryToValue(findPreference("graph_offset_min"));
+            bindPreferenceSummaryToValue(findPreference("graph_offset_max"));
             bindPreferenceSummaryToValue(findPreference("graph_heat_max"));
             bindPreferenceSummaryToValue(findPreference("graph_heat_min"));
-
         }
     }
 }

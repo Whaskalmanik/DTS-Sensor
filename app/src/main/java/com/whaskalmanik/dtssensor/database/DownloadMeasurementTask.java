@@ -150,10 +150,6 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
                 }
             }
         }
-
-        if (callback != null) {
-            callback.apply();
-        }
         if(showDialog) {
             try {
                 dialog.cancel();
@@ -166,5 +162,9 @@ public class DownloadMeasurementTask extends AsyncTask<Void,Void,Integer> {
             }
 
         }
+        if (callback != null) {
+            callback.apply();
+        }
+
     }
 }

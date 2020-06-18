@@ -51,33 +51,60 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_sync_frequency" />
     </com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory>
+
+    <com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory
+        android:key="heat_graph_category"
+        android:title="@string/heat_graph_category">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="heat_graph_switch"
+            android:summary="@string/graph_heat_switch_desc"
+            android:title="@string/graph_heat_switch_name" />
+
+        <EditTextPreference
+            android:defaultValue="20"
+            android:inputType="numberSigned"
+            android:key="graph_heat_min"
+            android:dependency="heat_graph_switch"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/graph_heat_min" />
+
+        <EditTextPreference
+            android:defaultValue="30"
+            android:inputType="numberSigned"
+            android:key="graph_heat_max"
+            android:dependency="heat_graph_switch"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/graph_heat_max" />
+
+    </com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory>
+
     <com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory
         android:key="graph_category"
         android:title="@string/graph_category">
         <EditTextPreference
             android:defaultValue="0"
             android:inputType="number"
-            android:key="graph_offset"
+            android:key="graph_offset_min"
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/graph_offset" />
+            android:title="@string/graph_offset_min" />
+
         <EditTextPreference
-            android:defaultValue="20"
-            android:inputType="numberSigned"
-            android:key="graph_heat_min"
+            android:defaultValue="500"
+            android:inputType="number"
+            android:key="graph_offset_max"
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/graph_heat_min" />
-        <EditTextPreference
-            android:defaultValue="30"
-            android:inputType="numberSigned"
-            android:key="graph_heat_max"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/graph_heat_max" />
+            android:title="@string/graph_offset_max" />
+
     </com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory>
 
     <com.whaskalmanik.dtssensor.preferences.MyPreferenceCategory

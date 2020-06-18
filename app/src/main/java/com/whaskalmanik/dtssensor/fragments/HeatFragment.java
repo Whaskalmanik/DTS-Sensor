@@ -3,6 +3,7 @@ package com.whaskalmanik.dtssensor.fragments;
 
 import android.os.Bundle;
 
+import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -50,7 +51,8 @@ public class HeatFragment extends Fragment {
         {
             Toast.makeText(getContext(), "Graph offset is out of range", Toast.LENGTH_SHORT).show();
         }
-        HeatGraph graph= new HeatGraph(data,heatGraph,bar);
+
+        HeatGraph graph = new HeatGraph(data, heatGraph, bar);
         graph.createGraph();
         setTextView();
         return rootView;
@@ -82,10 +84,16 @@ public class HeatFragment extends Fragment {
         float maxLength = 0;
 
         if(Utils.isDataValid(data)) {
-            startingTime = 0;
             endingTime = startingTime + data.size() * 10;
-            heat_max = Preferences.getHeatMax();
-            heat_min = Preferences.getHeatMin();
+            if(Preferences.isDataOverrided())
+            {
+                heat_max = Preferences.getHeatMax();
+                heat_min = Preferences.getHeatMin();
+            }
+            else {
+                heat_max = (int) Utils.getDataMaxTemperature(data);
+                heat_min = (int) Utils.getDataMinTemperature(data);
+            }
             midPoint = (heat_max+heat_min) / 2;
             minLength = data.get(0).getMinimumLength();
             maxLength = data.get(0).getMaximumLength();
@@ -105,7 +113,8 @@ public class HeatFragment extends Fragment {
     }
 
 
-    public static HeatFragment newInstance() {
+    public static HeatFragment newInstance()
+    {
         return new HeatFragment();
     }
 }

@@ -13,12 +13,17 @@ import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
+import com.whaskalmanik.dtssensor.files.DocumentsLoader;
+import com.whaskalmanik.dtssensor.files.ExtractedFile;
 import com.whaskalmanik.dtssensor.preferences.Preferences;
 import com.whaskalmanik.dtssensor.utils.EntryAdapter;
 import com.whaskalmanik.dtssensor.utils.ListEntry;
 import com.whaskalmanik.dtssensor.utils.Utils;
 
+import org.w3c.dom.Document;
+
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -115,11 +120,9 @@ public class MeasurementLoadingTask extends AsyncTask<Void,Void,Integer> {
             ListEntry temp = listEntries.get(i);
             Preferences.setSelectedValue(temp.identifier);
             adapter.notifyDataSetChanged();
-            DownloadMeasurementTask task = new DownloadMeasurementTask(context, temp.identifier,true);
+
+            DownloadMeasurementTask task = new DownloadMeasurementTask(context, temp.identifier, true);
             task.execute();
-            Toast.makeText(context, temp.identifier, Toast.LENGTH_SHORT).show();
         });
-
     }
-
 }

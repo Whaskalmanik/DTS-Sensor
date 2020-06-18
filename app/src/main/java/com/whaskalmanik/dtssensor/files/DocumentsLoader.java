@@ -1,6 +1,7 @@
 package com.whaskalmanik.dtssensor.files;
 
 import android.content.Context;
+import android.preference.Preference;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -55,10 +56,11 @@ public class DocumentsLoader {
                 Log.d("String",response);
                 Gson gson = new Gson();
                 ExtractedFile extractedFile = gson.fromJson(response, ExtractedFile.class);
-                float offset = Preferences.getGraphOffset();
-                if(offset!=0.0f)
+                float offsetMin = Preferences.getGraphOffsetMin();
+                float offsetMax = Preferences.getGraphOffsetMax();
+                if(offsetMin != 0.0f || offsetMax != extractedFile.getMaximumLength())
                 {
-                    List<ExtractedFile.Entry> entries = extractedFile.getEntries().stream().filter(x -> x.getLength() > offset).collect(Collectors.toList());
+                    List<ExtractedFile.Entry> entries = extractedFile.getEntries().stream().filter(x -> x.getLength() >= offsetMin &&  x.getLength() <= offsetMax).collect(Collectors.toList());
                     extractedFile.setEntries(entries);
                 }
                 extractedFiles.add(extractedFile);

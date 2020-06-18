@@ -2,6 +2,7 @@ package com.whaskalmanik.dtssensor.graph;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.preference.Preference;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -25,8 +26,15 @@ public class HeatGraph {
         this.data = data;
         this.heatImage = heatImage;
         this.barImage = barImage;
-        heat_min = Preferences.getHeatMin();
-        heat_max = Preferences.getHeatMax();
+        if(Preferences.isDataOverrided())
+        {
+            heat_max = Preferences.getHeatMax();
+            heat_min = Preferences.getHeatMin();
+        }
+        else {
+            heat_max = (int) Utils.getDataMaxTemperature(data);
+            heat_min = (int) Utils.getDataMinTemperature(data);
+        }
     }
 
     private float interpolate(float a, float b, float proportion) {

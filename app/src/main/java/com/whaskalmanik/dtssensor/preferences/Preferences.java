@@ -44,6 +44,17 @@ public final class Preferences {
         return instance.sharedPreferences.getBoolean("synchronizations_switch",true);
     }
 
+    public static boolean isDataOverrided() {
+        return instance.sharedPreferences.getBoolean("heat_graph_switch",false);
+    }
+    public static boolean isMaxDataManualyEdited() {
+        return instance.sharedPreferences.getBoolean("max_data_edited",false);
+    }
+    public static void setMaxDataManuallyEdited(final boolean value)
+    {
+        editValue(x -> x.putBoolean("max_data_edited", value));
+    }
+
     public static int getFrequency() {
         return Integer.parseInt(instance.sharedPreferences.getString("sync_frequency","10"));
     }
@@ -76,8 +87,16 @@ public final class Preferences {
         return instance.sharedPreferences.getBoolean("first_start",true);
     }
 
-    public static float getGraphOffset() {
-        return Float.parseFloat(instance.sharedPreferences.getString("graph_offset","0.0f"));
+    public static float getGraphOffsetMin() {
+        return Float.parseFloat(instance.sharedPreferences.getString("graph_offset_min","0.0f"));
+    }
+
+    public static float getGraphOffsetMax() {
+        return Float.parseFloat(instance.sharedPreferences.getString("graph_offset_max",String.valueOf(Float.MAX_VALUE)));
+    }
+
+    public static void setGraphOffsetMax(final float value) {
+        editValue(x -> x.putString("graph_offset_max", String.valueOf(value)));
     }
 
     public static void setFirstStart(boolean value) {
