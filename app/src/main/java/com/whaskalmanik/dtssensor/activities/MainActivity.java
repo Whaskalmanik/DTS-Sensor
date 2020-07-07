@@ -39,7 +39,7 @@ import java.util.function.Supplier;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,RealTimeFragment.FragmentRealTimeListener
 {
     private static Class fragmentType;
-
+    private static float tempNumber= Float.MIN_VALUE;
     private TemperatureFragment temperatureFragment;
     private HeatFragment heatFragment;
     private RealTimeFragment realTimeFragment;
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void initializeFragments() {
-        temperatureFragment = createFragment(() -> TemperatureFragment.newInstance(Float.MIN_VALUE));
+        temperatureFragment = createFragment(() -> TemperatureFragment.newInstance(tempNumber));
         heatFragment = createFragment(HeatFragment::newInstance);
         realTimeFragment = createFragment(() -> RealTimeFragment.newInstance(Integer.MIN_VALUE));
         measurementsFragment = createFragment(MeasurementsFragment::newInstance);
@@ -298,6 +298,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onValueSent(float number) {
         temperatureFragment = createFragment(() -> TemperatureFragment.newInstance(number));
+        tempNumber=number;
     }
 
 }

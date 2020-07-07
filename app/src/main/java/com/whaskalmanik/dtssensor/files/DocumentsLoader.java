@@ -70,6 +70,6 @@ public class DocumentsLoader {
                 return null;
             }
         }
-        return extractedFiles;
+        return extractedFiles.stream().sorted(new ExtractedFile.TimestampComparator()).collect(Collectors.toCollection(ArrayList::new));
     }
 }

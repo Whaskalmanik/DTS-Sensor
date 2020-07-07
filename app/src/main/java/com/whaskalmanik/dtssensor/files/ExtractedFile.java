@@ -5,11 +5,13 @@ import android.os.Parcelable;
 import android.util.Log;
 
 
+import com.anychart.anychart.DateTime;
 import com.whaskalmanik.dtssensor.utils.Utils;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +44,14 @@ public final class ExtractedFile implements Parcelable {
 
         public void setTemp(double temp) {
             this.temp = temp;
+        }
+    }
+
+    public static final class TimestampComparator implements Comparator<ExtractedFile> {
+
+        @Override
+        public int compare(ExtractedFile o1, ExtractedFile o2) {
+            return o1.timestamp.compareTo(o2.timestamp);
         }
     }
 

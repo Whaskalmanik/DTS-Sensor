@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 
 public class TemperatureFragment extends Fragment {
-    private float value;
+    static private float value;
     private TemperatureGraph graph;
     private ArrayList<ExtractedFile> data = new ArrayList<>();
 
